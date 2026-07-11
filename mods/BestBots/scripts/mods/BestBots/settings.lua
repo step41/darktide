@@ -17,6 +17,10 @@ local CATEGORY_STANCES = {
 	adamant_stance = true,
 	broker_focus = true,
 	broker_punk_rage = true,
+	cryptic_precision_stance = true,
+	-- cryptic_chordclaw is mechanically a self-buff (no locomotion), not a charge —
+	-- see meta_data.lua's cryptic_chordclaw comment. Gated as a stance.
+	cryptic_chordclaw = true,
 }
 
 local CATEGORY_CHARGES = {
@@ -33,6 +37,7 @@ local CATEGORY_SHOUTS = {
 	psyker_shout = true,
 	ogryn_taunt_shout = true,
 	adamant_shout = true,
+	cryptic_discharge = true,
 }
 
 local CATEGORY_STEALTH = {

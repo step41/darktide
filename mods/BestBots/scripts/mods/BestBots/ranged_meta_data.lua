@@ -461,6 +461,7 @@ local function should_inject_weakspot_aim(weapon_template)
 			"autogun",
 			"bolter",
 			"stub_pistol",
+			"arc_rifle",
 		})
 end
 

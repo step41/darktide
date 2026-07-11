@@ -4,22 +4,27 @@
 -- Discharge (the voltaic AoE) and Precision Stance are alternate combat abilities.
 -- The Servo-Skull blitz has three variants; Arc Grenade is the other blitz option.
 
+-- elite_distance is capped at/below precision_stance's own "distant" boundary (8m,
+-- see PRECISION_STANCE_THRESHOLDS usage below) so the two abilities don't have a
+-- contradictory overlap band. Previous values (12/9/7) exceeded that boundary and
+-- the aggressive value (12) exactly matched DISCHARGE_THRESHOLDS' unrelated AoE
+-- radius constant — almost certainly a copy/paste artifact, not intentional tuning.
 local CHORDCLAW_THRESHOLDS = {
 	aggressive = {
 		min_charges = 1,
-		elite_distance = 12,
+		elite_distance = 8,
 		density_nearby = 2,
 		density_distance = 10,
 	},
 	balanced = {
 		min_charges = 1,
-		elite_distance = 9,
+		elite_distance = 7,
 		density_nearby = 3,
 		density_distance = 8,
 	},
 	conservative = {
 		min_charges = 2,
-		elite_distance = 7,
+		elite_distance = 6,
 		density_nearby = 4,
 		density_distance = 6,
 	},

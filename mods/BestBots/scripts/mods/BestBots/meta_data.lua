@@ -74,6 +74,19 @@ local TIER2_META_DATA = {
 			done_when_arriving_at_destination = true,
 		},
 	},
+	-- cryptic_chordclaw is a self-buff (no locomotion component), unlike the charge
+	-- templates above — it has no arrival event, so it must NOT get an end_condition
+	-- of done_when_arriving_at_destination; that would hang BtBotActivateAbilityAction
+	-- waiting for an arrival that never fires.
+	cryptic_chordclaw = {
+		activation = {
+			action_input = "aim_pressed",
+			min_hold_time = 0.075,
+		},
+		wait_action = {
+			action_input = "aim_released",
+		},
+	},
 }
 
 -- Veteran templates ship with stance_pressed metadata, but runtime validation

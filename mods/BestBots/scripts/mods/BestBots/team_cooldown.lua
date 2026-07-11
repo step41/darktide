@@ -14,6 +14,7 @@ local CATEGORY_MAP = {
 	-- aoe_shout
 	psyker_shout = "aoe_shout",
 	veteran_combat_ability_shout = "aoe_shout",
+	cryptic_discharge = "aoe_shout",
 	-- dash
 	zealot_dash = "dash",
 	zealot_targeted_dash = "dash",

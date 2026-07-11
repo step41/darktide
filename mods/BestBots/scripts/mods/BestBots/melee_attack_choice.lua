@@ -227,6 +227,18 @@ local SPECIAL_WEAPON_POLICIES = {
 		},
 	},
 	{
+		-- Special action is a 2H sweep-mode toggle (action_special_activate_default_start,
+		-- kind = "toggle_special", chaining to a "sweep" kind action), same shape as the
+		-- chain family above.
+		family = "transonic_sword_transonic_knife",
+		prefixes = {
+			"transonic_sword_transonic_knife_p1_",
+		},
+		action_kinds = {
+			toggle_special = true,
+		},
+	},
+	{
 		family = "combat_axe_special",
 		prefixes = {
 			"combataxe_p1_",
@@ -543,7 +555,7 @@ local function _is_priority_special_target(special_action_meta, scratchpad, targ
 		return _is_thunder_hammer_target(target_breed, target_armor)
 	end
 
-	if special_action_meta.family == "chain" then
+	if special_action_meta.family == "chain" or special_action_meta.family == "transonic_sword_transonic_knife" then
 		return _is_chain_special_target(target_breed, target_armor)
 	end
 

@@ -34,6 +34,8 @@ local CATEGORY_SETTING_BY_SEMANTIC_KEY = {
 	adamant_stance = "enable_stances",
 	broker_focus = "enable_stances",
 	broker_punk_rage = "enable_stances",
+	cryptic_precision_stance = "enable_stances",
+	cryptic_chordclaw = "enable_stances",
 	zealot_dash = "enable_charges",
 	zealot_targeted_dash = "enable_charges",
 	zealot_targeted_dash_improved = "enable_charges",
@@ -44,6 +46,7 @@ local CATEGORY_SETTING_BY_SEMANTIC_KEY = {
 	psyker_shout = "enable_shouts",
 	ogryn_taunt_shout = "enable_shouts",
 	adamant_shout = "enable_shouts",
+	cryptic_discharge = "enable_shouts",
 	veteran_stealth_combat_ability = "enable_stealth",
 	zealot_invisibility = "enable_stealth",
 }
@@ -56,6 +59,10 @@ local REVIVE_DEFENSIVE_BY_SEMANTIC_KEY = {
 	zealot_invisibility = true,
 	veteran_stealth_combat_ability = true,
 	veteran_combat_ability_shout = true,
+	-- cryptic_discharge is an AoE stun (electrocute_enemies_radius=12,
+	-- stun_duration=2s) — same "clear space around a downed ally" role as the
+	-- other shout entries above.
+	cryptic_discharge = true,
 }
 
 local TEAM_COOLDOWN_CATEGORY_BY_SEMANTIC_KEY = {
@@ -63,6 +70,7 @@ local TEAM_COOLDOWN_CATEGORY_BY_SEMANTIC_KEY = {
 	adamant_shout = "taunt",
 	psyker_shout = "aoe_shout",
 	veteran_combat_ability_shout = "aoe_shout",
+	cryptic_discharge = "aoe_shout",
 	zealot_dash = "dash",
 	zealot_targeted_dash = "dash",
 	zealot_targeted_dash_improved = "dash",
