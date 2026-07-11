@@ -362,6 +362,10 @@ local ANTI_ARMOR_RANGED_POLICIES = {
 		family = "heavystubber",
 		min_target_distance_sq = meters_sq(12),
 	},
+	arc_rifle = {
+		family = "arc_rifle",
+		min_target_distance_sq = meters_sq(12),
+	},
 }
 
 local function close_range_ranged_policy(weapon_template)
@@ -431,6 +435,10 @@ local function anti_armor_ranged_policy(weapon_template)
 
 	if has_keyword(weapon_template, "heavystubber") then
 		return ANTI_ARMOR_RANGED_POLICIES.heavystubber
+	end
+
+	if has_keyword(weapon_template, "arc_rifle") then
+		return ANTI_ARMOR_RANGED_POLICIES.arc_rifle
 	end
 
 	return nil

@@ -262,6 +262,10 @@ local SPECIAL_WEAPON_POLICIES = {
 		family = "combat_knife_jab",
 		prefixes = {
 			"combatknife_p1_",
+			-- transonic_knife_p1's special (action_special_jab) is a mechanical
+			-- duplicate of combatknife_p1's jab: same kind ("sweep"), same
+			-- start_input, same special-action localization strings.
+			"transonic_knife_p1_",
 		},
 		action_kinds = {
 			sweep = true,

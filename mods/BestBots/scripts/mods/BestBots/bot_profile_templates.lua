@@ -721,21 +721,28 @@ M.DEFAULT_PROFILE_TEMPLATES = {
 			_default_curio_entry(),
 			_default_curio_entry(),
 		},
+		-- Talent keys verified directly against the real talent tree
+		-- (scripts/settings/ability/archetype_talents/talents/cryptic_talents.lua in
+		-- the decompiled source). The original keys here didn't match any real talent
+		-- node (13 of 14 were invalid), meaning the bot silently fell back to the
+		-- archetype's default base_talents (cryptic_discharge_base combat ability,
+		-- cryptic_servo_skull_order blitz) instead of the intended chordclaw/arc
+		-- grenade build. See mapping rationale in commit message / PR description.
 		talents = {
-			cryptic_combat_ability_chordclaw = 1,
-			cryptic_grenade_arc = 1,
-			cryptic_aura_capacitance_on_kill = 1,
-			cryptic_passive_electro_strike = 1,
-			cryptic_toughness_on_crit = 1,
-			cryptic_capacitance_on_weakspot = 1,
-			cryptic_electrocute_on_crit = 1,
-			cryptic_crit_chance_on_electrocute = 1,
-			cryptic_damage_vs_electrocuted = 1,
-			cryptic_chordclaw_bleed = 1,
-			cryptic_chordclaw_cooldown_on_kill = 1,
-			cryptic_arc_damage_bonus = 1,
+			cryptic_chordclaw = 1,
+			cryptic_grenade_ability_arc_grenade = 1,
+			cryptic_coherency_regen_aura_improved = 1,
+			cryptic_electrocution_toughness = 1,
+			cryptic_crits_grant_tdr = 1,
+			cryptic_weakspot_kills_grant_power = 1,
+			cryptic_melee_crits_electrocute_first = 1,
+			cryptic_crit_chance_based_on_charge = 1,
+			cryptic_damage_vs_electrocuted_scaling_on_charge = 1,
+			cryptic_chordclaw_quick_stab_combo = 1,
+			cryptic_chordclaw_capacitance_restoration = 1,
+			cryptic_arc_grenades_brittleness = 1,
 			cryptic_weakspot_damage = 1,
-			cryptic_electro_strike_improved = 1,
+			cryptic_chordclaw_consecutive_bonus = 1,
 			base_toughness_node_buff_medium_1 = 1,
 			base_melee_damage_node_buff_medium_1 = 1,
 			base_crit_chance_node_buff_low_1 = 1,

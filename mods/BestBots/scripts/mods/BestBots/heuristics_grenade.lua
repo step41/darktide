@@ -749,6 +749,12 @@ local GRENADE_HEURISTICS = {
 	adamant_grenade_improved = function(context)
 		return _grenade_horde(context, 4, 2.0, "grenade_adamant", context.preset)
 	end,
+	-- Same generator/shape as adamant_grenade (arc_grenade.lua vs adamant_grenade.lua
+	-- are both grenade_weapon_template_generator("grenade_ability") with no custom
+	-- action overrides beyond animation/projectile refs); same horde thresholds apply.
+	arc_grenade = function(context)
+		return _grenade_horde(context, 4, 2.0, "grenade_arc", context.preset)
+	end,
 	adamant_shock_mine = function(context)
 		return _grenade_mine_nonexplosive(context, "grenade_shock_mine", context.preset)
 	end,
