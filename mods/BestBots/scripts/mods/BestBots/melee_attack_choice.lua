@@ -252,6 +252,7 @@ local SPECIAL_WEAPON_POLICIES = {
 	{
 		family = "combat_sword_special",
 		prefixes = {
+			"combatsword_p1_",
 			"combatsword_p2_",
 		},
 		action_kinds = {

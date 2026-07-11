@@ -705,7 +705,11 @@ local function try_queue(unit, blackboard)
 	-- Pre-flight: don't enter the state machine without a target for aimed throws.
 	-- Wielding auto-fire templates (zealot knives) triggers the throw immediately,
 	-- so aborting after wield is too late — the charge is already consumed.
-	if aim_input then
+	-- Self-cast abilities (component-based, no external target — e.g. a personal
+	-- shield or a companion buff with no targeting logic) skip target/LOS
+	-- resolution entirely; aim_input is still queued below to fire the ability.
+	local self_cast = type(template_entry) == "table" and template_entry.self_cast == true
+	if aim_input and not self_cast then
 		local aim_unit = _grenade_aim.resolve_aim_unit(context, grenade_name)
 		if not aim_unit then
 			_grenade_runtime.finish_child_perf("grenade_fallback.profile_resolution", profile_t0)

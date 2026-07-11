@@ -755,6 +755,24 @@ local GRENADE_HEURISTICS = {
 	arc_grenade = function(context)
 		return _grenade_horde(context, 4, 2.0, "grenade_arc", context.preset)
 	end,
+	-- self-cast defensive bubble: trigger on the bot's own danger, not enemy
+	-- targeting (context.toughness_pct is an established context field, see
+	-- heuristics_skitarii.lua's discharge heuristic for the same pattern).
+	cryptic_force_field = function(context)
+		if context.toughness_pct and context.toughness_pct < 0.35 then
+			return true, "grenade_force_field_low_toughness"
+		end
+		if (context.num_nearby or 0) >= 4 then
+			return true, "grenade_force_field_surrounded"
+		end
+		return false, "grenade_force_field_hold"
+	end,
+	cryptic_servo_skull_order = function(context)
+		return _grenade_horde(context, 3, 2.0, "grenade_servo_skull", context.preset)
+	end,
+	cryptic_servo_skull_order_base = function(context)
+		return _grenade_horde(context, 3, 2.0, "grenade_servo_skull_base", context.preset)
+	end,
 	adamant_shock_mine = function(context)
 		return _grenade_mine_nonexplosive(context, "grenade_shock_mine", context.preset)
 	end,

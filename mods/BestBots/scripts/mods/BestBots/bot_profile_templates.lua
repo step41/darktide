@@ -564,24 +564,32 @@ M.DEFAULT_PROFILE_TEMPLATES = {
 			_default_curio_entry(),
 			_default_curio_entry(),
 		},
+		-- Talent keys verified directly against the real talent tree
+		-- (scripts/settings/ability/archetype_talents/talents/adamant_talents.lua in
+		-- the decompiled source) -- 17 of 17 original keys were invalid, same bug class
+		-- as the Skitarii profile. adamant_toughness_on_block -> adamant_movement_speed_on_block
+		-- and adamant_will -> adamant_stacking_damage are the weakest-confidence mappings:
+		-- only 3 real *_block* nodes exist (none about toughness specifically), and no
+		-- real analog for "will" exists anywhere in the tree at all -- worth a design
+		-- sanity-check, not just a data-accuracy one.
 		talents = {
-			adamant_combat_ability_charge = 1,
-			adamant_grenade_stun = 1,
-			adamant_aura_toughness_regen = 1,
-			adamant_passive_forceful = 1,
-			adamant_toughness_on_block = 1,
-			adamant_reduced_damage_on_block = 1,
-			adamant_increased_block_efficiency = 1,
-			adamant_charge_damage = 1,
-			adamant_charge_stagger = 1,
-			adamant_toughness_on_elite_kill = 1,
-			adamant_attack_speed_on_ability = 1,
-			adamant_coherency_toughness_regen = 1,
-			adamant_damage_resistance_on_high_toughness = 1,
-			adamant_shout_toughness = 1,
-			adamant_will = 1,
-			adamant_forceful_max_stacks_attack_speed = 1,
-			adamant_forceful_stagger = 1,
+			adamant_charge = 1,
+			adamant_shock_mine = 1,
+			adamant_toughness_regen_near_companion = 1,
+			adamant_forceful = 1,
+			adamant_movement_speed_on_block = 1,
+			adamant_forceful_stun_immune_and_block_all = 1,
+			adamant_perfect_block_damage_boost = 1,
+			adamant_charge_longer_distance = 1,
+			adamant_staggering_enemies_take_more_damage = 1,
+			adamant_elite_special_kills_replenish_toughness = 1,
+			adamant_multiple_hits_attack_speed = 1,
+			adamant_companion_coherency = 1,
+			adamant_staggers_reduce_damage_taken = 1,
+			adamant_charge_toughness = 1,
+			adamant_stacking_damage = 1,
+			adamant_forceful_offensive = 1,
+			adamant_forceful_stagger_on_low_high = 1,
 			base_toughness_node_buff_medium_1 = 1,
 			base_toughness_damage_reduction_node_buff_medium_1 = 1,
 			base_melee_damage_node_buff_medium_1 = 1,
@@ -644,21 +652,31 @@ M.DEFAULT_PROFILE_TEMPLATES = {
 			_default_curio_entry(),
 			_default_curio_entry(),
 		},
+		-- Talent keys verified directly against the real talent tree
+		-- (scripts/settings/ability/archetype_talents/talents/broker_talents.lua).
+		-- All 14 original keys were invalid (same class of bug as the cryptic
+		-- profile), so the bot silently fell back to the archetype's base_talents
+		-- (broker_ability_focus / broker_aura_gunslinger / broker_blitz_flash_grenade)
+		-- instead of the intended rage/close-range build. broker_toughness_on_melee_kill,
+		-- broker_movement_speed_on_kill, and broker_corruption_resistance have no real
+		-- analog anywhere in the tree; mapped to the closest thematic real passive
+		-- instead (weakspot-kill toughness, sprint threat reduction, stamina/damage
+		-- tradeoff DR) rather than left unmapped.
 		talents = {
-			broker_combat_ability_focus = 1,
-			broker_grenade_frag = 1,
-			broker_aura_damage_boost = 1,
-			broker_passive_street_fighter = 1,
-			broker_toughness_on_melee_kill = 1,
-			broker_dodge_distance = 1,
-			broker_crit_on_dodge = 1,
-			broker_damage_on_crit = 1,
-			broker_movement_speed_on_kill = 1,
-			broker_toughness_on_ranged_kill = 1,
-			broker_corruption_resistance = 1,
-			broker_rage_damage_bonus = 1,
-			broker_rage_attack_speed = 1,
-			broker_street_fighter_stacks = 1,
+			broker_ability_focus = 1,
+			broker_blitz_flash_grenade = 1,
+			broker_coherency_melee_damage = 1,
+			broker_passive_close_ranged_damage = 1,
+			broker_passive_restore_toughness_on_weakspot_kill = 1,
+			broker_passive_longer_dodges = 1,
+			broker_passive_ninja_grants_crit_chance = 1,
+			broker_passive_crit_to_damage = 1,
+			broker_passive_sprinting_reduces_threat = 1,
+			broker_passive_restore_toughness_on_close_ranged_kill = 1,
+			broker_passive_dr_damage_tradeoff_on_stamina = 1,
+			broker_ability_punk_rage_sub_2 = 1,
+			broker_passive_stamina_grants_atk_speed = 1,
+			broker_passive_finesse_damage = 1,
 			base_toughness_node_buff_medium_1 = 1,
 			base_melee_damage_node_buff_medium_1 = 1,
 			base_stamina_node_buff_low_2 = 1,

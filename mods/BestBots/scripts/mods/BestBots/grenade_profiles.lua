@@ -58,6 +58,30 @@ local SUPPORTED_THROW_TEMPLATES = {
 		release_input = "aim_released",
 		throw_delay = 0.15,
 	},
+	-- cryptic_force_field and cryptic_servo_skull_order_base are self-cast/self-
+	-- targeted (no external target — a personal shield and a companion buff with
+	-- no targeting logic in their real action code respectively). self_cast tells
+	-- grenade_fallback.lua to skip enemy-target/LOS resolution while still queuing
+	-- aim_input to fire the ability.
+	cryptic_force_field = {
+		component = "grenade_ability_action",
+		aim_input = "aim_pressed",
+		self_cast = true,
+	},
+	cryptic_servo_skull_order_base = {
+		component = "grenade_ability_action",
+		aim_input = "aim_pressed",
+		self_cast = true,
+	},
+	-- Upgraded servo skull has real ground-targeting (aim_pressed -> aim_released
+	-- chain into action_companion_start_ability, total_time=0.1) — same shape as
+	-- adamant_whistle above, not self-cast.
+	cryptic_servo_skull_order = {
+		component = "grenade_ability_action",
+		aim_input = "aim_pressed",
+		release_input = "aim_released",
+		throw_delay = 0.1,
+	},
 	broker_missile_launcher = {
 		aim_input = "shoot_charge",
 		auto_unwield = true,
