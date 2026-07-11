@@ -1,0 +1,412 @@
+-- Target selection hooks: #19 distant special penalty, #48 player tag boost,
+-- #69 companion-pin de-prioritization
+
+local M = {}
+
+local _mod
+
+local function _hook_require_now(path, callback)
+	local hook_require_now = _mod and _mod.hook_require_now
+	if hook_require_now then
+		return hook_require_now(_mod, path, callback, 4)
+	end
+
+	if _mod and _mod.warning and _mod._raw_hook_require then
+		_mod:warning("BestBots: hook_require_now_missing for " .. tostring(path))
+	end
+	return _mod["hook_require"](_mod, path, callback)
+end
+
+local _breed_utils
+local _debug_log
+local _debug_enabled
+local _fixed_time
+local _perf
+local _player_tag_bonus
+local _special_chase_penalty_range
+local _logged_companion_pin_melee = {}
+local _logged_companion_pin_ranged = {}
+local DEFAULT_MONSTER_WEIGHT = 2
+local FRIENDLY_COMPANION_PIN_PENALTY = 100
+
+-- Per-frame cache for chase_range_sq to avoid repeated settings reads in the hot
+-- slot_weight path (runs per-target per-bot per-frame).
+local _cached_chase_range_sq
+local _cached_chase_range_t
+local _cached_frame_t
+local _cached_tag_results
+local _cached_companion_pin_results
+local _cached_slot_ammo_pct
+local _is_daemonhost_avoidance_enabled
+local _daemonhost_breed_names
+local _is_non_aggroed_daemonhost
+local BOT_TARGET_SELECTION_SENTINEL = "__bb_target_selection_installed"
+local DAEMONHOST_BREED_NAMES = {
+	chaos_daemonhost = true,
+	chaos_mutator_daemonhost = true,
+}
+
+local function _reset_frame_caches(fixed_t)
+	if _cached_frame_t == fixed_t then
+		return
+	end
+
+	_cached_frame_t = fixed_t
+	_cached_tag_results = {}
+	_cached_companion_pin_results = {}
+	_cached_slot_ammo_pct = {}
+end
+
+-- Returns true if target_unit is currently tagged by a human player (not a bot ping).
+local function _has_human_player_tag(target_unit)
+	local state_ext = Managers and Managers.state and Managers.state.extension
+	if not state_ext then
+		return false
+	end
+
+	local ok, smart_tag_system = pcall(state_ext.system, state_ext, "smart_tag_system")
+	if not ok or not smart_tag_system then
+		return false
+	end
+
+	local tag = smart_tag_system:unit_tag(target_unit)
+	if not tag then
+		return false
+	end
+
+	local tagger_player = tag:tagger_player()
+
+	return tagger_player ~= nil and tagger_player:is_human_controlled()
+end
+
+-- Friendly cyber-mastiff pins mark the enemy disable component as:
+-- is_disabled=true, type="pounced", attacker_unit=<companion unit>.
+local function _is_friendly_companion_pin(target_unit)
+	local bb = BLACKBOARDS and BLACKBOARDS[target_unit]
+	if not bb or not bb.disable then
+		return false
+	end
+
+	local dc = bb.disable
+	if dc.is_disabled ~= true or dc.type ~= "pounced" or dc.attacker_unit == nil then
+		return false
+	end
+
+	local attacker_unit = dc.attacker_unit
+	local unit_data_extension = ScriptUnit
+		and ScriptUnit.has_extension
+		and ScriptUnit.has_extension(attacker_unit, "unit_data_system")
+	if not unit_data_extension then
+		return false
+	end
+
+	local attacker_breed = unit_data_extension:breed()
+	if not attacker_breed then
+		return false
+	end
+
+	return _breed_utils and _breed_utils.is_companion(attacker_breed) or false
+end
+
+local function _has_human_player_tag_cached(target_unit, fixed_t)
+	if target_unit == nil then
+		return false
+	end
+
+	_reset_frame_caches(fixed_t)
+
+	local cached = _cached_tag_results[target_unit]
+	if cached ~= nil then
+		return cached
+	end
+
+	local value = _has_human_player_tag(target_unit)
+	_cached_tag_results[target_unit] = value
+
+	return value
+end
+
+local function _is_friendly_companion_pin_cached(target_unit, fixed_t)
+	if target_unit == nil then
+		return false
+	end
+
+	_reset_frame_caches(fixed_t)
+
+	local cached = _cached_companion_pin_results[target_unit]
+	if cached ~= nil then
+		return cached
+	end
+
+	local value = _is_friendly_companion_pin(target_unit)
+	_cached_companion_pin_results[target_unit] = value
+
+	return value
+end
+
+local function _slot_ammo_pct_cached(Ammo, unit, fixed_t)
+	_reset_frame_caches(fixed_t)
+
+	local cached = _cached_slot_ammo_pct[unit]
+	if cached ~= nil then
+		return cached == false and nil or cached
+	end
+
+	-- Husk visual_loadout extensions on dedicated-server clients lack
+	-- slot_configuration_by_type. Bail before the underlying Ammo helper crashes.
+	local visual_loadout = ScriptUnit
+		and ScriptUnit.has_extension
+		and ScriptUnit.has_extension(unit, "visual_loadout_system")
+	if not (visual_loadout and visual_loadout.slot_configuration_by_type) then
+		_cached_slot_ammo_pct[unit] = false
+		return nil
+	end
+
+	local value = Ammo.current_slot_percentage(unit, "slot_secondary")
+	_cached_slot_ammo_pct[unit] = value == nil and false or value
+
+	return value
+end
+
+local function _is_monster_targeting_unit(target_unit, unit)
+	local enemy_blackboard = BLACKBOARDS and BLACKBOARDS[target_unit] or nil
+	local enemy_perception = enemy_blackboard and enemy_blackboard.perception or nil
+	if _is_non_aggroed_daemonhost and target_unit then
+		local unit_data_extension = ScriptUnit.has_extension(target_unit, "unit_data_system")
+		local breed = unit_data_extension and unit_data_extension:breed()
+		if
+			breed
+			and _daemonhost_breed_names
+			and _daemonhost_breed_names[breed.name]
+			and _is_non_aggroed_daemonhost(target_unit)
+		then
+			return false
+		end
+	end
+
+	return enemy_perception and enemy_perception.aggro_state == "aggroed" and enemy_perception.target_unit == unit
+end
+
+local function _is_dormant_daemonhost_target(target_unit, target_breed)
+	local dh_avoidance = not _is_daemonhost_avoidance_enabled or _is_daemonhost_avoidance_enabled()
+	if not (dh_avoidance and target_unit) then
+		return false
+	end
+
+	local breed = target_breed
+	if not breed then
+		local unit_data_extension = ScriptUnit.has_extension(target_unit, "unit_data_system")
+		breed = unit_data_extension and unit_data_extension:breed()
+	end
+
+	if not (breed and _daemonhost_breed_names and _daemonhost_breed_names[breed.name]) then
+		return false
+	end
+
+	if _is_non_aggroed_daemonhost then
+		return _is_non_aggroed_daemonhost(target_unit)
+	end
+
+	local target_bb = BLACKBOARDS and BLACKBOARDS[target_unit]
+	local target_perception = target_bb and target_bb.perception
+	return not (target_perception and target_perception.aggro_state == "aggroed")
+end
+
+function M.init(deps)
+	_mod = deps.mod
+	_debug_log = deps.debug_log
+	_debug_enabled = deps.debug_enabled
+	_fixed_time = deps.fixed_time
+	_perf = deps.perf
+	_player_tag_bonus = deps.player_tag_bonus
+	_special_chase_penalty_range = deps.special_chase_penalty_range
+	_is_daemonhost_avoidance_enabled = deps.is_daemonhost_avoidance_enabled
+	local shared_rules = deps.shared_rules
+	_daemonhost_breed_names = shared_rules and shared_rules.DAEMONHOST_BREED_NAMES or DAEMONHOST_BREED_NAMES
+	_is_non_aggroed_daemonhost = shared_rules and shared_rules.is_non_aggroed_daemonhost or nil
+	_cached_chase_range_sq = nil
+	_cached_chase_range_t = nil
+	_cached_frame_t = nil
+	_cached_tag_results = {}
+	_cached_companion_pin_results = {}
+	_cached_slot_ammo_pct = {}
+	_logged_companion_pin_melee = {}
+	_logged_companion_pin_ranged = {}
+end
+
+function M.register_hooks()
+	local ok, Ammo = pcall(require, "scripts/utilities/ammo")
+	local breed_ok, Breed = pcall(require, "scripts/utilities/breed")
+	if not (ok and Ammo) then
+		_debug_log("target_selection", _fixed_time(), "Failed to require target selection dependencies")
+		return
+	end
+	_breed_utils = breed_ok and Breed
+		or {
+			is_companion = function(breed)
+				return breed and (breed.breed_type == "companion" or (breed.tags and breed.tags.companion))
+			end,
+		}
+
+	_hook_require_now("scripts/utilities/bot_target_selection", function(BotTargetSelection)
+		if not BotTargetSelection or rawget(BotTargetSelection, BOT_TARGET_SELECTION_SENTINEL) then
+			return
+		end
+
+		BotTargetSelection[BOT_TARGET_SELECTION_SENTINEL] = true
+
+		_mod:hook(
+			BotTargetSelection,
+			"slot_weight",
+			function(func, unit, target_unit, target_distance_sq, target_breed, target_ally)
+				local perf_t0 = _perf and _perf.begin()
+				local score = func(unit, target_unit, target_distance_sq, target_breed, target_ally)
+				local fixed_t = _fixed_time()
+
+				if target_unit and _is_friendly_companion_pin_cached(target_unit, fixed_t) then
+					score = score - FRIENDLY_COMPANION_PIN_PENALTY
+					if _debug_enabled() then
+						local log_key = "target_sel_companion_pin:" .. tostring(target_unit) .. ":" .. tostring(unit)
+						if not _logged_companion_pin_melee[log_key] then
+							_logged_companion_pin_melee[log_key] = true
+							_debug_log(
+								log_key,
+								_fixed_time(),
+								"penalizing friendly companion pin "
+									.. tostring(target_breed.name)
+									.. " -"
+									.. FRIENDLY_COMPANION_PIN_PENALTY
+							)
+						end
+					end
+				-- Issue #48: Boost score for player-tagged enemies
+				elseif score > 0 and _has_human_player_tag_cached(target_unit, fixed_t) then
+					if _is_dormant_daemonhost_target(target_unit, target_breed) then
+						if _debug_enabled() then
+							_debug_log(
+								"target_sel_tag_boost_skip:" .. tostring(target_unit) .. ":" .. tostring(unit),
+								_fixed_time(),
+								"skipped player-tag boost for "
+									.. tostring(target_breed.name)
+									.. " (reason: dormant_daemonhost)"
+							)
+						end
+						goto after_tag_boost
+					end
+
+					local tag_bonus = _player_tag_bonus and _player_tag_bonus() or 3
+					if tag_bonus > 0 then
+						score = score + tag_bonus
+						if _debug_enabled() then
+							_debug_log(
+								"target_sel_tag_boost:" .. tostring(target_unit) .. ":" .. tostring(unit),
+								_fixed_time(),
+								"boosting score for player-tagged " .. tostring(target_breed.name) .. " +" .. tag_bonus
+							)
+						end
+					end
+				end
+				::after_tag_boost::
+
+				-- Issue #19: Stop chasing distant specials for melee
+				-- Cache chase_range_sq per frame to avoid per-target settings reads.
+				if _cached_chase_range_t ~= fixed_t then
+					local chase_range = _special_chase_penalty_range and _special_chase_penalty_range() or 18
+					_cached_chase_range_sq = chase_range > 0 and chase_range * chase_range or 0
+					_cached_chase_range_t = fixed_t
+				end
+				local tags = target_breed.tags
+				local ammo_percent = nil
+				if
+					_cached_chase_range_sq > 0
+					and target_distance_sq > _cached_chase_range_sq
+					and tags
+					and tags.special
+				then
+					ammo_percent = _slot_ammo_pct_cached(Ammo, unit, fixed_t)
+				end
+
+				if ammo_percent and ammo_percent > 0.5 then
+					if _debug_enabled() then
+						_debug_log(
+							"target_sel_penalty:" .. tostring(unit),
+							_fixed_time(),
+							"penalizing melee score for distant special "
+								.. tostring(target_breed.name)
+								.. " dist_sq="
+								.. target_distance_sq
+								.. " ammo="
+								.. ammo_percent
+						)
+					end
+					score = score - 100
+				end
+
+				if perf_t0 then
+					_perf.finish("target_selection.slot_weight", perf_t0)
+				end
+				return score
+			end
+		)
+
+		_mod:hook(BotTargetSelection, "line_of_sight_weight", function(func, unit, target_unit)
+			local perf_t0 = _perf and _perf.begin()
+			local score = func(unit, target_unit)
+			local fixed_t = _fixed_time()
+
+			if target_unit and _is_friendly_companion_pin_cached(target_unit, fixed_t) then
+				score = score - FRIENDLY_COMPANION_PIN_PENALTY
+				if _debug_enabled() then
+					local log_key = "target_sel_companion_pin_ranged:" .. tostring(target_unit) .. ":" .. tostring(unit)
+					if not _logged_companion_pin_ranged[log_key] then
+						_logged_companion_pin_ranged[log_key] = true
+						_debug_log(
+							log_key,
+							_fixed_time(),
+							"penalizing ranged target for friendly companion pin -" .. FRIENDLY_COMPANION_PIN_PENALTY
+						)
+					end
+				end
+			end
+
+			if perf_t0 then
+				_perf.finish("target_selection.line_of_sight_weight", perf_t0)
+			end
+			return score
+		end)
+
+		_mod:hook(BotTargetSelection, "monster_weight", function(func, unit, target_unit, target_breed, t)
+			local perf_t0 = _perf and _perf.begin()
+			local weight, override = func(unit, target_unit, target_breed, t)
+
+			local tags = target_breed and target_breed.tags or nil
+			if
+				tags
+				and tags.monster
+				and (not weight or weight <= 0)
+				and _is_monster_targeting_unit(target_unit, unit)
+			then
+				if _debug_enabled() then
+					_debug_log(
+						"boss_targeting_bot:" .. tostring(unit),
+						_fixed_time(),
+						"restoring monster weight for boss targeting bot " .. tostring(target_breed.name)
+					)
+				end
+				weight = DEFAULT_MONSTER_WEIGHT
+				override = false
+			end
+
+			if perf_t0 then
+				_perf.finish("target_selection.monster_weight", perf_t0)
+			end
+			return weight, override
+		end)
+	end)
+end
+
+M.is_monster_targeting_unit = _is_monster_targeting_unit
+M.has_human_player_tag = _has_human_player_tag
+M.is_friendly_companion_pin = _is_friendly_companion_pin
+
+return M

@@ -1,0 +1,984 @@
+local M = {}
+
+local _mod
+
+local function _hook_require_now(path, callback)
+	local hook_require_now = _mod and _mod.hook_require_now
+	if hook_require_now then
+		return hook_require_now(_mod, path, callback, 4)
+	end
+
+	if _mod and _mod.warning and _mod._raw_hook_require then
+		_mod:warning("BestBots: hook_require_now_missing for " .. tostring(path))
+	end
+	return _mod["hook_require"](_mod, path, callback)
+end
+
+local _debug_log
+local _debug_enabled
+local _fixed_time
+local _perf
+local _Ammo
+local _Settings
+local _com_wheel
+local _ability_extension
+local _bot_slot_for_unit
+local _nearby_grenade_pickups
+local _is_enabled
+local _pickup_recently_tagged
+local _bot_group_for_unit
+local _write_blackboard_component
+local _human_ammo_scan_cache = {}
+local _human_grenade_scan_cache = {}
+local _last_ammo_pickup_log_state_by_unit = setmetatable({}, { __mode = "k" })
+local _last_grenade_skip_log_state_by_unit = setmetatable({}, { __mode = "k" })
+local _last_grenade_pickup_log_state_by_unit = setmetatable({}, { __mode = "k" })
+local INTERACTION_PATCH_SENTINEL = "__bb_ammo_policy_stop_installed"
+local BEHAVIOR_EXT_PATCH_SENTINEL = "__bb_ammo_policy_behavior_installed"
+local _blackboard_module
+local _warned_blackboard_module_lookup_failure
+
+local PICKUP_BROADPHASE_CATEGORY = {
+	"pickups",
+}
+local PICKUP_QUERY_RESULTS = {}
+local PICKUP_MAX_DISTANCE = 5
+local PICKUP_MAX_FOLLOW_DISTANCE = 15
+local NON_PICKUP_GRENADE_ABILITIES = {
+	adamant_whistle = true,
+	ogryn_grenade_friend_rock = true,
+	psyker_throwing_knives = true,
+	zealot_throwing_knives = true,
+}
+local AMMO_REFILL_GRENADE_ABILITIES = {
+	zealot_throwing_knives = true,
+}
+local _grenade_ability_name
+local _needs_ammo_pickup_for_grenade_refill
+
+local function _cached_scan_result(cache, fixed_t, human_units, threshold)
+	if cache.fixed_t == fixed_t and cache.human_units == human_units and cache.threshold == threshold then
+		return cache.result
+	end
+
+	return nil
+end
+
+local function _store_scan_result(cache, fixed_t, human_units, threshold, result)
+	cache.fixed_t = fixed_t
+	cache.human_units = human_units
+	cache.threshold = threshold
+	cache.result = result
+
+	return result
+end
+
+local function _log(key, message)
+	if not (_debug_enabled and _debug_enabled()) then
+		return
+	end
+
+	_debug_log(key, _fixed_time and _fixed_time() or 0, message)
+end
+
+local function _clear_grenade_skip_log_state(unit)
+	_last_grenade_skip_log_state_by_unit[unit] = nil
+end
+
+local function _clear_ammo_pickup_log_state(unit)
+	_last_ammo_pickup_log_state_by_unit[unit] = nil
+end
+
+local function _ammo_pickup_log_state_changed(unit, state)
+	if _last_ammo_pickup_log_state_by_unit[unit] == state then
+		return false
+	end
+
+	_last_ammo_pickup_log_state_by_unit[unit] = state
+
+	return true
+end
+
+local function _log_grenade_skip_once(unit, reason, message, ability_extension)
+	local ability_name = _grenade_ability_name(ability_extension) or "none"
+	local state = tostring(reason) .. ":" .. tostring(ability_name)
+
+	if _last_grenade_skip_log_state_by_unit[unit] == state then
+		return
+	end
+
+	_last_grenade_skip_log_state_by_unit[unit] = state
+	_log("grenade_pickup_skip_" .. tostring(reason) .. ":" .. tostring(unit), message)
+end
+
+local function _clear_grenade_pickup_log_state(unit)
+	_last_grenade_pickup_log_state_by_unit[unit] = nil
+end
+
+local function _grenade_pickup_log_state_changed(unit, state)
+	if _last_grenade_pickup_log_state_by_unit[unit] == state then
+		return false
+	end
+
+	_last_grenade_pickup_log_state_by_unit[unit] = state
+
+	return true
+end
+
+local function _bot_threshold()
+	return (_Settings and _Settings.bot_ranged_ammo_threshold and _Settings.bot_ranged_ammo_threshold()) or 0.20
+end
+
+local function _human_threshold()
+	return (_Settings and _Settings.human_ammo_reserve_threshold and _Settings.human_ammo_reserve_threshold()) or 0.80
+end
+
+local function _human_grenade_threshold()
+	return (_Settings and _Settings.human_grenade_reserve_threshold and _Settings.human_grenade_reserve_threshold())
+		or 1
+end
+
+local function _pickups_require_tag()
+	return _Settings and _Settings.pickups_require_tag and _Settings.pickups_require_tag() == true or false
+end
+
+local function _pickup_has_required_tag(pickup_unit)
+	if not _pickups_require_tag() then
+		return true
+	end
+
+	return pickup_unit ~= nil and _pickup_recently_tagged and _pickup_recently_tagged(pickup_unit) == true
+end
+
+local function _default_bot_group_for_unit(unit)
+	local group_extension = ScriptUnit and ScriptUnit.has_extension and ScriptUnit.has_extension(unit, "group_system")
+	if not (group_extension and group_extension.bot_group) then
+		return nil
+	end
+
+	local ok, bot_group = pcall(group_extension.bot_group, group_extension)
+
+	return ok and bot_group or nil
+end
+
+local function _default_write_blackboard_component(blackboard, component_name)
+	if _blackboard_module == nil then
+		local ok, blackboard_module = pcall(require, "scripts/extension_systems/blackboard/utilities/blackboard")
+		if ok then
+			_blackboard_module = blackboard_module
+		else
+			if not _warned_blackboard_module_lookup_failure and _mod and _mod.warning then
+				_warned_blackboard_module_lookup_failure = true
+				_mod:warning("BestBots: blackboard utility unavailable; grenade pickup order refresh skipped")
+			end
+			return nil
+		end
+	end
+
+	if _blackboard_module and type(_blackboard_module.write_component) == "function" then
+		return _blackboard_module.write_component(blackboard, component_name)
+	end
+
+	return nil
+end
+
+local function _mark_destination_refresh(unit)
+	local blackboard = BLACKBOARDS and unit and BLACKBOARDS[unit]
+	if not (blackboard and _write_blackboard_component) then
+		return
+	end
+
+	local follow_component = _write_blackboard_component(blackboard, "follow")
+	if follow_component then
+		follow_component.needs_destination_refresh = true
+	end
+end
+
+local function _clear_ammo_pickup_target(pickup_component)
+	if not pickup_component then
+		return
+	end
+
+	pickup_component.ammo_pickup = nil
+	pickup_component.ammo_pickup_distance = math.huge
+	pickup_component.ammo_pickup_valid_until = -math.huge
+end
+
+local function _distance_between_units(unit_a, unit_b)
+	local position_a = POSITION_LOOKUP and POSITION_LOOKUP[unit_a]
+	local position_b = POSITION_LOOKUP and POSITION_LOOKUP[unit_b]
+	if not (position_a and position_b and Vector3 and Vector3.distance) then
+		return nil
+	end
+
+	return Vector3.distance(position_a, position_b)
+end
+
+local function _format_percent(value)
+	if value == nil then
+		return "nil"
+	end
+
+	return string.format("%.0f%%", value * 100)
+end
+
+local function _all_eligible_humans_above_threshold(human_units, threshold)
+	if not (human_units and _Ammo) then
+		return true
+	end
+
+	local fixed_t = _fixed_time and _fixed_time() or 0
+	local cached = _cached_scan_result(_human_ammo_scan_cache, fixed_t, human_units, threshold)
+	if cached ~= nil then
+		return cached
+	end
+
+	for i = 1, #human_units do
+		local human_unit = human_units[i]
+		if human_unit and _Ammo.uses_ammo(human_unit) then
+			local ammo_percentage = _Ammo.current_total_percentage(human_unit)
+			local needs_grenade_refill = ammo_percentage > threshold
+				and _needs_ammo_pickup_for_grenade_refill(human_unit)
+			if ammo_percentage <= threshold or needs_grenade_refill then
+				return _store_scan_result(_human_ammo_scan_cache, fixed_t, human_units, threshold, false)
+			end
+		end
+	end
+
+	return _store_scan_result(_human_ammo_scan_cache, fixed_t, human_units, threshold, true)
+end
+
+function _grenade_ability_name(ability_extension)
+	if not ability_extension then
+		return nil
+	end
+
+	if ability_extension.get_current_grenade_ability_name then
+		return ability_extension:get_current_grenade_ability_name()
+	end
+
+	if ability_extension.ability_name then
+		return ability_extension:ability_name("grenade_ability")
+	end
+
+	return nil
+end
+
+local function _grenade_ability_uses_pickups(ability_extension)
+	local ability_name = _grenade_ability_name(ability_extension)
+	if ability_name and NON_PICKUP_GRENADE_ABILITIES[ability_name] then
+		return false
+	end
+
+	return true
+end
+
+local function _grenade_ability_refills_from_ammo(ability_extension)
+	local ability_name = _grenade_ability_name(ability_extension)
+
+	return ability_name and AMMO_REFILL_GRENADE_ABILITIES[ability_name] or false
+end
+
+local function _grenade_charge_state(unit, ability_extension)
+	ability_extension = ability_extension or (_ability_extension and _ability_extension(unit, "ability_system"))
+	if not ability_extension then
+		_log_grenade_skip_once(unit, "no_ability", "grenade pickup skipped: no ability extension")
+		return nil, nil
+	end
+
+	local max_charges = ability_extension:max_ability_charges("grenade_ability")
+	if max_charges <= 0 then
+		return 0, 0
+	end
+
+	return ability_extension:remaining_ability_charges("grenade_ability"), max_charges
+end
+
+_needs_ammo_pickup_for_grenade_refill = function(unit, ability_extension)
+	ability_extension = ability_extension or (_ability_extension and _ability_extension(unit, "ability_system"))
+	if not (ability_extension and _grenade_ability_refills_from_ammo(ability_extension)) then
+		return false
+	end
+
+	local current, max = _grenade_charge_state(unit, ability_extension)
+
+	return current ~= nil and max ~= nil and current < max
+end
+
+local function _eligible_for_grenade_pickup(unit)
+	local ability_extension = _ability_extension and _ability_extension(unit, "ability_system")
+	if not ability_extension then
+		return false, nil, nil, "no_ability"
+	end
+
+	local uses_pickups = _grenade_ability_uses_pickups(ability_extension)
+	if not uses_pickups then
+		return false, 0, 0, "pickup_disabled"
+	end
+
+	local current, max = _grenade_charge_state(unit, ability_extension)
+	if max ~= nil and max <= 0 then
+		return false, current, max, "cooldown_only"
+	end
+
+	return max ~= nil and max > 0, current, max, "pickup_based"
+end
+
+local function _bot_group_data(bot_group, unit)
+	return bot_group and bot_group._bot_data and bot_group._bot_data[unit] or nil
+end
+
+local function _grenade_pickup_reserved_by_other_bot(bot_group, unit, grenade_pickup)
+	local bot_data_by_unit = bot_group and bot_group._bot_data
+	if not bot_data_by_unit then
+		return false
+	end
+
+	for other_unit, other_data in pairs(bot_data_by_unit) do
+		-- A marker only counts while its pickup order is still live — mirrors
+		-- the self-clearing consistency rule in _reserved_grenade_pickup, so a
+		-- stale marker (order cleared by vanilla, bot died) can't block the
+		-- pickup forever.
+		if
+			other_unit ~= unit
+			and other_data._bb_reserved_grenade_pickup == grenade_pickup
+			and other_data.ammo_pickup_order_unit == grenade_pickup
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function _reserved_grenade_pickup(bot_group, unit)
+	local bot_data = _bot_group_data(bot_group, unit)
+	if not bot_data then
+		return nil
+	end
+
+	local reserved_pickup = bot_data and bot_data._bb_reserved_grenade_pickup or nil
+
+	if reserved_pickup and bot_data.ammo_pickup_order_unit ~= reserved_pickup then
+		bot_data._bb_reserved_grenade_pickup = nil
+		bot_data._bb_reserved_grenade_pickup_explicit = nil
+		return nil
+	end
+
+	return reserved_pickup
+end
+
+local function _reserve_grenade_pickup(
+	bot_group,
+	unit,
+	pickup_component,
+	grenade_pickup,
+	grenade_distance,
+	explicit_order
+)
+	if not (pickup_component and grenade_pickup) then
+		return
+	end
+
+	pickup_component.ammo_pickup = grenade_pickup
+	pickup_component.ammo_pickup_distance = grenade_distance or 0
+	pickup_component.ammo_pickup_valid_until = math.huge
+
+	local bot_data = _bot_group_data(bot_group, unit)
+	if bot_data then
+		bot_data.ammo_pickup_order_unit = grenade_pickup
+		bot_data._bb_reserved_grenade_pickup = grenade_pickup
+		bot_data._bb_reserved_grenade_pickup_explicit = explicit_order == true or nil
+	end
+end
+
+local function _clear_reserved_grenade_pickup(bot_group, unit, pickup_component, grenade_pickup)
+	local bot_data = _bot_group_data(bot_group, unit)
+	local reserved_pickup = bot_data and bot_data._bb_reserved_grenade_pickup or nil
+	local target_pickup = grenade_pickup or reserved_pickup
+	local cleared = false
+
+	if pickup_component and pickup_component.ammo_pickup == target_pickup then
+		pickup_component.ammo_pickup = nil
+		pickup_component.ammo_pickup_distance = math.huge
+		pickup_component.ammo_pickup_valid_until = -math.huge
+		cleared = true
+	end
+
+	if bot_data and reserved_pickup and reserved_pickup == target_pickup then
+		if bot_data.ammo_pickup_order_unit == reserved_pickup then
+			bot_data.ammo_pickup_order_unit = nil
+		end
+		bot_data._bb_reserved_grenade_pickup = nil
+		bot_data._bb_reserved_grenade_pickup_explicit = nil
+		cleared = true
+	end
+
+	return cleared
+end
+
+local function _clear_reserved_grenade_pickup_if_present(bot_group, unit, pickup_component)
+	local grenade_pickup = _reserved_grenade_pickup(bot_group, unit)
+	if not grenade_pickup then
+		local current_pickup = pickup_component and pickup_component.ammo_pickup
+		if
+			current_pickup
+			and Unit
+			and Unit.get_data
+			and Unit.get_data(current_pickup, "pickup_type") == "small_grenade"
+		then
+			grenade_pickup = current_pickup
+		end
+	end
+
+	if not grenade_pickup then
+		return false
+	end
+
+	return _clear_reserved_grenade_pickup(bot_group, unit, pickup_component, grenade_pickup)
+end
+
+local function _reserved_grenade_pickup_is_explicit(bot_group, unit)
+	local bot_data = _bot_group_data(bot_group, unit)
+
+	return bot_data and bot_data._bb_reserved_grenade_pickup_explicit == true or false
+end
+
+local function _reserved_grenade_pickup_still_in_range(bot_group, unit, pickup_component)
+	if _reserved_grenade_pickup_is_explicit(bot_group, unit) then
+		return true
+	end
+
+	local pickup_distance = pickup_component and pickup_component.ammo_pickup_distance or math.huge
+
+	return pickup_distance < PICKUP_MAX_FOLLOW_DISTANCE
+end
+
+local function _all_eligible_humans_above_grenade_threshold(human_units, threshold)
+	if not human_units then
+		return true
+	end
+
+	local fixed_t = _fixed_time and _fixed_time() or 0
+	local cached = _cached_scan_result(_human_grenade_scan_cache, fixed_t, human_units, threshold)
+	if cached ~= nil then
+		return cached
+	end
+
+	for i = 1, #human_units do
+		local human_unit = human_units[i]
+		local eligible, current, max = _eligible_for_grenade_pickup(human_unit)
+		if eligible then
+			local charge_fraction = current / max
+			if charge_fraction < threshold then
+				return _store_scan_result(_human_grenade_scan_cache, fixed_t, human_units, threshold, false)
+			end
+		end
+	end
+
+	return _store_scan_result(_human_grenade_scan_cache, fixed_t, human_units, threshold, true)
+end
+
+local function _debug_grenade_reserve_detail(human_units, threshold)
+	if not (_debug_enabled and _debug_enabled()) then
+		return ""
+	end
+
+	local eligible_count = 0
+	local lowest_fraction
+	local lowest_current
+	local lowest_max
+
+	if human_units then
+		for i = 1, #human_units do
+			local human_unit = human_units[i]
+			local eligible, current, max = _eligible_for_grenade_pickup(human_unit)
+
+			if eligible and current and max and max > 0 then
+				eligible_count = eligible_count + 1
+				local fraction = current / max
+
+				if not lowest_fraction or fraction < lowest_fraction then
+					lowest_fraction = fraction
+					lowest_current = current
+					lowest_max = max
+				end
+			end
+		end
+	end
+
+	local threshold_text = _format_percent(threshold or _human_grenade_threshold())
+	if eligible_count == 0 then
+		return " (eligible_humans=0, threshold=" .. threshold_text .. ")"
+	end
+
+	return " (lowest_human_grenades="
+		.. tostring(lowest_current)
+		.. "/"
+		.. tostring(lowest_max)
+		.. ", threshold="
+		.. threshold_text
+		.. ")"
+end
+
+local function _best_nearby_grenade_pickup(bot_group, unit)
+	if _nearby_grenade_pickups then
+		return _nearby_grenade_pickups(bot_group, unit)
+	end
+
+	local bot_data = bot_group and bot_group._bot_data and bot_group._bot_data[unit]
+	local broadphase_system = bot_group and bot_group._broadphase_system
+	local player_position = POSITION_LOOKUP and POSITION_LOOKUP[unit]
+	if not (bot_data and broadphase_system and player_position) then
+		return nil
+	end
+
+	local broadphase = broadphase_system.broadphase
+	local num_units = Broadphase.query(
+		broadphase,
+		player_position,
+		PICKUP_MAX_FOLLOW_DISTANCE,
+		PICKUP_QUERY_RESULTS,
+		PICKUP_BROADPHASE_CATEGORY
+	)
+	local follow_position = bot_data.follow_position
+	local current_pickup = bot_data.pickup_component and bot_data.pickup_component.ammo_pickup
+	local best_pickup
+	local best_distance
+
+	for i = 1, num_units do
+		local pickup_unit = PICKUP_QUERY_RESULTS[i]
+		if Unit.get_data(pickup_unit, "pickup_type") == "small_grenade" then
+			local pickup_position = POSITION_LOOKUP[pickup_unit]
+			if pickup_position then
+				local distance = Vector3.distance(player_position, pickup_position)
+				local follow_distance = follow_position and Vector3.distance(follow_position, pickup_position)
+					or math.huge
+				local in_range = distance < PICKUP_MAX_DISTANCE or follow_distance < PICKUP_MAX_FOLLOW_DISTANCE
+
+				if in_range then
+					local sticky_distance = current_pickup == pickup_unit and 2.5 or 0
+					local candidate_distance = distance - sticky_distance
+					if not best_distance or candidate_distance < best_distance then
+						best_pickup = pickup_unit
+						best_distance = candidate_distance
+					end
+				end
+			end
+		end
+	end
+
+	return best_pickup, best_distance
+end
+
+local function _current_ammo_percentage(unit)
+	if not (_Ammo and _Ammo.current_total_percentage and _Ammo.uses_ammo and _Ammo.uses_ammo(unit)) then
+		return nil
+	end
+
+	return _Ammo.current_total_percentage(unit)
+end
+
+local function _pickup_snapshot(unit)
+	local grenade_current, grenade_max = _grenade_charge_state(unit)
+
+	return {
+		ammo_pct = _current_ammo_percentage(unit),
+		grenade_current = grenade_current,
+		grenade_max = grenade_max,
+	}
+end
+
+local function _log_pickup_success(interactor_unit, target_unit, pickup_name, before, after)
+	local bot_slot = _bot_slot_for_unit and _bot_slot_for_unit(interactor_unit) or nil
+	if not bot_slot then
+		return
+	end
+
+	if before.ammo_pct ~= nil and after.ammo_pct ~= nil and after.ammo_pct > before.ammo_pct then
+		_log(
+			"ammo_pickup_success:" .. tostring(interactor_unit) .. ":" .. tostring(target_unit),
+			"ammo pickup success: "
+				.. tostring(pickup_name)
+				.. " (bot="
+				.. tostring(bot_slot)
+				.. ", ammo="
+				.. string.format("%.0f%%->%.0f%%", before.ammo_pct * 100, after.ammo_pct * 100)
+				.. ")"
+		)
+	end
+
+	if
+		before.grenade_current ~= nil
+		and after.grenade_current ~= nil
+		and after.grenade_current > before.grenade_current
+	then
+		_log(
+			"grenade_pickup_success:" .. tostring(interactor_unit) .. ":" .. tostring(target_unit),
+			"grenade pickup success: "
+				.. tostring(pickup_name)
+				.. " (bot="
+				.. tostring(bot_slot)
+				.. ", charges="
+				.. tostring(before.grenade_current)
+				.. "->"
+				.. tostring(after.grenade_current)
+				.. "/"
+				.. tostring(after.grenade_max or before.grenade_max or "?")
+				.. ")"
+		)
+	end
+end
+
+function M.init(deps)
+	_mod = deps.mod
+	_debug_log = deps.debug_log
+	_debug_enabled = deps.debug_enabled
+	_fixed_time = deps.fixed_time
+	_perf = deps.perf
+	_Ammo = deps.ammo_module or require("scripts/utilities/ammo")
+	_Settings = deps.settings
+	_com_wheel = deps.com_wheel
+	_ability_extension = deps.ability_extension or (ScriptUnit and ScriptUnit.has_extension)
+	_bot_slot_for_unit = deps.bot_slot_for_unit
+	_nearby_grenade_pickups = deps.nearby_grenade_pickups
+	_is_enabled = deps.is_enabled
+	_pickup_recently_tagged = deps.pickup_recently_tagged
+	_bot_group_for_unit = deps.bot_group_for_unit or _default_bot_group_for_unit
+	_write_blackboard_component = deps.blackboard_write_component or _default_write_blackboard_component
+	_human_ammo_scan_cache = {}
+	_human_grenade_scan_cache = {}
+	_last_ammo_pickup_log_state_by_unit = setmetatable({}, { __mode = "k" })
+	_last_grenade_skip_log_state_by_unit = setmetatable({}, { __mode = "k" })
+	_last_grenade_pickup_log_state_by_unit = setmetatable({}, { __mode = "k" })
+	_blackboard_module = nil
+	_warned_blackboard_module_lookup_failure = false
+end
+
+function M.install_interaction_hooks(AmmunitionInteraction)
+	if not AmmunitionInteraction or rawget(AmmunitionInteraction, INTERACTION_PATCH_SENTINEL) then
+		return
+	end
+	AmmunitionInteraction[INTERACTION_PATCH_SENTINEL] = true
+
+	_mod:hook(
+		AmmunitionInteraction,
+		"stop",
+		function(func, self, world, interactor_unit, unit_data_component, t, result, interactor_is_server)
+			if not (interactor_is_server and result == "success" and _debug_enabled and _debug_enabled()) then
+				return func(self, world, interactor_unit, unit_data_component, t, result, interactor_is_server)
+			end
+
+			local bot_slot = _bot_slot_for_unit and _bot_slot_for_unit(interactor_unit) or nil
+			if not bot_slot then
+				return func(self, world, interactor_unit, unit_data_component, t, result, interactor_is_server)
+			end
+
+			local target_unit = unit_data_component and unit_data_component.target_unit or nil
+			local pickup_name = target_unit and Unit and Unit.get_data and Unit.get_data(target_unit, "pickup_type")
+				or "unknown"
+			local before = _pickup_snapshot(interactor_unit)
+			local stop_result = func(self, world, interactor_unit, unit_data_component, t, result, interactor_is_server)
+			local after = _pickup_snapshot(interactor_unit)
+
+			_log_pickup_success(interactor_unit, target_unit, pickup_name, before, after)
+
+			return stop_result
+		end
+	)
+end
+
+function M.register_hooks()
+	_hook_require_now(
+		"scripts/extension_systems/interaction/interactions/ammunition_interaction",
+		function(AmmunitionInteraction)
+			M.install_interaction_hooks(AmmunitionInteraction)
+		end
+	)
+	_hook_require_now(
+		"scripts/extension_systems/interaction/interactions/grenade_interaction",
+		function(GrenadeInteraction)
+			M.install_interaction_hooks(GrenadeInteraction)
+		end
+	)
+end
+
+function M.install_behavior_ext_hooks(BotBehaviorExtension)
+	if not BotBehaviorExtension or rawget(BotBehaviorExtension, BEHAVIOR_EXT_PATCH_SENTINEL) then
+		return
+	end
+
+	BotBehaviorExtension[BEHAVIOR_EXT_PATCH_SENTINEL] = true
+
+	_mod:hook_safe(BotBehaviorExtension, "_update_ammo", function(self, unit)
+		local pickup_component = self._pickup_component
+		local bot_group = self._bot_group
+		if _is_enabled and not _is_enabled() then
+			_clear_ammo_pickup_log_state(unit)
+			_clear_grenade_skip_log_state(unit)
+			if _clear_reserved_grenade_pickup_if_present(bot_group, unit, pickup_component) then
+				_clear_grenade_pickup_log_state(unit)
+				_log(
+					"grenade_pickup_release_disabled:" .. tostring(unit),
+					"released reserved grenade pickup because ammo policy was disabled"
+				)
+			end
+			return
+		end
+
+		local perf_t0 = _perf and _perf.begin()
+		if not pickup_component then
+			_clear_ammo_pickup_log_state(unit)
+			_clear_grenade_skip_log_state(unit)
+			_clear_grenade_pickup_log_state(unit)
+			_log("ammo_pickup_skip_no_component:" .. tostring(unit), "ammo policy skipped: no pickup_component")
+			if perf_t0 then
+				_perf.finish("ammo_policy.update_ammo", perf_t0)
+			end
+			return
+		end
+
+		local reserved_grenade_pickup = _reserved_grenade_pickup(bot_group, unit)
+		local reserved_grenade_pickup_explicit = _reserved_grenade_pickup_is_explicit(bot_group, unit)
+		local pickup_order_unit = bot_group and bot_group:ammo_pickup_order_unit(unit) or nil
+		local has_external_ammo_pickup_order = pickup_order_unit ~= nil and pickup_order_unit ~= reserved_grenade_pickup
+
+		if has_external_ammo_pickup_order then
+			_clear_ammo_pickup_log_state(unit)
+			_clear_grenade_skip_log_state(unit)
+			_clear_grenade_pickup_log_state(unit)
+			pickup_component.needs_ammo = true
+			_log("ammo_pickup_order:" .. tostring(unit), "ammo pickup preserved due to explicit order")
+			if perf_t0 then
+				_perf.finish("ammo_policy.update_ammo", perf_t0)
+			end
+			return
+		end
+
+		local human_units = self._side and self._side.valid_human_units
+		local human_request_active = _com_wheel
+				and _com_wheel.has_recent_ammo_request
+				and _com_wheel.has_recent_ammo_request(human_units)
+			or false
+		local bot_ammo_percentage = _current_ammo_percentage(unit)
+		local bot_needs_grenade_refill = _needs_ammo_pickup_for_grenade_refill(unit)
+		local bot_needs_regular_ammo = bot_ammo_percentage ~= nil and bot_ammo_percentage < 1
+		if bot_needs_regular_ammo and not _pickup_has_required_tag(pickup_component.ammo_pickup) then
+			bot_needs_regular_ammo = false
+			pickup_component.needs_ammo = false
+			_clear_ammo_pickup_target(pickup_component)
+			if _ammo_pickup_log_state_changed(unit, "tag_required") then
+				_log("ammo_pickup_tag_required:" .. tostring(unit), "ammo pickup deferred until a human smart-tags it")
+			end
+		end
+		local bot_needs_ammo = bot_needs_regular_ammo or bot_needs_grenade_refill
+		local humans_ok = not human_request_active
+			and _all_eligible_humans_above_threshold(human_units, _human_threshold())
+
+		if not bot_needs_ammo then
+			pickup_component.needs_ammo = false
+			_clear_ammo_pickup_log_state(unit)
+		elseif humans_ok then
+			pickup_component.needs_ammo = true
+			if _ammo_pickup_log_state_changed(unit, "allow") then
+				_log("ammo_pickup_allow:" .. tostring(unit), "ammo pickup permitted: all eligible humans above reserve")
+			end
+		else
+			local bot_threshold = _bot_threshold()
+			local bot_desperate = bot_ammo_percentage ~= nil and bot_ammo_percentage <= bot_threshold
+			pickup_component.needs_ammo = bot_desperate
+			if bot_desperate and _ammo_pickup_log_state_changed(unit, "desperate") then
+				if human_request_active then
+					_log(
+						"ammo_pickup_desperate:" .. tostring(unit),
+						"ammo pickup permitted: bot desperate despite human request"
+					)
+				else
+					_log(
+						"ammo_pickup_desperate:" .. tostring(unit),
+						"ammo pickup permitted: bot desperate ("
+							.. string.format("%.0f%% <= %.0f%%", bot_ammo_percentage * 100, bot_threshold * 100)
+							.. ") despite human reserve low"
+					)
+				end
+			elseif not bot_desperate and _ammo_pickup_log_state_changed(unit, "defer") then
+				if human_request_active then
+					_log("ammo_pickup_defer:" .. tostring(unit), "ammo pickup deferred to human request")
+				else
+					_log(
+						"ammo_pickup_defer:" .. tostring(unit),
+						"ammo pickup deferred to human ("
+							.. string.format("bot %.0f%% > %.0f%%", bot_ammo_percentage * 100, bot_threshold * 100)
+							.. ")"
+					)
+				end
+			end
+		end
+
+		local grenade_eligible, grenade_current, grenade_max, grenade_reason = _eligible_for_grenade_pickup(unit)
+		if grenade_eligible and grenade_current < grenade_max then
+			local grenade_pickup, grenade_distance = _best_nearby_grenade_pickup(bot_group, unit)
+			if reserved_grenade_pickup_explicit and reserved_grenade_pickup then
+				grenade_pickup = reserved_grenade_pickup
+				grenade_distance = _distance_between_units(unit, reserved_grenade_pickup)
+					or pickup_component.ammo_pickup_distance
+			elseif not grenade_pickup and reserved_grenade_pickup then
+				if _reserved_grenade_pickup_still_in_range(bot_group, unit, pickup_component) then
+					grenade_pickup = reserved_grenade_pickup
+					grenade_distance = _distance_between_units(unit, reserved_grenade_pickup)
+						or pickup_component.ammo_pickup_distance
+				elseif _clear_reserved_grenade_pickup(bot_group, unit, pickup_component, reserved_grenade_pickup) then
+					_clear_grenade_pickup_log_state(unit)
+					_log(
+						"grenade_pickup_release_range:" .. tostring(unit),
+						"released reserved grenade pickup after leaving range"
+					)
+				end
+			end
+
+			if grenade_pickup then
+				if not (reserved_grenade_pickup_explicit or _pickup_has_required_tag(grenade_pickup)) then
+					if _clear_reserved_grenade_pickup(bot_group, unit, pickup_component, grenade_pickup) then
+						_clear_grenade_pickup_log_state(unit)
+					end
+					if not bot_needs_regular_ammo then
+						pickup_component.needs_ammo = false
+					end
+					local pickup_state = "tag_required:" .. tostring(grenade_pickup)
+					if _grenade_pickup_log_state_changed(unit, pickup_state) then
+						_log(
+							"grenade_pickup_tag_required:" .. tostring(unit),
+							"grenade pickup deferred until a human smart-tags it"
+						)
+					end
+				elseif reserved_grenade_pickup_explicit then
+					_reserve_grenade_pickup(bot_group, unit, pickup_component, grenade_pickup, grenade_distance, true)
+					pickup_component.needs_ammo = true
+					local pickup_state = "reserved_explicit:" .. tostring(grenade_pickup)
+					if _grenade_pickup_log_state_changed(unit, pickup_state) then
+						_log(
+							"grenade_pickup_allow:" .. tostring(unit),
+							"grenade pickup permitted: human smart-tag order"
+						)
+						_log(
+							"grenade_pickup_bind:" .. tostring(unit),
+							"grenade pickup bound into ammo slot from human smart-tag"
+						)
+					end
+				elseif
+					not human_request_active
+					and not _grenade_pickup_reserved_by_other_bot(bot_group, unit, grenade_pickup)
+					and _all_eligible_humans_above_grenade_threshold(human_units, _human_grenade_threshold())
+				then
+					_reserve_grenade_pickup(bot_group, unit, pickup_component, grenade_pickup, grenade_distance)
+					pickup_component.needs_ammo = true
+					local pickup_state = "reserved:" .. tostring(grenade_pickup)
+					if _grenade_pickup_log_state_changed(unit, pickup_state) then
+						_log(
+							"grenade_pickup_allow:" .. tostring(unit),
+							"grenade pickup permitted: all eligible humans above reserve"
+								.. _debug_grenade_reserve_detail(human_units, _human_grenade_threshold())
+						)
+						_log("grenade_pickup_bind:" .. tostring(unit), "grenade pickup bound into ammo slot")
+					end
+				else
+					if _clear_reserved_grenade_pickup(bot_group, unit, pickup_component, grenade_pickup) then
+						_clear_grenade_pickup_log_state(unit)
+						_log(
+							"grenade_pickup_release:" .. tostring(unit),
+							"released reserved grenade pickup to human reserve"
+						)
+					end
+					local pickup_state = "deferred:" .. tostring(grenade_pickup)
+					if _grenade_pickup_log_state_changed(unit, pickup_state) then
+						if human_request_active then
+							_log("grenade_pickup_defer:" .. tostring(unit), "grenade pickup deferred to human request")
+						else
+							_log(
+								"grenade_pickup_defer:" .. tostring(unit),
+								"grenade pickup deferred to human reserve"
+									.. _debug_grenade_reserve_detail(human_units, _human_grenade_threshold())
+							)
+						end
+					end
+				end
+			end
+		else
+			if reserved_grenade_pickup then
+				_clear_reserved_grenade_pickup(bot_group, unit, pickup_component, reserved_grenade_pickup)
+			end
+			_clear_grenade_pickup_log_state(unit)
+		end
+
+		if grenade_reason == "no_ability" then
+			_log_grenade_skip_once(unit, "no_ability", "grenade pickup skipped: no ability extension")
+		elseif grenade_reason == "pickup_disabled" then
+			_log_grenade_skip_once(
+				unit,
+				"pickup_disabled",
+				"grenade pickup skipped: ability does not use grenade pickups"
+			)
+		elseif grenade_reason == "cooldown_only" then
+			_log_grenade_skip_once(unit, "cooldown_only", "grenade pickup skipped: cooldown-based blitz")
+		else
+			_clear_grenade_skip_log_state(unit)
+		end
+
+		if perf_t0 then
+			_perf.finish("ammo_policy.update_ammo", perf_t0)
+		end
+	end)
+end
+
+M.all_eligible_humans_above_threshold = _all_eligible_humans_above_threshold
+M.needs_ammo_pickup_for_grenade_refill = _needs_ammo_pickup_for_grenade_refill
+
+function M.can_reserve_grenade_pickup(unit, pickup_unit)
+	if
+		not (pickup_unit and Unit and Unit.get_data and Unit.get_data(pickup_unit, "pickup_type") == "small_grenade")
+	then
+		return false, "not_grenade_pickup"
+	end
+
+	local eligible, current, max, reason = _eligible_for_grenade_pickup(unit)
+	if not eligible then
+		return false, reason
+	end
+
+	if current >= max then
+		return false, "grenade_full"
+	end
+
+	return true, nil
+end
+
+function M.reserve_tagged_grenade_pickup(unit, pickup_unit)
+	local can_reserve, reason = M.can_reserve_grenade_pickup(unit, pickup_unit)
+	if not can_reserve then
+		return false, reason
+	end
+
+	local bot_group = _bot_group_for_unit and _bot_group_for_unit(unit) or nil
+	local bot_data = _bot_group_data(bot_group, unit)
+	local pickup_component = bot_data and bot_data.pickup_component or nil
+	if not pickup_component then
+		return false, "missing_pickup_component"
+	end
+
+	local bot_position = POSITION_LOOKUP and POSITION_LOOKUP[unit]
+	local pickup_position = POSITION_LOOKUP and POSITION_LOOKUP[pickup_unit]
+	local pickup_distance = bot_position
+			and pickup_position
+			and Vector3
+			and Vector3.distance
+			and Vector3.distance(bot_position, pickup_position)
+		or 0
+
+	_reserve_grenade_pickup(bot_group, unit, pickup_component, pickup_unit, pickup_distance, true)
+	pickup_component.needs_ammo = true
+	_mark_destination_refresh(unit)
+
+	return true, nil
+end
+
+return M

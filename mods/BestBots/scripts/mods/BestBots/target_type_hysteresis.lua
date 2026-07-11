@@ -1,0 +1,941 @@
+local M = {}
+
+local MARGIN_FACTOR = 0.10 -- Score difference must exceed this fraction of max to flip type
+local MOMENTUM_FACTOR = 0.05 -- Bonus added to current type's score to resist flipping
+local REEVALUATION_INTERVAL_S = 0.3 -- Matches vanilla target reevaluation period
+local DEFAULT_IMMEDIATE_MELEE_PRESSURE_DISTANCE = 2.5
+local POXBURSTER_PUSH_DISTANCE = 3
+local POXBURSTER_BREED_NAME = "chaos_poxwalker_bomber"
+local ANTI_ARMOR_RANGED_TARGET_BREEDS = {
+	chaos_ogryn_bulwark = true,
+	chaos_ogryn_executor = true,
+	renegade_executor = true,
+}
+
+local _mod
+
+local function _hook_require_now(path, callback)
+	local hook_require_now = _mod and _mod.hook_require_now
+	if hook_require_now then
+		return hook_require_now(_mod, path, callback, 4)
+	end
+
+	if _mod and _mod.warning and _mod._raw_hook_require then
+		_mod:warning("BestBots: hook_require_now_missing for " .. tostring(path))
+	end
+	return _mod["hook_require"](_mod, path, callback)
+end
+
+local _debug_log
+local _debug_enabled
+local _fixed_time
+local _is_enabled
+local _perf
+local _bot_slot_for_unit
+local _bot_target_selection
+local _breed
+local _player_unit_visual_loadout
+local _anti_armor_ranged_policy
+local _close_range_ranged_policy
+local _immediate_melee_pressure_distance
+local _warned_errors = {}
+local BOT_PERCEPTION_PATCH_SENTINEL = "__bb_target_type_hysteresis_installed"
+local INVENTORY_SWITCH_PATCH_SENTINEL = "__bb_target_type_hysteresis_inventory_switch_installed"
+
+local function _load_runtime_deps()
+	if not _bot_target_selection then
+		_bot_target_selection = require("scripts/utilities/bot_target_selection")
+	end
+
+	if not _breed then
+		_breed = require("scripts/utilities/breed")
+	end
+
+	return _bot_target_selection, _breed
+end
+
+local function _visual_loadout_api()
+	if _player_unit_visual_loadout ~= nil then
+		return _player_unit_visual_loadout or nil
+	end
+
+	local ok, api = pcall(require, "scripts/extension_systems/visual_loadout/utilities/player_unit_visual_loadout")
+	if ok then
+		_player_unit_visual_loadout = api
+	else
+		_player_unit_visual_loadout = false
+	end
+
+	return _player_unit_visual_loadout or nil
+end
+
+local function _abs(x)
+	return x < 0 and -x or x
+end
+
+local function _max3(a, b, c)
+	local ab = a > b and a or b
+	return ab > c and ab or c
+end
+
+local function _calculate_common_score(unit, target_unit, target_breed, t, bot_group, current_target_enemy)
+	local BotTargetSelection = _load_runtime_deps()
+	local score = 0
+	local opportunity_weight = BotTargetSelection.opportunity_weight(unit, target_unit, target_breed, t)
+	score = score + opportunity_weight
+
+	local priority_weight = BotTargetSelection.priority_weight(target_unit, bot_group)
+	score = score + priority_weight
+
+	local monster_weight = BotTargetSelection.monster_weight(unit, target_unit, target_breed, t)
+	score = score + monster_weight
+
+	local current_target_weight = BotTargetSelection.current_target_weight(target_unit, current_target_enemy)
+	score = score + current_target_weight
+
+	return score
+end
+
+local function _calculate_melee_score(unit, target_unit, melee_gestalt, target_breed, target_distance_sq, target_ally)
+	local BotTargetSelection = _load_runtime_deps()
+	local score = 0
+	score = score + BotTargetSelection.gestalt_weight(melee_gestalt, target_breed)
+	score = score + BotTargetSelection.slot_weight(unit, target_unit, target_distance_sq, target_breed, target_ally)
+	score = score + BotTargetSelection.melee_distance_weight(target_distance_sq)
+
+	return score
+end
+
+local function _calculate_ranged_score(
+	unit,
+	target_unit,
+	ranged_gestalt,
+	target_breed,
+	target_distance_sq,
+	_threat_units
+)
+	local BotTargetSelection = _load_runtime_deps()
+	local score = 0
+	score = score + BotTargetSelection.gestalt_weight(ranged_gestalt, target_breed)
+	score = score + BotTargetSelection.ranged_distance_weight(target_distance_sq)
+	score = score + BotTargetSelection.line_of_sight_weight(unit, target_unit)
+
+	return score
+end
+
+local function _secondary_weapon_template(unit)
+	local visual_loadout_extension = ScriptUnit.has_extension(unit, "visual_loadout_system")
+	local visual_loadout_api = visual_loadout_extension and _visual_loadout_api() or nil
+
+	if not visual_loadout_extension then
+		return nil, "missing_visual_loadout_extension"
+	end
+
+	if visual_loadout_extension.weapon_template_from_slot then
+		local weapon_template = visual_loadout_extension:weapon_template_from_slot("slot_secondary")
+
+		return weapon_template, weapon_template and "resolved_extension" or "slot_secondary_template_nil"
+	end
+
+	if not visual_loadout_api then
+		return nil, "missing_visual_loadout_api"
+	end
+
+	if not visual_loadout_api.weapon_template_from_slot then
+		return nil, "missing_weapon_template_from_slot"
+	end
+
+	local weapon_template = visual_loadout_api.weapon_template_from_slot(visual_loadout_extension, "slot_secondary")
+
+	return weapon_template, weapon_template and "resolved" or "slot_secondary_template_nil"
+end
+
+local function _weapon_template_name(weapon_template)
+	return type(weapon_template) == "table" and weapon_template.name or nil
+end
+
+local function _is_immediate_melee_pressure(target_breed, target_distance_sq)
+	if target_distance_sq == nil then
+		return false
+	end
+
+	local configured_distance = _immediate_melee_pressure_distance and _immediate_melee_pressure_distance()
+		or DEFAULT_IMMEDIATE_MELEE_PRESSURE_DISTANCE
+	local pressure_distance = configured_distance
+	if target_breed and target_breed.name == POXBURSTER_BREED_NAME then
+		pressure_distance = math.max(pressure_distance, POXBURSTER_PUSH_DISTANCE)
+	end
+
+	return target_distance_sq <= pressure_distance * pressure_distance
+end
+
+local function _anti_armor_ranged_candidate_policy(target_breed, target_distance_sq, weapon_template, secondary_status)
+	local breed_name = target_breed and target_breed.name
+	if ANTI_ARMOR_RANGED_TARGET_BREEDS[breed_name] ~= true then
+		return nil
+	end
+
+	local diagnostic = {
+		breed = breed_name,
+		reason = nil,
+		secondary_status = secondary_status or "unknown",
+		weapon = _weapon_template_name(weapon_template) or "none",
+	}
+
+	if target_distance_sq == nil then
+		diagnostic.reason = "missing_distance"
+		return nil, diagnostic
+	end
+
+	diagnostic.distance = math.sqrt(target_distance_sq)
+
+	if not _anti_armor_ranged_policy then
+		diagnostic.reason = "missing_policy_resolver"
+		return nil, diagnostic
+	end
+
+	if not weapon_template then
+		diagnostic.reason = diagnostic.secondary_status
+		return nil, diagnostic
+	end
+
+	local policy = _anti_armor_ranged_policy and _anti_armor_ranged_policy(weapon_template) or nil
+	if not (policy and policy.min_target_distance_sq) then
+		diagnostic.reason = policy and "missing_policy_min_distance" or "unsupported_secondary"
+		return nil, diagnostic
+	end
+
+	diagnostic.family = policy.family
+	diagnostic.min_distance = math.sqrt(policy.min_target_distance_sq)
+
+	if target_distance_sq < policy.min_target_distance_sq then
+		diagnostic.reason = "distance_below_min"
+		return nil, diagnostic
+	end
+
+	diagnostic.reason = "policy_active"
+
+	return policy, diagnostic
+end
+
+local function _close_range_ranged_diagnostic(
+	target_breed,
+	target_distance_sq,
+	weapon_template,
+	secondary_status,
+	policy
+)
+	if not policy then
+		return nil
+	end
+
+	return {
+		breed = target_breed and target_breed.name or "unknown",
+		distance = target_distance_sq and math.sqrt(target_distance_sq) or nil,
+		family = policy.family,
+		reason = nil,
+		secondary_status = secondary_status or "unknown",
+		weapon = _weapon_template_name(weapon_template) or "none",
+	}
+end
+
+local function _calculate_score(
+	unit,
+	target_unit,
+	target_breed,
+	target_distance_sq,
+	melee_gestalt,
+	ranged_gestalt,
+	t,
+	bot_group,
+	current_target_enemy,
+	target_ally,
+	threat_units
+)
+	local common_score = _calculate_common_score(unit, target_unit, target_breed, t, bot_group, current_target_enemy)
+	local melee_score = common_score
+		+ _calculate_melee_score(unit, target_unit, melee_gestalt, target_breed, target_distance_sq, target_ally)
+	local ranged_score = common_score
+		+ _calculate_ranged_score(unit, target_unit, ranged_gestalt, target_breed, target_distance_sq, threat_units)
+
+	local policy = nil
+	local weapon_template
+	local secondary_status
+	if (_close_range_ranged_policy or _anti_armor_ranged_policy) and target_distance_sq ~= nil then
+		weapon_template, secondary_status = _secondary_weapon_template(unit)
+	end
+
+	local anti_armor_policy, anti_armor_diagnostic =
+		_anti_armor_ranged_candidate_policy(target_breed, target_distance_sq, weapon_template, secondary_status)
+	local immediate_melee_pressure = _is_immediate_melee_pressure(target_breed, target_distance_sq)
+	if anti_armor_policy and immediate_melee_pressure then
+		anti_armor_diagnostic.reason = "immediate_melee_pressure"
+		anti_armor_policy = nil
+	end
+
+	local hard_armor_without_active_ranged_policy = anti_armor_diagnostic
+		and anti_armor_diagnostic.reason ~= "policy_active"
+
+	if _close_range_ranged_policy and target_distance_sq ~= nil then
+		local close_range_policy = weapon_template and _close_range_ranged_policy(weapon_template) or nil
+		local close_range_diagnostic = _close_range_ranged_diagnostic(
+			target_breed,
+			target_distance_sq,
+			weapon_template,
+			secondary_status,
+			close_range_policy
+		)
+
+		if
+			close_range_policy
+			and not hard_armor_without_active_ranged_policy
+			and not immediate_melee_pressure
+			and close_range_policy.hold_ranged_target_distance_sq
+			and target_distance_sq <= close_range_policy.hold_ranged_target_distance_sq
+			and ranged_score <= melee_score
+		then
+			local scale = _max3(_abs(melee_score), _abs(ranged_score), 1)
+			ranged_score = melee_score + scale * 0.25 + 1
+			policy = policy or {}
+			policy.close_range_ranged_family = close_range_policy.family
+		elseif close_range_diagnostic and immediate_melee_pressure then
+			close_range_diagnostic.reason = "immediate_melee_pressure"
+			policy = policy or {}
+			policy.close_range_ranged_diagnostic = close_range_diagnostic
+		end
+	end
+
+	if anti_armor_policy then
+		if ranged_score <= melee_score then
+			local scale = _max3(_abs(melee_score), _abs(ranged_score), 1)
+			ranged_score = melee_score + scale * 0.25 + 1
+		end
+
+		policy = policy or {}
+		policy.anti_armor_ranged_breed = target_breed.name
+		policy.anti_armor_ranged_family = anti_armor_policy.family
+	end
+
+	return melee_score, ranged_score, policy, anti_armor_diagnostic
+end
+
+local function _is_valid_target(target_unit, target_breed, aggroed_minion_target_units)
+	local _, Breed = _load_runtime_deps()
+	return not target_breed.not_bot_target
+		and (aggroed_minion_target_units[target_unit] or Breed.is_player(target_breed))
+end
+
+local function _choose_raw_target_type(melee_score, ranged_score)
+	return ranged_score < melee_score and "melee" or "ranged"
+end
+
+local function _collect_stabilized_choice(
+	unit,
+	unit_position,
+	side,
+	perception_component,
+	behavior_component,
+	target_units,
+	t,
+	threat_units,
+	bot_group,
+	current_target_enemy
+)
+	local melee_gestalt = behavior_component.melee_gestalt
+	local ranged_gestalt = behavior_component.ranged_gestalt
+	local aggroed_minion_target_units = side.aggroed_minion_target_units or {}
+	local target_ally = perception_component.target_ally
+	local vector3_distance_squared = Vector3.distance_squared
+	local position_lookup = POSITION_LOOKUP
+
+	local best_melee_score, best_melee_target, best_melee_target_distance_sq = -math.huge, nil, math.huge
+	local best_ranged_score, best_ranged_target, best_ranged_target_distance_sq = -math.huge, nil, math.huge
+	local best_ranged_policy = nil
+	local best_ranged_anti_armor_diagnostic = nil
+	local best_melee_close_range_diagnostic = nil
+	local best_ranged_close_range_diagnostic = nil
+
+	local should_fully_reevaluate = not current_target_enemy or t > perception_component.target_enemy_reevaluation_t
+
+	if should_fully_reevaluate then
+		for i = 1, #target_units do
+			local target_unit = target_units[i]
+			local target_unit_data_extension = ScriptUnit.has_extension(target_unit, "unit_data_system")
+
+			if not target_unit_data_extension then
+				goto continue
+			end
+
+			local target_breed = target_unit_data_extension:breed()
+
+			if _is_valid_target(target_unit, target_breed, aggroed_minion_target_units) then
+				local target_position = position_lookup[target_unit]
+
+				if not target_position then
+					goto continue
+				end
+
+				local target_distance_sq = vector3_distance_squared(unit_position, target_position)
+				local melee_score, ranged_score, ranged_policy, anti_armor_diagnostic = _calculate_score(
+					unit,
+					target_unit,
+					target_breed,
+					target_distance_sq,
+					melee_gestalt,
+					ranged_gestalt,
+					t,
+					bot_group,
+					current_target_enemy,
+					target_ally,
+					threat_units
+				)
+
+				if best_melee_score < melee_score then
+					best_melee_score, best_melee_target, best_melee_target_distance_sq =
+						melee_score, target_unit, target_distance_sq
+					best_melee_close_range_diagnostic = ranged_policy and ranged_policy.close_range_ranged_diagnostic
+						or nil
+				end
+
+				if best_ranged_score < ranged_score then
+					best_ranged_score, best_ranged_target, best_ranged_target_distance_sq =
+						ranged_score, target_unit, target_distance_sq
+					best_ranged_policy = ranged_policy
+					best_ranged_anti_armor_diagnostic = anti_armor_diagnostic
+					best_ranged_close_range_diagnostic = ranged_policy and ranged_policy.close_range_ranged_diagnostic
+						or nil
+				end
+			end
+
+			::continue::
+		end
+
+		if not best_melee_target and not best_ranged_target then
+			return nil
+		end
+
+		local analysis =
+			M.analyze_target_type_choice(perception_component.target_enemy_type, best_melee_score, best_ranged_score)
+		local chosen_type = analysis.chosen_type
+
+		if chosen_type == "melee" then
+			return {
+				target_enemy = best_melee_target,
+				target_enemy_distance = math.sqrt(best_melee_target_distance_sq),
+				target_enemy_type = "melee",
+				raw_target_enemy_type = analysis.raw_target_enemy_type,
+				suppressed_raw_flip = analysis.suppressed_raw_flip,
+				melee_score = best_melee_score,
+				ranged_score = best_ranged_score,
+				anti_armor_ranged_diagnostic = best_ranged_anti_armor_diagnostic,
+				close_range_ranged_diagnostic = best_melee_close_range_diagnostic,
+			}
+		end
+
+		return {
+			target_enemy = best_ranged_target,
+			target_enemy_distance = math.sqrt(best_ranged_target_distance_sq),
+			target_enemy_type = "ranged",
+			raw_target_enemy_type = analysis.raw_target_enemy_type,
+			suppressed_raw_flip = analysis.suppressed_raw_flip,
+			melee_score = best_melee_score,
+			ranged_score = best_ranged_score,
+			close_range_ranged_family = best_ranged_policy and best_ranged_policy.close_range_ranged_family or nil,
+			close_range_ranged_diagnostic = best_ranged_close_range_diagnostic,
+			anti_armor_ranged_breed = best_ranged_policy and best_ranged_policy.anti_armor_ranged_breed or nil,
+			anti_armor_ranged_family = best_ranged_policy and best_ranged_policy.anti_armor_ranged_family or nil,
+			anti_armor_ranged_diagnostic = best_ranged_anti_armor_diagnostic,
+		}
+	end
+
+	if current_target_enemy then
+		local target_unit = current_target_enemy
+		local target_position = position_lookup[target_unit]
+
+		if not target_position then
+			return nil
+		end
+
+		local target_unit_data_extension = ScriptUnit.has_extension(target_unit, "unit_data_system")
+
+		if not target_unit_data_extension then
+			return nil
+		end
+
+		local target_breed = target_unit_data_extension:breed()
+		local target_distance_sq = vector3_distance_squared(unit_position, target_position)
+		local melee_score, ranged_score, ranged_policy, anti_armor_diagnostic = _calculate_score(
+			unit,
+			target_unit,
+			target_breed,
+			target_distance_sq,
+			melee_gestalt,
+			ranged_gestalt,
+			t,
+			bot_group,
+			current_target_enemy,
+			target_ally,
+			threat_units
+		)
+		local analysis = M.analyze_target_type_choice(perception_component.target_enemy_type, melee_score, ranged_score)
+		local chosen_type = analysis.chosen_type
+
+		return {
+			target_enemy = current_target_enemy,
+			target_enemy_distance = math.sqrt(target_distance_sq),
+			target_enemy_type = chosen_type,
+			raw_target_enemy_type = analysis.raw_target_enemy_type,
+			suppressed_raw_flip = analysis.suppressed_raw_flip,
+			melee_score = melee_score,
+			ranged_score = ranged_score,
+			close_range_ranged_family = ranged_policy and ranged_policy.close_range_ranged_family or nil,
+			close_range_ranged_diagnostic = ranged_policy and ranged_policy.close_range_ranged_diagnostic or nil,
+			anti_armor_ranged_breed = ranged_policy and ranged_policy.anti_armor_ranged_breed or nil,
+			anti_armor_ranged_family = ranged_policy and ranged_policy.anti_armor_ranged_family or nil,
+			anti_armor_ranged_diagnostic = anti_armor_diagnostic,
+		}
+	end
+
+	return nil
+end
+
+function M.init(deps)
+	_mod = deps.mod
+	_debug_log = deps.debug_log
+	_debug_enabled = deps.debug_enabled
+	_fixed_time = deps.fixed_time
+	_is_enabled = deps.is_enabled
+	_perf = deps.perf
+	_bot_slot_for_unit = deps.bot_slot_for_unit
+	_close_range_ranged_policy = deps.close_range_ranged_policy
+	_anti_armor_ranged_policy = deps.anti_armor_ranged_policy
+	_immediate_melee_pressure_distance = deps.immediate_melee_pressure_distance
+end
+
+function M.analyze_target_type_choice(current_type, melee_score, ranged_score)
+	local raw_choice = _choose_raw_target_type(melee_score, ranged_score)
+	local analysis = {
+		chosen_type = raw_choice,
+		raw_target_enemy_type = raw_choice,
+		suppressed_raw_flip = false,
+	}
+	if current_type ~= "melee" and current_type ~= "ranged" then
+		return analysis
+	end
+
+	local stabilized_scale = _max3(_abs(melee_score), _abs(ranged_score), 1)
+	local momentum_bonus = stabilized_scale * MOMENTUM_FACTOR
+	local melee_stabilized = melee_score
+	local ranged_stabilized = ranged_score
+
+	if current_type == "melee" then
+		melee_stabilized = melee_stabilized + momentum_bonus
+	else
+		ranged_stabilized = ranged_stabilized + momentum_bonus
+	end
+
+	local margin = stabilized_scale * MARGIN_FACTOR
+	local candidate = _choose_raw_target_type(melee_stabilized, ranged_stabilized)
+	if candidate == current_type then
+		analysis.chosen_type = current_type
+		analysis.suppressed_raw_flip = raw_choice ~= current_type
+		return analysis
+	end
+
+	local winner = candidate == "melee" and melee_stabilized or ranged_stabilized
+	local loser = candidate == "melee" and ranged_stabilized or melee_stabilized
+	if winner - loser > margin then
+		analysis.chosen_type = candidate
+		return analysis
+	end
+
+	analysis.chosen_type = current_type
+	analysis.suppressed_raw_flip = raw_choice ~= current_type
+
+	return analysis
+end
+
+function M.choose_target_type(current_type, melee_score, ranged_score)
+	return M.analyze_target_type_choice(current_type, melee_score, ranged_score).chosen_type
+end
+
+local function _format_distance(value)
+	return value and string.format("%.2f", value) or "none"
+end
+
+local function _log_anti_armor_ranged_skip(unit, stabilized, t)
+	local diagnostic = stabilized and stabilized.anti_armor_ranged_diagnostic
+	if
+		not diagnostic
+		or diagnostic.reason == "policy_active"
+		or not (_debug_enabled and _debug_enabled() and _debug_log)
+	then
+		return
+	end
+
+	_debug_log(
+		"anti_armor_ranged_skip:"
+			.. tostring(unit)
+			.. ":"
+			.. tostring(diagnostic.breed)
+			.. ":"
+			.. tostring(diagnostic.weapon)
+			.. ":"
+			.. tostring(diagnostic.reason),
+		_fixed_time and _fixed_time() or t or 0,
+		"anti-armor ranged target skipped (reason="
+			.. tostring(diagnostic.reason)
+			.. ", weapon="
+			.. tostring(diagnostic.weapon)
+			.. ", secondary_status="
+			.. tostring(diagnostic.secondary_status)
+			.. ", breed="
+			.. tostring(diagnostic.breed)
+			.. ", distance="
+			.. _format_distance(diagnostic.distance)
+			.. ", min_distance="
+			.. _format_distance(diagnostic.min_distance)
+			.. ", chosen="
+			.. tostring(stabilized.target_enemy_type)
+			.. ", melee="
+			.. string.format("%.2f", stabilized.melee_score or 0)
+			.. ", ranged="
+			.. string.format("%.2f", stabilized.ranged_score or 0)
+			.. ")",
+		nil,
+		"debug"
+	)
+end
+
+local function _log_close_range_ranged_skip(unit, stabilized, t)
+	local diagnostic = stabilized and stabilized.close_range_ranged_diagnostic
+	if not diagnostic or not (_debug_enabled and _debug_enabled() and _debug_log) then
+		return
+	end
+
+	local bot_slot = _bot_slot_for_unit and _bot_slot_for_unit(unit) or "unknown"
+	_debug_log(
+		"close_range_ranged_skip:"
+			.. tostring(unit)
+			.. ":"
+			.. tostring(diagnostic.family)
+			.. ":"
+			.. tostring(diagnostic.weapon)
+			.. ":"
+			.. tostring(diagnostic.reason),
+		_fixed_time and _fixed_time() or t or 0,
+		"close-range ranged target skipped (reason="
+			.. tostring(diagnostic.reason)
+			.. ", bot="
+			.. tostring(bot_slot)
+			.. ", family="
+			.. tostring(diagnostic.family)
+			.. ", weapon="
+			.. tostring(diagnostic.weapon)
+			.. ", secondary_status="
+			.. tostring(diagnostic.secondary_status)
+			.. ", breed="
+			.. tostring(diagnostic.breed)
+			.. ", distance="
+			.. _format_distance(diagnostic.distance)
+			.. ", chosen="
+			.. tostring(stabilized.target_enemy_type)
+			.. ", melee="
+			.. string.format("%.2f", stabilized.melee_score or 0)
+			.. ", ranged="
+			.. string.format("%.2f", stabilized.ranged_score or 0)
+			.. ")",
+		nil,
+		"debug"
+	)
+end
+
+-- Kept for unit tests: installs a standalone hook that calls post_update_target_enemy.
+-- Production registration lives in BestBots.lua's consolidated _update_target_enemy hook
+-- (DMF dedupes hook registrations by (mod, obj, method), so per-feature install functions
+-- would silently discard all but the first).
+function M.install_bot_perception_hooks(BotPerceptionExtension)
+	if not BotPerceptionExtension or rawget(BotPerceptionExtension, BOT_PERCEPTION_PATCH_SENTINEL) then
+		return
+	end
+
+	local original = BotPerceptionExtension._update_target_enemy
+	if type(original) ~= "function" then
+		return
+	end
+
+	BotPerceptionExtension[BOT_PERCEPTION_PATCH_SENTINEL] = true
+
+	_mod:hook(
+		BotPerceptionExtension,
+		"_update_target_enemy",
+		function(
+			func,
+			self,
+			self_unit,
+			self_position,
+			perception_component,
+			behavior_component,
+			enemies_in_proximity,
+			side,
+			bot_group,
+			dt,
+			t
+		)
+			local pre_state = {
+				target_enemy = perception_component.target_enemy,
+				target_enemy_type = perception_component.target_enemy_type,
+				target_enemy_reevaluation_t = perception_component.target_enemy_reevaluation_t,
+			}
+			func(
+				self,
+				self_unit,
+				self_position,
+				perception_component,
+				behavior_component,
+				enemies_in_proximity,
+				side,
+				bot_group,
+				dt,
+				t
+			)
+			M.post_update_target_enemy(
+				self,
+				pre_state,
+				self_unit,
+				self_position,
+				perception_component,
+				behavior_component,
+				enemies_in_proximity,
+				side,
+				bot_group,
+				dt,
+				t
+			)
+		end
+	)
+end
+
+-- Called by the consolidated _update_target_enemy hook in BestBots.lua, after
+-- the original runs. pre_state is a snapshot of perception_component fields
+-- captured before the original.
+function M.post_update_target_enemy(
+	self,
+	pre_state,
+	self_unit,
+	self_position,
+	perception_component,
+	behavior_component,
+	_enemies_in_proximity,
+	side,
+	bot_group,
+	_dt,
+	t
+)
+	if _is_enabled and not _is_enabled() then
+		return
+	end
+
+	local previous_target_enemy = pre_state.target_enemy
+	previous_target_enemy = HEALTH_ALIVE[previous_target_enemy] and previous_target_enemy or nil
+	local previous_target_type = pre_state.target_enemy_type
+	local previous_reevaluation_t = pre_state.target_enemy_reevaluation_t
+
+	if
+		previous_target_type
+		and perception_component.target_enemy_type == previous_target_type
+		and previous_target_enemy
+		and perception_component.target_enemy == previous_target_enemy
+	then
+		return
+	end
+
+	local perf_t0 = _perf and _perf.begin() or nil
+	local ok, err = pcall(function()
+		local reevaluation_view = {
+			target_enemy = previous_target_enemy,
+			target_enemy_type = previous_target_type,
+			target_enemy_reevaluation_t = previous_reevaluation_t,
+			target_ally = perception_component.target_ally,
+		}
+		local stabilized = _collect_stabilized_choice(
+			self_unit,
+			self_position,
+			side,
+			reevaluation_view,
+			behavior_component,
+			side.ai_target_units or {},
+			t,
+			self._threat_units,
+			bot_group,
+			previous_target_enemy
+		)
+
+		if not stabilized then
+			return
+		end
+
+		perception_component.target_enemy = stabilized.target_enemy
+		perception_component.target_enemy_distance = stabilized.target_enemy_distance
+		perception_component.target_enemy_type = stabilized.target_enemy_type
+
+		if previous_target_type ~= stabilized.target_enemy_type and _debug_enabled and _debug_enabled() then
+			_debug_log(
+				"target_type_flip:" .. tostring(self_unit),
+				_fixed_time and _fixed_time() or t or 0,
+				"type flip " .. tostring(previous_target_type) .. " -> " .. tostring(stabilized.target_enemy_type),
+				nil,
+				"debug"
+			)
+		elseif stabilized.suppressed_raw_flip and previous_target_type and _debug_enabled and _debug_enabled() then
+			_debug_log(
+				"target_type_hold:" .. tostring(self_unit),
+				_fixed_time and _fixed_time() or t or 0,
+				"type hold "
+					.. tostring(previous_target_type)
+					.. " over raw "
+					.. tostring(stabilized.raw_target_enemy_type)
+					.. " (melee="
+					.. string.format("%.2f", stabilized.melee_score or 0)
+					.. ", ranged="
+					.. string.format("%.2f", stabilized.ranged_score or 0)
+					.. ")",
+				nil,
+				"debug"
+			)
+		end
+
+		if
+			stabilized.close_range_ranged_family
+			and stabilized.target_enemy_type == "ranged"
+			and _debug_enabled
+			and _debug_enabled()
+		then
+			_debug_log(
+				"close_range_ranged_family:" .. tostring(self_unit),
+				_fixed_time and _fixed_time() or t or 0,
+				"close-range ranged family kept ranged target type (family="
+					.. tostring(stabilized.close_range_ranged_family)
+					.. ", distance="
+					.. string.format("%.2f", stabilized.target_enemy_distance or 0)
+					.. ", melee="
+					.. string.format("%.2f", stabilized.melee_score or 0)
+					.. ", ranged="
+					.. string.format("%.2f", stabilized.ranged_score or 0)
+					.. ")",
+				nil,
+				"debug"
+			)
+		end
+
+		if
+			stabilized.anti_armor_ranged_breed
+			and stabilized.target_enemy_type == "ranged"
+			and _debug_enabled
+			and _debug_enabled()
+		then
+			_debug_log(
+				"anti_armor_ranged_target:" .. tostring(self_unit),
+				_fixed_time and _fixed_time() or t or 0,
+				"anti-armor ranged family kept ranged target type (family="
+					.. tostring(stabilized.anti_armor_ranged_family)
+					.. ", breed="
+					.. tostring(stabilized.anti_armor_ranged_breed)
+					.. ", distance="
+					.. string.format("%.2f", stabilized.target_enemy_distance or 0)
+					.. ")",
+				nil,
+				"debug"
+			)
+		end
+
+		_log_anti_armor_ranged_skip(self_unit, stabilized, t)
+		_log_close_range_ranged_skip(self_unit, stabilized, t)
+
+		if previous_target_enemy == nil or t > previous_reevaluation_t then
+			perception_component.target_enemy_reevaluation_t = t + REEVALUATION_INTERVAL_S
+		end
+	end)
+	if perf_t0 and _perf then
+		_perf.finish("target_type_hysteresis.post_process", perf_t0)
+	end
+
+	if not ok then
+		local key = tostring(err)
+		if not _warned_errors[key] then
+			_warned_errors[key] = true
+			_mod:warning("TargetTypeHysteresis hook error (reported once per unique error): " .. key)
+		end
+		if _debug_enabled and _debug_enabled() then
+			_debug_log(
+				"target_type_hysteresis_error:" .. tostring(self_unit),
+				_fixed_time and _fixed_time() or t or 0,
+				key,
+				nil,
+				"debug"
+			)
+		end
+	end
+end
+
+function M.register_hooks()
+	_hook_require_now(
+		"scripts/extension_systems/behavior/nodes/actions/bot/bt_bot_inventory_switch_action",
+		function(BtBotInventorySwitchAction)
+			if
+				not BtBotInventorySwitchAction
+				or rawget(BtBotInventorySwitchAction, INVENTORY_SWITCH_PATCH_SENTINEL)
+			then
+				return
+			end
+
+			BtBotInventorySwitchAction[INVENTORY_SWITCH_PATCH_SENTINEL] = true
+
+			_mod:hook_safe(
+				BtBotInventorySwitchAction,
+				"enter",
+				function(_self, unit, _unit_breed, blackboard, scratchpad, action_data, t)
+					if not (_debug_enabled and _debug_enabled()) then
+						return
+					end
+
+					local wanted_slot = action_data and action_data.wanted_slot or "unknown"
+					local target_type = blackboard and blackboard.perception and blackboard.perception.target_enemy_type
+						or "unknown"
+					local wielded_slot = scratchpad
+							and scratchpad.inventory_component
+							and scratchpad.inventory_component.wielded_slot
+						or "unknown"
+					local bot_slot = _bot_slot_for_unit and _bot_slot_for_unit(unit) or "unknown"
+					local switch_name = "inventory_switch"
+
+					if target_type == "melee" and wanted_slot == "slot_primary" then
+						switch_name = "switch_melee"
+					elseif target_type == "ranged" and wanted_slot == "slot_secondary" then
+						switch_name = "switch_ranged"
+					end
+
+					_debug_log(
+						"inventory_switch_enter:" .. tostring(unit),
+						_fixed_time and _fixed_time() or t or 0,
+						"bot "
+							.. tostring(bot_slot)
+							.. " "
+							.. switch_name
+							.. " entered (wielded="
+							.. tostring(wielded_slot)
+							.. ", wanted="
+							.. tostring(wanted_slot)
+							.. ", target_type="
+							.. tostring(target_type)
+							.. ")",
+						nil,
+						"debug"
+					)
+				end
+			)
+		end
+	)
+end
+
+return M
