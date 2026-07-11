@@ -389,6 +389,13 @@ local function close_range_ranged_policy(weapon_template)
 		return CLOSE_RANGE_RANGED_POLICIES.shotgun
 	end
 
+	-- shotpistol_shield_p1's own keyword is the compound "shotpistol_shield", not
+	-- "shotgun" — but its actions are kind = "shoot_pellets" (confirmed real pellet
+	-- spread, same mechanic as plain shotguns), so it belongs in the same policy.
+	if has_keyword(weapon_template, "shotpistol_shield") then
+		return CLOSE_RANGE_RANGED_POLICIES.shotgun
+	end
+
 	if has_keyword(weapon_template, "shotgun_grenade") then
 		return CLOSE_RANGE_RANGED_POLICIES.shotgun_grenade
 	end

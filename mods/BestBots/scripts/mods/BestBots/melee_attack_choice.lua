@@ -239,6 +239,28 @@ local SPECIAL_WEAPON_POLICIES = {
 		},
 	},
 	{
+		-- saw_p1's coating toggle: kind = "toggle_special", same shape as the
+		-- families above.
+		family = "saw_coating_toggle",
+		prefixes = {
+			"saw_p1_",
+		},
+		action_kinds = {
+			toggle_special = true,
+		},
+	},
+	{
+		-- crowbar_p1's sticky/blunt stance toggle: kind = "toggle_special", same
+		-- shape as the families above.
+		family = "crowbar_stance_toggle",
+		prefixes = {
+			"crowbar_p1_",
+		},
+		action_kinds = {
+			toggle_special = true,
+		},
+	},
+	{
 		family = "combat_axe_special",
 		prefixes = {
 			"combataxe_p1_",
@@ -560,7 +582,12 @@ local function _is_priority_special_target(special_action_meta, scratchpad, targ
 		return _is_thunder_hammer_target(target_breed, target_armor)
 	end
 
-	if special_action_meta.family == "chain" or special_action_meta.family == "transonic_sword_transonic_knife" then
+	if
+		special_action_meta.family == "chain"
+		or special_action_meta.family == "transonic_sword_transonic_knife"
+		or special_action_meta.family == "saw_coating_toggle"
+		or special_action_meta.family == "crowbar_stance_toggle"
+	then
 		return _is_chain_special_target(target_breed, target_armor)
 	end
 
