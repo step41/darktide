@@ -1084,10 +1084,16 @@ end)
 
 function mod.on_game_state_changed(status, state)
 	-- Merged in from the former BestTeam mod: kick off the real-character
-	-- roster fetch as early as possible so it's populated before bot slots
-	-- resolve. Isolated in its own block/pcall so a fetch failure can't
-	-- affect the GameplayStateRun reset logic below.
-	if status == "enter" and state == "StateLoading" then
+	-- roster fetch as early as possible so the character_N dropdowns are
+	-- populated before the player opens mod settings. StateMainMenu (the hub)
+	-- is the primary trigger -- that's where players actually configure bot
+	-- slots, well before StateLoading, which only fires once a mission is
+	-- already launching (too late to be useful for the dropdown). StateLoading
+	-- is kept as a fallback in case the roster fetch never fired (e.g. the
+	-- player was already at the hub when this mod version first loaded).
+	-- Isolated in its own block/pcall so a fetch failure can't affect the
+	-- GameplayStateRun reset logic below.
+	if status == "enter" and (state == "StateMainMenu" or state == "StateLoading") then
 		local ok, err = pcall(RealCharacterRoster.fetch_all_profiles)
 		if not ok then
 			mod:warning("BestBots: real character roster fetch failed: " .. tostring(err))
