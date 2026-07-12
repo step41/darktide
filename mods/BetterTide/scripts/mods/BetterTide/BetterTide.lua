@@ -399,10 +399,12 @@ local rippergun_templates = {
 
 -- Swap (action_wield) and ADS (action_zoom / action_zoom_fast) speed --
 -- identical across all 3 marks in vanilla (1.15s wield, 1.25s ADS, 0.55s
--- fast re-aim), so one shared override covers all of them.
+-- fast re-aim), so one shared override covers all of them. ADS pushed to
+-- near-instant (0.12s) per explicit request -- the earlier 0.5s target was
+-- still "way too slow".
 local rippergun_wield_time = 0.4
-local rippergun_ads_time = 0.5
-local rippergun_ads_fast_time = 0.25
+local rippergun_ads_time = 0.12
+local rippergun_ads_fast_time = 0.08
 
 local function apply_rippergun_speed()
     for _, weapon_template in ipairs(rippergun_templates) do
