@@ -506,7 +506,14 @@ local function resolve_profile(profile)
 			.. tostring(profile.name)
 	)
 
-	local has_real_character = profile.character_id or profile.name
+	-- BUG FIX (confirmed via console log 2026-07-12): this used to be
+	-- `profile.character_id or profile.name`, an OR. But the comment above
+	-- already says character_id is unreliable (vanilla bots get
+	-- character_id="high_bot_N", always truthy) -- the OR made that half of
+	-- the check always true regardless of profile.name, so this yielded on
+	-- EVERY bot spawn unconditionally, real or generic. name is the only
+	-- reliable signal; character_id must not be part of this check at all.
+	local has_real_character = profile.name ~= nil
 	if has_real_character then
 		_mod:echo(
 			"BestBots: resolve_profile slot="
