@@ -44,7 +44,18 @@ local function fetch_all_profiles()
 	local data_service = Managers and Managers.data_service
 	local profiles_service = data_service and data_service.profiles
 	if not profiles_service then
+		if _debug_enabled and _debug_enabled() then
+			_debug_log(
+				"real_character_roster:fetch_skipped",
+				0,
+				"fetch_all_profiles() called but Managers.data_service.profiles unavailable"
+			)
+		end
 		return
+	end
+
+	if _debug_enabled and _debug_enabled() then
+		_debug_log("real_character_roster:fetch_requested", 0, "calling ProfilesService:fetch_all_profiles()")
 	end
 
 	profiles_service:fetch_all_profiles()
@@ -94,6 +105,10 @@ end
 
 function M.register_hooks()
 	_mod:hook("ProfilesService", "fetch_all_profiles", function(func, ...)
+		if _debug_enabled and _debug_enabled() then
+			_debug_log("real_character_roster:hook_fired", 0, "ProfilesService:fetch_all_profiles() hook intercepted a call")
+		end
+
 		local profiles_promise = func(...)
 
 		profiles_promise:next(function(data)
@@ -101,6 +116,8 @@ function M.register_hooks()
 			if not ok and _mod.warning then
 				_mod:warning("BestBots: real_character_roster failed to process fetched profiles: " .. tostring(err))
 			end
+		end):catch(function(err)
+			_mod:warning("BestBots: real_character_roster fetch_all_profiles promise rejected: " .. tostring(err))
 		end)
 
 		return profiles_promise

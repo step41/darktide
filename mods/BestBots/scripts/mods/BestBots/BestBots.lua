@@ -1083,6 +1083,13 @@ mod:command("bb_reset", "Reset all BestBots settings to their default values", f
 end)
 
 function mod.on_game_state_changed(status, state)
+	-- Diagnostic: which (status, state) pairs actually fire, to confirm or
+	-- correct the StateMainMenu/StateLoading assumption below. Remove once
+	-- the real-character roster fetch is confirmed working.
+	if _debug_enabled() then
+		_debug_log("state:transition:" .. tostring(status) .. ":" .. tostring(state), 0, "game_state_changed(" .. tostring(status) .. ", " .. tostring(state) .. ")")
+	end
+
 	-- Merged in from the former BestTeam mod: kick off the real-character
 	-- roster fetch as early as possible so the character_N dropdowns are
 	-- populated before the player opens mod settings. StateMainMenu (the hub)
