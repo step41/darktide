@@ -91,12 +91,30 @@ for _, weapon_template in ipairs(ogryn_combatblade_templates) do
     ogryn_combatblade_template_set[weapon_template] = true
 end
 
--- "Over the top" multiplier, applied to every knife-specific mobility value
--- below, per explicit user request: prove there's an unmistakable
--- difference first, then dial back once confirmed. Scoped entirely to the
--- Combat Blade's own weapon-level templates -- never the shared archetype
--- tables -- so no other Ogryn weapon (Powermaul, Shovel, etc.) is affected.
-local ogryn_combatblade_mobility_multiplier = 2
+-- Dodge and heavy-attack forward movement both confirmed working (in fact
+-- "way more than we want" / "about 2x what they should be") -- dialed back
+-- to 1 (exact Combat Knife parity, the original ask) now that the
+-- mechanism is proven. Kept for stamina too (reverts to the original 7
+-- pool / combat_knife_p1 costs -- doubling stamina specifically was never
+-- requested, just swept up in the "over the top" test pass).
+--
+-- Sprint speed is the one confirmed NOT working even at 2x -- full trace
+-- confirms weapon_sprint_template.sprint_speed_mod really is the
+-- authoritative term in the actual applied-velocity formula
+-- (max_move_speed = archetype.sprint_move_speed(5) + weapon.sprint_speed_mod,
+-- flows through to locomotion_steering.velocity_wanted with no clamp in
+-- between), and the resolution mechanism is byte-for-byte identical to
+-- dodge's (same accessor pattern, same WeaponTweakTemplates.create
+-- pipeline) -- which IS confirmed working. Leading theory: the archetype
+-- term (5) still dominated the sum even after doubling the weapon term
+-- (~0.8 -> ~1.6), diluting the ~20% top-speed change enough to not read as
+-- "different" next to the much larger dodge/heavy-attack changes. Testing
+-- an extreme, dedicated multiplier here (separate from the mobility
+-- multiplier above) to get a definitive signal: if this still produces zero
+-- difference, that's strong evidence of an actual bug worth digging into
+-- further rather than a magnitude problem.
+local ogryn_combatblade_mobility_multiplier = 1
+local ogryn_combatblade_sprint_test_multiplier = 8
 local ogryn_combatblade_move_speed = 5.8 * ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_heavy_total_time = 1
 local ogryn_combatblade_heavy_actions = { "action_left_heavy", "action_right_heavy" }
@@ -138,8 +156,8 @@ local function apply_ogryn_combatblade_dodge_and_sprint()
             ogryn_assault_sprint[key] = value
         end
     end
-    _scale_numeric_leaves(ogryn_assault_sprint.sprint_speed_mod, ogryn_combatblade_mobility_multiplier)
-    _scale_numeric_leaves(ogryn_assault_sprint.sprint_forward_acceleration, ogryn_combatblade_mobility_multiplier)
+    _scale_numeric_leaves(ogryn_assault_sprint.sprint_speed_mod, ogryn_combatblade_sprint_test_multiplier)
+    _scale_numeric_leaves(ogryn_assault_sprint.sprint_forward_acceleration, ogryn_combatblade_sprint_test_multiplier)
 end
 
 apply_ogryn_combatblade_dodge_and_sprint()
