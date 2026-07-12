@@ -31,6 +31,19 @@ local function _is_bot_unit(self)
 	return player and player.is_human_controlled and not player:is_human_controlled()
 end
 
+local function _is_unit_animation_valid(unit)
+	if not unit then
+		return false
+	end
+	local ok, result = pcall(Unit.alive, unit)
+	return ok and result == true
+end
+
+local function _is_fp_unit_animation_valid(self)
+	local fp_unit = self and self._first_person_unit
+	return _is_unit_animation_valid(fp_unit)
+end
+
 local function _safe_animation_find_variable(unit, variable_name)
 	local ok, variable_index = pcall(Unit.animation_find_variable, unit, variable_name)
 	if not ok then
@@ -67,11 +80,11 @@ local function register_hooks()
 					end
 
 					local unit = self and self._unit
-					local variable_index
-					local failure_reason
-					if unit then
-						variable_index, failure_reason = _safe_animation_find_variable(unit, variable_name)
+					if not _is_unit_animation_valid(unit) then
+						return
 					end
+
+					local variable_index, failure_reason = _safe_animation_find_variable(unit, variable_name)
 
 					if not variable_index then
 						if _debug_enabled() then
@@ -95,7 +108,7 @@ local function register_hooks()
 				end
 			)
 
-			-- Guard anim_event (plain — catches post-fallback crashes)
+			-- Guard anim_event (plain)
 			_mod:hook(
 				AuthoritativePlayerUnitAnimationExtension,
 				"anim_event",
@@ -105,19 +118,21 @@ local function register_hooks()
 					end
 
 					local unit = self and self._unit
-					if unit then
-						local ok = pcall(func, self, event_name)
-						if not ok then
-							if _debug_enabled() then
-								_debug_log(
-									"animation_guard:anim_event:" .. tostring(event_name),
-									_fixed_time(),
-									"animation guard suppressed invalid anim_event for "
-										.. tostring(event_name),
-									nil,
-									"info"
-								)
-							end
+					if not _is_unit_animation_valid(unit) then
+						return
+					end
+
+					local ok = pcall(func, self, event_name)
+					if not ok then
+						if _debug_enabled() then
+							_debug_log(
+								"animation_guard:anim_event:" .. tostring(event_name),
+								_fixed_time(),
+								"animation guard suppressed invalid anim_event for "
+									.. tostring(event_name),
+								nil,
+								"info"
+							)
 						end
 					end
 				end
@@ -133,11 +148,11 @@ local function register_hooks()
 					end
 
 					local unit = self and self._unit
-					local variable_index
-					local failure_reason
-					if unit then
-						variable_index, failure_reason = _safe_animation_find_variable(unit, variable_name)
+					if not _is_unit_animation_valid(unit) then
+						return
 					end
+
+					local variable_index, failure_reason = _safe_animation_find_variable(unit, variable_name)
 
 					if not variable_index then
 						if _debug_enabled() then
@@ -161,7 +176,7 @@ local function register_hooks()
 				end
 			)
 
-			-- Guard anim_event_1p (first person variant)
+			-- Guard anim_event_1p (first person plain)
 			_mod:hook(
 				AuthoritativePlayerUnitAnimationExtension,
 				"anim_event_1p",
@@ -170,26 +185,27 @@ local function register_hooks()
 						return func(self, event_name)
 					end
 
-					local fp_unit = self and self._first_person_unit
-					if fp_unit then
-						local ok = pcall(func, self, event_name)
-						if not ok then
-							if _debug_enabled() then
-								_debug_log(
-									"animation_guard:anim_event_1p:" .. tostring(event_name),
-									_fixed_time(),
-									"animation guard suppressed invalid anim_event_1p for "
-										.. tostring(event_name),
-									nil,
-									"info"
-								)
-							end
+					if not _is_fp_unit_animation_valid(self) then
+						return
+					end
+
+					local ok = pcall(func, self, event_name)
+					if not ok then
+						if _debug_enabled() then
+							_debug_log(
+								"animation_guard:anim_event_1p:" .. tostring(event_name),
+								_fixed_time(),
+								"animation guard suppressed invalid anim_event_1p for "
+									.. tostring(event_name),
+								nil,
+								"info"
+							)
 						end
 					end
 				end
 			)
 
-			-- Guard anim_event_with_variable_float_1p (first person float variant)
+			-- Guard anim_event_with_variable_float_1p (first person float)
 			_mod:hook(
 				AuthoritativePlayerUnitAnimationExtension,
 				"anim_event_with_variable_float_1p",
@@ -199,11 +215,11 @@ local function register_hooks()
 					end
 
 					local fp_unit = self and self._first_person_unit
-					local variable_index
-					local failure_reason
-					if fp_unit then
-						variable_index, failure_reason = _safe_animation_find_variable(fp_unit, variable_name)
+					if not _is_unit_animation_valid(fp_unit) then
+						return
 					end
+
+					local variable_index, failure_reason = _safe_animation_find_variable(fp_unit, variable_name)
 
 					if not variable_index then
 						if _debug_enabled() then
@@ -227,13 +243,18 @@ local function register_hooks()
 				end
 			)
 
-			-- Guard anim_event_with_variable_floats (multi-float variant)
+			-- Guard anim_event_with_variable_floats (multi-float)
 			_mod:hook(
 				AuthoritativePlayerUnitAnimationExtension,
 				"anim_event_with_variable_floats",
 				function(func, self, event_name, ...)
 					if not _is_bot_unit(self) then
 						return func(self, event_name, ...)
+					end
+
+					local unit = self and self._unit
+					if not _is_unit_animation_valid(unit) then
+						return
 					end
 
 					local ok = pcall(func, self, event_name, ...)
@@ -254,13 +275,18 @@ local function register_hooks()
 				end
 			)
 
-			-- Guard anim_event_with_variable_floats_1p (multi-float first person variant)
+			-- Guard anim_event_with_variable_floats_1p (multi-float first person)
 			_mod:hook(
 				AuthoritativePlayerUnitAnimationExtension,
 				"anim_event_with_variable_floats_1p",
 				function(func, self, event_name, ...)
 					if not _is_bot_unit(self) then
 						return func(self, event_name, ...)
+					end
+
+					local fp_unit = self and self._first_person_unit
+					if not _is_unit_animation_valid(fp_unit) then
+						return
 					end
 
 					local ok = pcall(func, self, event_name, ...)
