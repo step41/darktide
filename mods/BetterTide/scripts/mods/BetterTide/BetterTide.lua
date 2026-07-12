@@ -1,5 +1,37 @@
 local mod = get_mod("BetterTide")
 
+-- Shared helpers used across sections below.
+-- _scale_numeric_leaves: recursively multiplies every numeric leaf in a
+-- table by factor. Used on deeply nested lerp_basic/lerp_perfect-style
+-- tables where hand-listing every leaf would be huge and fragile against
+-- decompile drift. CAUTION: only call this on a table you know contains
+-- ONLY scalable data -- some engine tables mix in derived metadata fields
+-- (e.g. spread_templates' num_spreads counts) that must not be scaled; see
+-- the Ripper Gun accuracy section below for a real example of that trap.
+local function _scale_numeric_leaves(node, factor)
+    for key, value in pairs(node) do
+        if type(value) == "table" then
+            _scale_numeric_leaves(value, factor)
+        elseif type(value) == "number" then
+            node[key] = value * factor
+        end
+    end
+end
+
+-- _deep_copy: full recursive copy, so mutating (or scaling) the result
+-- never leaks back into the source table.
+local function _deep_copy(source)
+    local copy = {}
+    for key, value in pairs(source) do
+        if type(value) == "table" then
+            copy[key] = _deep_copy(value)
+        else
+            copy[key] = value
+        end
+    end
+    return copy
+end
+
 ---- OGRYN ----
 local ogryn_archetype = require("scripts/settings/archetype/archetypes/ogryn_archetype")
 local archetype_toughness_templates = require("scripts/settings/toughness/archetype_toughness_templates")
@@ -59,54 +91,58 @@ for _, weapon_template in ipairs(ogryn_combatblade_templates) do
     ogryn_combatblade_template_set[weapon_template] = true
 end
 
-local ogryn_combatblade_move_speed = 5.8
+-- "Over the top" multiplier, applied to every knife-specific mobility value
+-- below, per explicit user request: prove there's an unmistakable
+-- difference first, then dial back once confirmed. Scoped entirely to the
+-- Combat Blade's own weapon-level templates -- never the shared archetype
+-- tables -- so no other Ogryn weapon (Powermaul, Shovel, etc.) is affected.
+local ogryn_combatblade_mobility_multiplier = 2
+local ogryn_combatblade_move_speed = 5.8 * ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_heavy_total_time = 1
 local ogryn_combatblade_heavy_actions = { "action_left_heavy", "action_right_heavy" }
 
 -- "ogryn_fast"/"ogryn_assault" are exclusive to the Combat Blade family (no
 -- other Ogryn weapon references them), so overwriting their fields in place
--- is safe -- verified via a repo-wide search before writing this. Every
--- field copied from ninja_knife/ninja_l (the real Combat Knife's dodge and
--- sprint templates) by reference, not by hand-copied literal, so this stays
--- correct even if a future game patch changes those numbers.
+-- is safe -- verified via a repo-wide search before writing this. Deep-copy
+-- every field from ninja_knife/ninja_l rather than aliasing by reference:
+-- a plain `ogryn_fast_dodge[key] = value` (an earlier version of this code)
+-- assigns the SAME nested table object for any table-typed field, so
+-- scaling it afterward would also scale the REAL Combat Knife's stats for
+-- every other class that uses it (Zealot included). Left unscaled:
+-- diminishing_return_distance_modifier (a falloff curve shape, not a
+-- magnitude) and dodge_speed_at_times (an animation-synced speed curve --
+-- doubling it would desync the visual dodge animation from the actual
+-- movement).
 local function apply_ogryn_combatblade_dodge_and_sprint()
     local ninja_knife_dodge = weapon_dodge_templates.ninja_knife
     local ogryn_fast_dodge = weapon_dodge_templates.ogryn_fast
     for key, value in pairs(ninja_knife_dodge) do
-        ogryn_fast_dodge[key] = value
+        if type(value) == "table" then
+            ogryn_fast_dodge[key] = _deep_copy(value)
+        else
+            ogryn_fast_dodge[key] = value
+        end
     end
+    ogryn_fast_dodge.base_distance = ogryn_fast_dodge.base_distance * ogryn_combatblade_mobility_multiplier
+    _scale_numeric_leaves(ogryn_fast_dodge.distance_scale, ogryn_combatblade_mobility_multiplier)
+    _scale_numeric_leaves(ogryn_fast_dodge.speed_modifier, ogryn_combatblade_mobility_multiplier)
+    _scale_numeric_leaves(ogryn_fast_dodge.diminishing_return_start, ogryn_combatblade_mobility_multiplier)
+    _scale_numeric_leaves(ogryn_fast_dodge.diminishing_return_limit, ogryn_combatblade_mobility_multiplier)
 
     local ninja_l_sprint = weapon_sprint_templates.ninja_l
     local ogryn_assault_sprint = weapon_sprint_templates.ogryn_assault
     for key, value in pairs(ninja_l_sprint) do
-        ogryn_assault_sprint[key] = value
+        if type(value) == "table" then
+            ogryn_assault_sprint[key] = _deep_copy(value)
+        else
+            ogryn_assault_sprint[key] = value
+        end
     end
+    _scale_numeric_leaves(ogryn_assault_sprint.sprint_speed_mod, ogryn_combatblade_mobility_multiplier)
+    _scale_numeric_leaves(ogryn_assault_sprint.sprint_forward_acceleration, ogryn_combatblade_mobility_multiplier)
 end
 
 apply_ogryn_combatblade_dodge_and_sprint()
-
--- TEMPORARY diagnostic: confirms the source-table mutation above actually
--- took effect, and separately confirms what the engine's per-call resolver
--- (WeaponTweakTemplates.create, hooked below) produces for the Combat Blade
--- at actual weapon-resolve time. Needed because the user reports no dodge/
--- sprint difference at all (neither in the stats panel nor in gameplay
--- feel) despite the source values changing here -- this will show whether
--- the mutation landed, and whether the resolved (post-lerp) values the game
--- actually uses reflect it. Remove once confirmed working.
-mod:echo(
-    "BetterTide: ogryn_fast dodge after mutation -- distance_scale.lerp_perfect="
-        .. tostring(weapon_dodge_templates.ogryn_fast.distance_scale.lerp_perfect)
-        .. " speed_modifier.lerp_perfect="
-        .. tostring(weapon_dodge_templates.ogryn_fast.speed_modifier.lerp_perfect)
-        .. " base_distance="
-        .. tostring(weapon_dodge_templates.ogryn_fast.base_distance)
-)
-mod:echo(
-    "BetterTide: ogryn_assault sprint after mutation -- sprint_speed_mod.lerp_basic="
-        .. tostring(weapon_sprint_templates.ogryn_assault.sprint_speed_mod.lerp_basic)
-        .. " sprint_forward_acceleration.lerp_perfect="
-        .. tostring(weapon_sprint_templates.ogryn_assault.sprint_forward_acceleration.lerp_perfect)
-)
 
 -- Stamina's vanilla template ("default") is shared with the Powermaul, so
 -- overwriting it in place would buff that weapon too. Instead, hook the
@@ -124,23 +160,20 @@ mod:echo(
 -- the weapon inspect panel (confirmed via crash log: math.lua:28,
 -- "attempt to compare number with table", inside math.clamp). Fixed by
 -- assigning plain, already-resolved numbers instead -- combat_knife_p1's
--- lerp_perfect (best-case/lowest-cost) values, matching a maxed-quality
--- knife's actual resolved cost profile.
+-- lerp_perfect (best-case/lowest-cost) values, halved again for "minimal"
+-- cost per explicit user request.
 local WeaponTweakTemplates = require("scripts/extension_systems/weapon/utilities/weapon_tweak_templates")
 local WeaponTweakTemplateSettings = require("scripts/settings/equipment/weapon_templates/weapon_tweak_template_settings")
 local template_types = WeaponTweakTemplateSettings.template_types
-local ogryn_combatblade_stamina_modifier = 7
+local ogryn_combatblade_stamina_modifier = 7 * ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_sprint_cost_per_second = weapon_stamina_templates.combat_knife_p1.sprint_cost_per_second.lerp_perfect
+    / ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_block_cost_inner = weapon_stamina_templates.combat_knife_p1.block_cost_default.inner.lerp_perfect
+    / ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_block_cost_outer = weapon_stamina_templates.combat_knife_p1.block_cost_default.outer.lerp_perfect
+    / ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_push_cost = weapon_stamina_templates.combat_knife_p1.push_cost.lerp_perfect
-
--- TEMPORARY diagnostic (see above): logs once per weapon_template the first
--- time it's resolved, showing the actual RESOLVED (post-lerp) dodge/sprint
--- values the game computes at runtime -- ground truth for whether the
--- source-table mutation is reaching gameplay/UI at all. Remove once
--- confirmed working, alongside the two mod:echo calls above.
-local _ogryn_combatblade_resolve_logged = {}
+    / ogryn_combatblade_mobility_multiplier
 
 mod:hook(WeaponTweakTemplates, "create", function(func, lerp_values, weapon_template, override_lerp_value_or_nil)
     local templates = func(lerp_values, weapon_template, override_lerp_value_or_nil)
@@ -157,46 +190,99 @@ mod:hook(WeaponTweakTemplates, "create", function(func, lerp_values, weapon_temp
             resolved_stamina.push_cost = ogryn_combatblade_push_cost
         end
 
-        if not _ogryn_combatblade_resolve_logged[weapon_template] then
-            _ogryn_combatblade_resolve_logged[weapon_template] = true
-
-            local resolved_dodge_templates = templates[template_types.dodge]
-            for dodge_key, resolved_dodge in pairs(resolved_dodge_templates) do
-                mod:echo(
-                    "BetterTide: resolved dodge template '"
-                        .. tostring(dodge_key)
-                        .. "' for combat blade -- distance_scale="
-                        .. tostring(resolved_dodge.distance_scale)
-                        .. " speed_modifier="
-                        .. tostring(resolved_dodge.speed_modifier)
-                        .. " base_distance="
-                        .. tostring(resolved_dodge.base_distance)
-                )
-            end
-
-            local resolved_sprint_templates = templates[template_types.sprint]
-            for sprint_key, resolved_sprint in pairs(resolved_sprint_templates) do
-                mod:echo(
-                    "BetterTide: resolved sprint template '"
-                        .. tostring(sprint_key)
-                        .. "' for combat blade -- sprint_speed_mod="
-                        .. tostring(resolved_sprint.sprint_speed_mod)
-                        .. " sprint_forward_acceleration="
-                        .. tostring(resolved_sprint.sprint_forward_acceleration)
-                )
-            end
+        -- Tagged so the dodge-frequency hook below can recognize "the
+        -- currently equipped weapon's resolved dodge template is one of
+        -- ours" -- self._weapon_extension:dodge_template() returns this
+        -- exact RESOLVED (post-lerp) table, not the raw source table
+        -- mutated above, so an identity check against
+        -- weapon_dodge_templates.ogryn_fast would never match it.
+        local resolved_dodge_templates = templates[template_types.dodge]
+        for _, resolved_dodge in pairs(resolved_dodge_templates) do
+            resolved_dodge._bettertide_ogryn_combatblade = true
         end
     end
 
     return templates
 end)
 
+-- dodge_cooldown (time before you can dodge again) and
+-- consecutive_dodges_reset (time before the diminishing-return dodge
+-- counter resets) are read directly off the ARCHETYPE dodge template inside
+-- the actual dodge-execution code (player_character_state_dodging.lua),
+-- with NO per-weapon override in that formula -- unlike distance/speed,
+-- which the weapon template already overrides once it defines its own
+-- base_distance (confirmed: weapon base_distance wins over archetype
+-- base_distance whenever present, which ogryn_fast now does). This is why
+-- Ogryn's dodge frequency stayed capped even after the weapon-level fix.
+--
+-- Directly mutating the shared archetype table (archetype_dodge_templates.
+-- ogryn) was explicitly ruled out -- it would affect every Ogryn weapon,
+-- not just the knife -- and it's also a single object shared by every
+-- Ogryn player in a session, so temporarily mutating and restoring it
+-- around the call would risk a race in multiplayer. Instead: let on_exit
+-- run normally first (still handles animations, buffs, consecutive-dodge
+-- counting), then overwrite the resulting PER-PLAYER cooldown fields with
+-- knife-specific values -- but only when the resolved dodge template just
+-- used carries the tag set above, i.e. only when a Combat Blade is
+-- actually equipped. Values set aggressively low ("nearly infinite"
+-- dodging, matching the user's description of how the real Combat Blade
+-- plays on other classes) rather than just matching Zealot's 0.15s, since
+-- this is the "over the top, confirm it first" pass.
+local PlayerCharacterStateDodging =
+    require("scripts/extension_systems/character_state_machine/character_states/player_character_state_dodging")
+local ogryn_combatblade_dodge_cooldown = 0.05
+local ogryn_combatblade_dodge_jump_override_timer = 0.05
+local ogryn_combatblade_consecutive_dodges_reset = 0.1
+
+mod:hook(PlayerCharacterStateDodging, "on_exit", function(func, self, unit, t, next_state)
+    func(self, unit, t, next_state)
+
+    local weapon_dodge_template = self._weapon_extension and self._weapon_extension:dodge_template()
+    if not (weapon_dodge_template and weapon_dodge_template._bettertide_ogryn_combatblade) then
+        return
+    end
+
+    local dodge_character_state_component = self._dodge_character_state_component
+    local time_in_dodge = t - self._character_state_component.entered_t
+    local cd = math.max(ogryn_combatblade_dodge_cooldown, ogryn_combatblade_dodge_jump_override_timer - time_in_dodge)
+    dodge_character_state_component.cooldown = t + cd
+
+    local stat_buffs = self._buff_extension:stat_buffs()
+    local buff_dodge_cooldown_reset_modifier = stat_buffs.dodge_cooldown_reset_modifier or 1
+    local weapon_consecutive_dodges_reset = weapon_dodge_template.consecutive_dodges_reset or 0
+    local cooldown = (ogryn_combatblade_consecutive_dodges_reset + weapon_consecutive_dodges_reset)
+        * buff_dodge_cooldown_reset_modifier
+    dodge_character_state_component.consecutive_dodges_cooldown = t + cooldown
+end)
+
+-- action_movement_curve.modifier values are multipliers applied to the
+-- character's current move speed while the heavy attack plays (confirmed
+-- via WeaponActionMovement.move_speed_modifier) -- this is what produces
+-- forward distance when moving + heavy-attacking together. Doubling only
+-- .modifier (and .start_modifier, if present) -- .t is a normalized time
+-- position (0-1) along the swing, not a magnitude, so it must stay as-is
+-- or the curve's timing desyncs from the attack animation.
+local function _double_movement_curve_modifiers(action_movement_curve, factor)
+    if action_movement_curve.start_modifier then
+        action_movement_curve.start_modifier = action_movement_curve.start_modifier * factor
+    end
+
+    for i = 1, #action_movement_curve do
+        action_movement_curve[i].modifier = action_movement_curve[i].modifier * factor
+    end
+end
+
 local function apply_ogryn_combatblade_speed_and_heavy_timing()
     for _, weapon_template in ipairs(ogryn_combatblade_templates) do
         weapon_template.max_first_person_anim_movement_speed = ogryn_combatblade_move_speed
 
         for _, action_name in ipairs(ogryn_combatblade_heavy_actions) do
-            weapon_template.actions[action_name].total_time = ogryn_combatblade_heavy_total_time
+            local action = weapon_template.actions[action_name]
+            action.total_time = ogryn_combatblade_heavy_total_time
+
+            if action.action_movement_curve then
+                _double_movement_curve_modifiers(action.action_movement_curve, ogryn_combatblade_mobility_multiplier)
+            end
         end
     end
 end
@@ -204,20 +290,7 @@ end
 apply_ogryn_combatblade_speed_and_heavy_timing()
 
 ---- OGRYN RIPPER GUN TWEAKS ----
--- Shared helper: recursively multiplies every numeric leaf in a table by
--- factor. Used below on damage ranges/thresholds, spread cones, and recoil
--- kick -- all deeply nested lerp_basic/lerp_perfect-style tables where
--- hand-listing every leaf would be huge and fragile against decompile drift.
-local function _scale_numeric_leaves(node, factor)
-    for key, value in pairs(node) do
-        if type(value) == "table" then
-            _scale_numeric_leaves(value, factor)
-        elseif type(value) == "number" then
-            node[key] = value * factor
-        end
-    end
-end
-
+-- _scale_numeric_leaves is defined at the top of the file (shared helper).
 local rippergun_templates = {
     require("scripts/settings/equipment/weapon_templates/ripperguns/ogryn_rippergun_p1_m1"),
     require("scripts/settings/equipment/weapon_templates/ripperguns/ogryn_rippergun_p1_m2"),
