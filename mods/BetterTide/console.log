@@ -1694,4 +1694,1619 @@ Volume for path 'D:\GAMES\Steam\steamapps\common\Warhammer 40,000 DARKTIDE\binar
 22:23:02.588 [Lua] [Mod] Loading ./../mods/BestBots/BestBots.mod
 22:23:02.588 [Lua] <<crashify-property>>Mod:BestBots = true<</crashify-property>>
 22:23:02.588 [Lua] INFO [Uncategorized] [ModManager] Loading mod BestBots with id 58
-22:23:02.591 [Lua] Init DMF mod 'BestBots' [workshop_n
+22:23:02.591 [Lua] Init DMF mod 'BestBots' [workshop_name: 'BestBots', workshop_id: 58]
+22:23:03.687 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'get_bot_config_identifier' from [table: 0x00837050] (Origin: function: 0x06782320)
+22:23:03.687 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'on_player_unit_spawn' from [GameModeCoopCompleteObjective] (Origin: function: 0x070403b0)
+22:23:03.687 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'on_player_unit_spawn' from [GameModeExpedition] (Origin: function: 0x07ab3950)
+22:23:03.687 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'slot_weight' from [table: 0x001db750] (Origin: function: 0x001db7f0)
+22:23:03.687 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'line_of_sight_weight' from [table: 0x001db750] (Origin: function: 0x001db9e8)
+22:23:03.687 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'monster_weight' from [table: 0x001db750] (Origin: function: 0x001db898)
+22:23:03.688 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'wield_slot' from [table: 0x03d51f40] (Origin: function: 0x03d51f68)
+22:23:03.688 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'on_demand_vo_event' from [table: 0x014b3c00] (Origin: function: 0x014b4798)
+22:23:03.688 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'fetch_all_profiles' from [ProfilesService] (Origin: function: 0x06d88ef8)
+22:23:03.688 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'generate_random_name' from [table: 0x067813b0] (Origin: function: 0x06782040)
+22:23:03.688 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'add_bot' from [BotSynchronizerHost] (Origin: function: 0x06d2fc30)
+22:23:03.688 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_num_available_bot_slots' from [PlayerUnitSpawnManager] (Origin: function: 0x07e3e9f8)
+22:23:03.688 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'set_profile' from [BotPlayer] (Origin: function: 0x06d2f880)
+22:23:03.689 [Lua] [MOD][BestBots][ECHO] BestBots loaded
+22:23:03.690 warning: [Profiler] [main] Stall 1099 ms on frame 239: 
+    Application::update 1100 ms
+        game update 1100 ms
+            MyGame::update 1100 ms
+                Lua->update 1099 ms
+22:23:03.690 warning: [Profiler] [renderer] Stall 1098 ms on frame 239: 
+    ThreadPool::do_work_while_waiting_for_event 1098 ms
+22:23:03.719 [Lua] [MOD][Spidey Sense][INFO] 7.3
+22:23:03.719 [Lua] [MOD][Spidey Sense][INFO] (hook_safe): Hooking 'trigger_resource_event' from [WwiseWorld] (Origin: function: 0x0007b4a8)
+22:23:03.719 [Lua] [MOD][Spidey Sense][INFO] (hook_safe): Hooking 'trigger_resource_external_event' from [WwiseWorld] (Origin: function: 0x0007b510)
+22:23:03.719 [Lua] [MOD][Spidey Sense][INFO] (hook_safe): Hooking 'update' from [table: 0x06132570] (Origin: function: 0x061326e8)
+22:23:03.719 [Lua] [MOD][Redshift][INFO] Redshift: sniper laser template wrapped
+22:23:03.719 [Lua] [MOD][Redshift][INFO] Redshift 1.1.0 loaded
+22:23:03.719 [Lua] [MOD][pointer][INFO] (hook_safe): [SmartTag.init] needs to be delayed.
+22:23:03.719 [Lua] [MOD][mauler_attack_indicator][INFO] (hook_safe): Hooking 'trigger_resource_event' from [WwiseWorld] (Origin: function: 0x0007b4a8)
+22:23:03.719 [Lua] [MOD][mauler_attack_indicator][INFO] (hook_safe): Hooking 'trigger_resource_external_event' from [WwiseWorld] (Origin: function: 0x0007b510)
+22:23:03.814 [Lua] [MOD][Lantern of the Omnissiah][INFO] [slug_cache] loaded 636 entries from D:\GAMES\Steam\steamapps\common\Warhammer 40,000 DARKTIDE\mods\Lantern of the Omnissiah\scripts\mods\Lantern of the Omnissiah\gameslantern_slugs.lua
+22:23:03.814 [Lua] [MOD][Lantern of the Omnissiah][INFO] v1.7.1 | slug_cache: 636 entries (game 1.12.0-b747675, built 2026-06-23 18:56:15)
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): Hooking 'cb_add_new_profile_preset' from [ViewElementProfilePresets] (Origin: function: 0x03998f10)
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): Hooking '_setup_individual_layout' from [InventoryView] (Origin: function: 0x09269ec0)
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): Hooking '_draw_loadout_widgets' from [InventoryView] (Origin: function: 0x0926ace8)
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): Hooking 'on_exit' from [InventoryView] (Origin: function: 0x09269bf8)
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): [InventoryWeaponsView.draw] needs to be delayed.
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): [CraftingMechanicusModifyView.draw] needs to be delayed.
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): [CraftingMechanicusReplacePerkView.draw] needs to be delayed.
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): [CraftingMechanicusReplaceTraitView.draw] needs to be delayed.
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): Hooking 'can_add_profile_preset' from [ViewElementProfilePresets] (Origin: function: 0x03998ee8)
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): Hooking '_remove_profile_preset' from [ViewElementProfilePresets] (Origin: function: 0x03998f58)
+22:23:03.887 [Lua] [MOD][Lantern of the Omnissiah][INFO] (hook): Hooking '_setup_input_legend' from [InventoryBackgroundView] (Origin: function: 0x0399ab90)
+22:23:03.887 [Lua] [MOD][Enhanced_descriptions][INFO] (hook_safe): [MarksVendorView.on_enter] needs to be delayed.
+22:23:03.887 [Lua] [MOD][Enhanced_descriptions][INFO] (hook_safe): [InventoryWeaponsView.on_enter] needs to be delayed.
+22:23:03.887 [Lua] [MOD][Enhanced_descriptions][INFO] (hook_safe): [InventoryWeaponMarksView.on_enter] needs to be delayed.
+22:23:03.887 [Lua] [MOD][Enhanced_descriptions][INFO] (hook_safe): [ViewElementWeaponInfo._create_bar_breakdown_widgets] needs to be delayed.
+22:23:03.888 [Lua] [MOD][Enhanced_descriptions][INFO] NAMES_Talents_Blessings.lua loaded successfully
+22:23:03.888 [Lua] [MOD][Enhanced_descriptions][INFO] Loaded localization file: Enhanced_descriptions/Main_Modules/NAMES_Talents_Blessings
+22:23:03.896 [Lua] [MOD][Enhanced_descriptions][INFO] Loaded localization file: Enhanced_descriptions/Main_Modules/WEAPONS_Blessings_Perks
+22:23:03.896 [Lua] [MOD][Enhanced_descriptions][INFO] +++---------------------------------------------+++
+22:23:03.896 [Lua] [MOD][Enhanced_descriptions][INFO] // ✅ Shared Talents: 46 templates created
+22:23:03.902 [Lua] [MOD][Enhanced_descriptions][INFO] // ✅ Added 948 talents from TALENTS_Psyker module
+22:23:03.904 [Lua] [MOD][Enhanced_descriptions][INFO] // ✅ Added 150 talents from TALENTS_Veteran module
+22:23:03.904 [Lua] [MOD][Enhanced_descriptions][INFO] // ✅ Added 158 talents from TALENTS_Zealot module
+22:23:03.906 [Lua] [MOD][Enhanced_descriptions][INFO] // ✅ Added 178 talents from TALENTS_Ogryn module
+22:23:03.906 [Lua] [MOD][Enhanced_descriptions][INFO] // ✅ Added 166 talents from TALENTS_Arbites module
+22:23:03.908 [Lua] [MOD][Enhanced_descriptions][INFO] // ✅ Added 198 talents from TALENTS_Scum module
+22:23:03.908 [Lua] [MOD][Enhanced_descriptions][INFO] +++---------------------------------------------+++
+22:23:03.908 [Lua] [MOD][Enhanced_descriptions][INFO] // ⚙ Loaded: 1844 talents in 6 modules
+22:23:03.908 [Lua] [MOD][Enhanced_descriptions][INFO] +++---------------------------------------------+++
+22:23:03.908 [Lua] [MOD][Enhanced_descriptions][INFO] Loaded localization file: Enhanced_descriptions/Main_Modules/TALENTS_Modular
+22:23:03.908 [Lua] [MOD][Enhanced_descriptions][INFO] Loaded localization file: Enhanced_descriptions/Main_Modules/CURIOS_Blessings_Perks
+22:23:03.909 [Lua] [MOD][Enhanced_descriptions][INFO] MENUS.lua loaded successfully
+22:23:03.909 [Lua] [MOD][Enhanced_descriptions][INFO] Loaded localization file: Enhanced_descriptions/Main_Modules/MENUS
+22:23:03.911 [Lua] [MOD][Enhanced_descriptions][INFO] Loaded localization file: Enhanced_descriptions/Main_Modules/PENANCES
+22:23:03.912 [Lua] [MOD][Enhanced_descriptions][INFO] Localization templates reloaded for en: 5469 templates
+22:23:03.945 [Lua] [MOD][Enhanced_descriptions][INFO] Enhanced Descriptions debug commands loaded
+22:23:03.945 [Lua] [MOD][Enhanced_descriptions][INFO] Debug module not loaded (optional)
+22:23:03.945 [Lua] [MOD][crusher_attack_indicator][INFO] (hook_safe): Hooking 'trigger_resource_event' from [WwiseWorld] (Origin: function: 0x0007b4a8)
+22:23:03.945 [Lua] [MOD][crusher_attack_indicator][INFO] (hook_safe): Hooking 'trigger_resource_external_event' from [WwiseWorld] (Origin: function: 0x0007b510)
+22:23:03.945 [Lua] [MOD][BetterLoadouts][INFO] 1.5.2
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] 3.1
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): [PenanceOverviewView.init] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook): [PenanceOverviewView.cb_on_filter_changed] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook): [PenanceOverviewView.cb_on_toggle_penance_appearance] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): [PenanceOverviewView._build_achievements_cache] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): [PenanceOverviewView.on_category_button_pressed] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook): [PenanceOverviewView._add_category_to_penance_grid_layout] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): [PenanceOverviewView.update] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): [PenanceOverviewView._set_handle_navigation] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook): [PenanceOverviewView._is_result_presentation_active] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): Hooking 'set_alpha_multiplier' from [ViewElementGrid] (Origin: function: 0x011e5370)
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): Hooking 'cb_on_grid_entry_left_pressed' from [ViewElementGrid] (Origin: function: 0x01287970)
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): Hooking 'cb_on_grid_entry_double_click_pressed' from [ViewElementGrid] (Origin: function: 0x01287990)
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook): Hooking '_handle_input' from [ViewElementInputLegend] (Origin: function: 0x068944a8)
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): [PenanceOverviewView._setup_penance_category_buttons] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook_safe): [PenanceOverviewView._cb_on_penance_secondary_pressed] needs to be delayed.
+22:23:03.945 [Lua] [MOD][Archivum Messelina][INFO] (hook): Hooking 'add_entry' from [ViewElementTabMenu] (Origin: function: 0x0348d038)
+22:23:03.945 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500
+22:23:03.945 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters
+22:23:03.946 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/core
+22:23:03.946 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/progression
+22:23:03.946 warning: [Profiler] [main] Stall 255 ms on frame 240: 
+    Application::update 256 ms
+        game update 256 ms
+            MyGame::update 256 ms
+                Lua->update 255 ms
+22:23:03.947 warning: [Profiler] [renderer] Stall 251 ms on frame 240: 
+    ThreadPool::do_work_while_waiting_for_event 251 ms
+22:23:03.965 [Lua] INFO [ParameterResolver] Overriding param [error_codes_crashifyreport] from backend, setting it to [failed_handshake_timeout,nonexisting_channel,pong_timeout,failed_found_no_lobby]
+22:23:03.965 [Lua] INFO [ParameterResolver] Overriding param [subresource_tlsf_allocator_win32] from backend, setting it to [true]
+22:23:03.965 [Lua] INFO [ParameterResolver] Overriding param [persistent_breeds_lockhart] from backend, setting it to [false]
+22:23:03.965 [Lua] INFO [ParameterResolver] Overriding param [extra_persistent_package] from backend, setting it to [1.0,packages/ui/material_sets/circumstances]
+22:23:03.965 [Lua] INFO [ParameterResolver] Overriding param [allocators_to_track_telemetry] from backend, setting it to [agc_page_allocator,buffer_heap,comitted_render_targets,comitted_textures,cpu_visible,D3D12Memory,generic_allocator,heap_allocator,index_buffer,lua_heap,page_allocator,physx_page_allocator,render_page_allocator,resource_loader_page_allocator,resource_manager,rrc_page_allocator,slot_allocator,Texture streaming buffer,texture_streamer_slot_heap,unit resources,vertex_buffer,default,fullscreen resource_generator,gui,gui_slug,non_streamed,non_streamed particle_mesh_spawning,resident,streamed,streamed particle_mesh_spawning,#ID[daf4548b],#ID[58955f0f],#ID[92e28c84],#ID[f85eca19],#ID[a09ea61b],#ID[be63ee4d],#ID[9fcfe126],#ID[f2760503],#ID[304dcce0],#ID[c07e87fc],lua,material,wwise_event,animation,GwNav]
+22:23:03.965 [Lua] INFO [ParameterResolver] Overriding param [enable_direct_storage_debug_map] from backend, setting it to [true]
+22:23:03.965 [Lua] INFO [MasterData] Fetching master items at https://bsp-cdn-prod.atoma.cloud/items/versions/133319/Vr5OhglcnHKHbqxapRGy2dPu8pcXSkI7xdWq.json
+22:23:03.965 [Lua] INFO [BackendManager] url_request: GET https://bsp-cdn-prod.atoma.cloud/items/versions/133319/Vr5OhglcnHKHbqxapRGy2dPu8pcXSkI7xdWq.json
+22:23:03.965 [Lua] INFO [ErrorCodes] Crashify exception enabled from backend for error_code: "failed_handshake_timeout"
+22:23:03.965 [Lua] INFO [ErrorCodes] Crashify exception enabled from backend for error_code: "nonexisting_channel"
+22:23:03.965 [Lua] INFO [ErrorCodes] Crashify exception enabled from backend for error_code: "pong_timeout"
+22:23:03.965 [Lua] INFO [ErrorCodes] Crashify exception enabled from backend for error_code: "failed_found_no_lobby"
+22:23:03.965 [Lua] INFO [PackageManager] Loading extra persistent package 'packages/ui/material_sets/circumstances'
+22:23:04.249 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=20cedde2-3f6a-4d10-aa34-d3be6fe3b10f
+22:23:05.805 warning: [Profiler] [main] Stall 488 ms on frame 323: 
+    Application::update 488 ms
+        game update 488 ms
+            MyGame::update 488 ms
+                BackendSystem::update 488 ms
+22:23:05.979 warning: [Profiler] [main] Stall 173 ms on frame 323: 
+    Application::update 663 ms
+        game update 663 ms
+            MyGame::update 663 ms
+                Lua->update 173 ms
+22:23:05.979 warning: [Profiler] [renderer] Stall 675 ms on frame 323: 
+    ThreadPool::do_work_while_waiting_for_event 675 ms
+22:23:05.996 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=3e6a50a0-0618-44df-ac9f-4a30110921f6
+22:23:06.407 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=5db03d82-3887-4f2f-8241-d89f627f4d2f
+22:23:06.829 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=7ceb04c2-bcc3-465f-ab93-223698b95214
+22:23:07.239 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=9d676e18-ec50-43aa-ac30-1a1e6e89701c
+22:23:07.637 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=bbf33296-591e-4337-b333-7b87618f6db5
+22:23:07.938 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=da684ff8-d3d3-4d93-b383-d5308e1fe29f
+22:23:08.272 [Lua] <<crashify-property>>masterdata_version = 133319<</crashify-property>>
+22:23:08.272 [Lua] INFO [GRPCManager] Connecting to grpc address bsp-im-prod.atoma.cloud:443
+22:23:08.274 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500
+22:23:08.274 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/progression
+22:23:08.274 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters
+22:23:08.274 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/traits/
+22:23:08.274 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/core
+22:23:08.291 [Lua] INFO [GRPCManager] gRPC channel state changed to CONNECTING from IDLE
+22:23:08.358 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=f9ae68f4-9cee-4ace-a7bc-48bcffaab83c
+22:23:08.708 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=20cedde2-3f6a-4d10-aa34-d3be6fe3b10f
+22:23:08.825 [Lua] INFO [GRPCManager] gRPC channel state changed to READY from CONNECTING
+22:23:09.108 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=3e6a50a0-0618-44df-ac9f-4a30110921f6
+22:23:09.409 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=5db03d82-3887-4f2f-8241-d89f627f4d2f
+22:23:09.709 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=7ceb04c2-bcc3-465f-ab93-223698b95214
+22:23:10.127 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=9d676e18-ec50-43aa-ac30-1a1e6e89701c
+22:23:10.527 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=bbf33296-591e-4337-b333-7b87618f6db5
+22:23:10.827 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=da684ff8-d3d3-4d93-b383-d5308e1fe29f
+22:23:11.228 [Lua] INFO [BackendManager] title_request: GET /v2/data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/gear?limit=500&last=f9ae68f4-9cee-4ace-a7bc-48bcffaab83c
+22:23:11.506 [Lua] INFO [BackendManager] title_request: GET /tracks/category/event
+22:23:11.506 [Lua] INFO [BackendManager] title_request: GET /gameplay/config/sessions
+22:23:11.592 [Vivox] Initialized version 5.25.4.33805.68548b92
+22:23:11.592 [Lua] INFO [PrivilegesManager] Using permissive privileges manager
+22:23:11.592 [Lua] INFO [PrivilegesManager] Using permissive privileges manager
+22:23:11.594 warning: [Profiler] [main] Stall 116 ms on frame 646: 
+    Application::update 117 ms
+        game update 117 ms
+            MyGame::update 117 ms
+                Lua->update 116 ms
+22:23:11.594 warning: [Profiler] [renderer] Stall 129 ms on frame 646: 
+    ThreadPool::do_work_while_waiting_for_event 129 ms
+22:23:11.595 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/havoc/eligible
+22:23:11.595 [Vivox] Issuing request req_connector_create
+22:23:11.595 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/havoc/latest
+22:23:11.595 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account
+22:23:11.595 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/commendations?includeStats=true&includeAll=false
+22:23:11.846 [Lua] INFO [StateTitle] Changing state signing_in -> loading_packages
+22:23:11.962 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/commendations?includeStats=false&includeAll=true
+22:23:12.231 [Lua] INFO [AchievementsManager] Downloaded unknown achievement 'multi_class_3' for player '1' with account id '1cf3d58a-1969-41e7-967c-06f71b04d1b1'.
+22:23:12.231 [Lua] INFO [AchievementsManager] Downloaded unknown achievement 'multi_class_4' for player '1' with account id '1cf3d58a-1969-41e7-967c-06f71b04d1b1'.
+22:23:12.245 [SteamStats] UserStatsStored success: true
+22:23:12.429 [Vivox] Issuing request req_account_anonymous_login
+22:23:12.597 [Vivox] Account login state change event: login_state_logging_in
+22:23:13.147 [Window] Window => inactive
+22:23:13.148 [Lua] INFO [Main] LUA window => DEACTIVATED
+22:23:13.798 [Vivox] Connection state changed event: 1
+22:23:14.198 [Vivox] Account login state change event: login_state_logged_in
+22:23:14.198 [Vivox] Issuing request req_connector_get_local_audio_info
+22:23:14.198 [Vivox] Issuing request req_aux_get_capture_devices
+22:23:14.198 [Vivox] Issuing request req_connector_mute_local_mic
+22:23:14.315 [Vivox] Issuing request req_connector_mute_local_mic
+22:23:14.816 [Vivox] Issuing request req_connector_get_local_audio_info
+22:23:40.172 [Lua] INFO [StateTitle] Changing state loading_packages -> legal_verification
+22:23:40.206 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/legal
+22:23:40.422 [Lua] INFO [StateTitle] Changing state legal_verification -> name_verification
+22:23:40.439 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account
+22:23:40.689 [Lua] INFO [StateTitle] Changing state name_verification -> done
+22:23:40.706 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: StateTitle
+22:23:40.708 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object AuspexScanningEffects
+22:23:40.708 [Lua] [MOD][ScanHelper][INFO] (hook_safe): Hooking 'init' from [AuspexScanningEffects] (Origin: function: 0x08be0b30)
+22:23:40.708 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object MissionIntroView
+22:23:40.708 [Lua] [MOD][CollectibleFinder][INFO] (hook_safe): Hooking 'on_enter' from [MissionIntroView] (Origin: function: 0x08ba9b80)
+22:23:40.709 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object PlasmagunOverheatEffects
+22:23:40.709 [Lua] [MOD][DisableScreenEffects][INFO] (hook): Hooking '_update_screenspace' from [PlasmagunOverheatEffects] (Origin: function: 0x08c212a8)
+22:23:40.709 [Lua] [MOD][DMF][INFO] Attempting to hook 5 delayed hooks for object HealthExtension
+22:23:40.709 [Lua] [MOD][debuff_indicator][INFO] (hook_safe): Hooking 'init' from [HealthExtension] (Origin: function: 0x087ae750)
+22:23:40.709 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'kill' from [HealthExtension] (Origin: function: 0x087ae958)
+22:23:40.709 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'init' from [HealthExtension] (Origin: function: 0x087ae750)
+22:23:40.709 [Lua] [MOD][crusher_attack_indicator][INFO] (hook_safe): Hooking 'init' from [HealthExtension] (Origin: function: 0x087ae750)
+22:23:40.709 [Lua] [MOD][crusher_attack_indicator][INFO] (hook_safe): Hooking 'kill' from [HealthExtension] (Origin: function: 0x087ae958)
+22:23:40.709 [Lua] [MOD][DMF][INFO] Attempting to hook 6 delayed hooks for object ViewElementProfilePresets
+22:23:40.709 [Lua] [MOD][BetterLoadouts][INFO] (hook_safe): Hooking 'destroy' from [ViewElementProfilePresets] (Origin: function: 0x0399cdb8)
+22:23:40.709 [Lua] [MOD][BetterLoadouts][INFO] (hook_safe): Hooking 'init' from [ViewElementProfilePresets] (Origin: function: 0x03998cd8)
+22:23:40.709 [Lua] [MOD][BetterLoadouts][INFO] (hook): Hooking 'cb_on_profile_preset_icon_grid_left_pressed' from [ViewElementProfilePresets] (Origin: function: 0x03998fa0)
+22:23:40.709 [Lua] [MOD][BetterLoadouts][INFO] (hook): Hooking '_present_tooltip_grid_layout' from [ViewElementProfilePresets] (Origin: function: 0x03998e00)
+22:23:40.709 [Lua] [MOD][BetterLoadouts][INFO] (hook): Hooking '_setup_preset_buttons' from [ViewElementProfilePresets] (Origin: function: 0x03998e20)
+22:23:40.709 [Lua] [MOD][BetterLoadouts][INFO] (hook_safe): Hooking 'cb_on_profile_preset_icon_grid_layout_changed' from [ViewElementProfilePresets] (Origin: function: 0x03998f80)
+22:23:40.709 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object InventoryView
+22:23:40.709 [Lua] [MOD][character_cosmetics_view_improved][INFO] (hook_safe): Hooking 'on_exit' from [InventoryView] (Origin: function: 0x09269bf8)
+22:23:40.709 [Lua] [MOD][BioPage][INFO] (hook): Hooking '_create_sequence_animator' from [InventoryView] (Origin: function: 0x0808fc68)
+22:23:40.709 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object InventoryBackgroundView
+22:23:40.709 [Lua] [MOD][BioPage][INFO] (hook_safe): Hooking '_setup_top_panel' from [InventoryBackgroundView] (Origin: function: 0x0399a8a8)
+22:23:40.709 [Lua] [MOD][DMF][INFO] Attempted to hook 205 delayed functions
+22:23:40.709 [Lua] INFO [PresenceManager] Activity changed title_screen -> main_menu
+22:23:40.709 [Lua] <<crashify-breadcrumb>>
+             	<<timestamp>73.755010<</timestamp>>
+             	<<value>>Entering Game State StateMainMenu<</value>>
+             <</crashify-breadcrumb>>
+22:23:40.709 [Lua] [MOD][DMF][INFO] MainMenuBackgroundView is now available for previously-delayed hooks.
+22:23:40.709 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [MainMenuBackgroundView] (Origin: function: 0x010263d8)
+22:23:40.709 [Lua] [MOD][DMF][INFO] Attempting to hook 7 delayed hooks for object MainMenuBackgroundView
+22:23:40.709 [Lua] [MOD][improved_character_menu][INFO] (hook): Hooking 'on_enter' from [MainMenuBackgroundView] (Origin: function: 0x03017360)
+22:23:40.709 [Lua] [MOD][improved_character_menu][INFO] (hook): Hooking 'update' from [MainMenuBackgroundView] (Origin: function: 0x00f91780)
+22:23:40.709 [Lua] [MOD][improved_character_menu][INFO] (hook): Hooking '_handle_background_blur' from [MainMenuBackgroundView] (Origin: function: 0x03016db0)
+22:23:40.709 [Lua] [MOD][enhanced_character_selection][INFO] (hook): Hooking 'update' from [MainMenuBackgroundView] (Origin: function: 0x00f91780)
+22:23:40.709 [Lua] [MOD][enhanced_character_selection][INFO] (hook): Hooking '_spawn_profile' from [MainMenuBackgroundView] (Origin: function: 0x04c13e58)
+22:23:40.709 [Lua] [MOD][enhanced_character_selection][INFO] (hook): Hooking 'event_main_menu_set_presentation_profile' from [MainMenuBackgroundView] (Origin: function: 0x00fc1578)
+22:23:40.709 [Lua] [MOD][enhanced_character_selection][INFO] (hook): Hooking 'on_exit' from [MainMenuBackgroundView] (Origin: function: 0x00f97c30)
+22:23:40.709 [Lua] INFO [BackendManager] title_request: GET /matchmaker/regions
+22:23:40.709 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: StateMainMenu
+22:23:40.717 [Lua] [MOD][DMF][INFO] Attempted to hook 181 delayed functions
+22:23:40.717 [Lua] INFO [ConstantElementLoading] State changed StateTitle -> StateMainMenu
+22:23:40.739 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters
+22:23:40.739 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/core
+22:23:40.740 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/progression
+22:23:40.740 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters/f4ae42f3-25c4-4504-94fd-11da8cea5bbc/data/narrative
+22:23:40.752 [Lua] INFO [ScriptWorld] Registering level named: "content/levels/ui/main_menu/main_menu" with id: 1
+22:23:40.799 [Lua] [MOD][DMF][INFO] MainMenuView is now available for previously-delayed hooks.
+22:23:40.799 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [MainMenuView] (Origin: function: 0x00c02770)
+22:23:40.799 [Lua] [MOD][DMF][INFO] Attempting to hook 13 delayed hooks for object MainMenuView
+22:23:40.799 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking '_set_selected_character_list_index' from [MainMenuView] (Origin: function: 0x01d26898)
+22:23:40.799 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking 'update' from [MainMenuView] (Origin: function: 0x0ab5b228)
+22:23:40.799 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking '_event_profiles_changed' from [MainMenuView] (Origin: function: 0x00938930)
+22:23:40.799 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking 'init' from [MainMenuView] (Origin: function: 0x0ab5b1d8)
+22:23:40.799 [Lua] [MOD][improved_character_menu][INFO] (hook): Hooking 'update' from [MainMenuView] (Origin: function: 0x0ab5b228)
+22:23:40.799 [Lua] [MOD][improved_character_menu][INFO] (hook): Hooking 'on_enter' from [MainMenuView] (Origin: function: 0x0ab5b200)
+22:23:40.799 [Lua] [MOD][improved_character_menu][INFO] (hook): Hooking '_sync_character_slots' from [MainMenuView] (Origin: function: 0x0ab5b2a0)
+22:23:40.799 [Lua] [MOD][improved_character_menu][INFO] (hook): Hooking '_set_player_profile_information' from [MainMenuView] (Origin: function: 0x07fe8720)
+22:23:40.799 [Lua] [MOD][improved_character_menu][INFO] (hook_safe): Hooking '_event_profiles_changed' from [MainMenuView] (Origin: function: 0x00938930)
+22:23:40.799 [Lua] [MOD][enhanced_character_selection][INFO] (hook): Hooking '_set_selected_character_list_index' from [MainMenuView] (Origin: function: 0x01d26898)
+22:23:40.799 [Lua] [MOD][CollectibleFinder][INFO] (hook_safe): Hooking 'on_enter' from [MainMenuView] (Origin: function: 0x0ab5b200)
+22:23:40.799 [Lua] [MOD][CustomUIColors][INFO] (hook_safe): Hooking 'update' from [MainMenuView] (Origin: function: 0x0ab5b228)
+22:23:40.799 [Lua] [MOD][CustomUIColors][INFO] (hook_safe): Hooking '_create_widgets' from [MainMenuView] (Origin: function: 0x0808fb68)
+22:23:40.801 [Lua] [MOD][CustomUIColors][INFO] === MainMenuView._create_widgets HOOK ===
+22:23:40.801 [Lua] [MOD][CustomUIColors][INFO] Loaded 32 widgets for main_menu
+22:23:40.801 [Lua] [MOD][CustomUIColors][INFO] Found 15 widgets
+22:23:40.803 [Lua] INFO [BackendManager] title_request: GET /data/experience-table/character
+22:23:40.803 [Lua] [MOD][true_level][INFO] fetching xp settings...
+22:23:40.803 [Lua] INFO [BackendManager] title_request: GET /tracks/dec942ce-b6ba-439c-95e2-022c5d71394d
+22:23:40.804 [Lua] [MOD][CustomUIColors][INFO] Updating MainMenuView colors
+22:23:40.806 [Lua] INFO [ScriptWorld] Registering level named: "content/levels/ui/portrait/portrait" with id: 1
+22:23:41.243 warning: [Profiler] [renderer] Stall 385 ms on frame 2394: 
+    RI::update_world 443 ms
+        update_world 443 ms
+            RenderWorld::update_state 443 ms
+                rrc dispatch 385 ms
+                    dispatch_runtime 385 ms
+                        d3d12_resource_context::dispatch 385 ms
+22:23:41.257 warning: [Profiler] [main] Stall 447 ms on frame 2395: 
+    Application::update 456 ms
+        RI::wait_for_fence 447 ms
+22:23:41.258 [Lua] INFO [BackendManager] title_request: POST /store/1cf3d58a-1969-41e7-967c-06f71b04d1b1/dlc/reconcile?platform=steam
+22:23:41.275 [Lua] INFO [PartyImmateriumManager] Joined new strike team
+22:23:41.275 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/surveys/
+22:23:41.275 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/trackstate/dec942ce-b6ba-439c-95e2-022c5d71394d?errorOnEmpty=false
+22:23:41.275 [Lua] INFO [BackendManager] title_request: GET /social
+22:23:41.275 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/mail?source=event&limit=100&includeUnreadGlobal=true&includeTranslation=true
+22:23:41.275 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/rewards/commendation?limit=1
+22:23:41.275 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters/f4ae42f3-25c4-4504-94fd-11da8cea5bbc/wallets
+22:23:41.275 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/wallets
+22:23:41.275 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/mail?source=news&limit=100&includeUnreadGlobal=true&includeTranslation=true
+22:23:41.605 [Lua] INFO [BackendManager] title_request: GET /social/1cf3d58a-1969-41e7-967c-06f71b04d1b1/friends
+22:23:41.605 [Lua] INFO [BackendManager] title_request: GET /social/1cf3d58a-1969-41e7-967c-06f71b04d1b1/block
+22:23:41.605 [Lua] INFO [BackendManager] url_request: GET https://bsp-cdn-prod.atoma.cloud/news-images/skitarii/freeupdateheader.png
+22:23:41.605 [Lua] INFO [BackendManager] url_request: GET https://bsp-cdn-prod.atoma.cloud/news-images/skitarii/headeroutnow.png
+22:23:41.605 [Lua] INFO [BackendManager] url_request: GET https://bsp-cdn-prod.atoma.cloud/news-images/skitarii/hereticalartifactsweb.png
+22:23:41.605 [Lua] INFO [BackendManager] url_request: GET https://bsp-cdn-prod.atoma.cloud/news-images/grim-protocols/maintenanceservocarousel.png
+22:23:41.822 [Lua] INFO [[DLCManager]] Leaving state: "idle"
+22:23:41.822 [Lua] INFO [[DLCManager]] Entering state: "present_rewards"
+22:23:41.842 [Lua] INFO [[DLCManager]] Leaving state: "present_rewards"
+22:23:41.842 [Lua] INFO [[DLCManager]] Entering state: "idle"
+22:23:47.921 [Lua] INFO [UIProfileSpawner] [cb_on_unit_3p_streaming_complete] unit: [Unit '#ID[f888cbd0f5a35360]']
+22:23:54.558 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:23:54.572 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:23:57.109 [Lua] INFO [UIProfileSpawner] [cb_on_unit_3p_streaming_complete] unit: [Unit '#ID[f888cbd0f5a35360]']
+22:23:57.247 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:23:59.275 [Lua] INFO [UIProfileSpawner] [cb_on_unit_3p_streaming_complete] unit: [Unit '#ID[f888cbd0f5a35360]']
+22:23:59.592 [Lua] INFO [BackendManager] title_request: POST /matchmaker/preferredreef
+22:24:01.442 [Lua] INFO [UIProfileSpawner] [cb_on_unit_3p_streaming_complete] unit: [Unit '#ID[f888cbd0f5a35360]']
+22:24:03.609 [Lua] INFO [UIProfileSpawner] [cb_on_unit_3p_streaming_complete] unit: [Unit '#ID[7e8ce97452215da6]']
+22:24:03.746 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:24:05.775 [Lua] INFO [UIProfileSpawner] [cb_on_unit_3p_streaming_complete] unit: [Unit '#ID[f888cbd0f5a35360]']
+22:24:32.885 [Window] Window => active
+22:24:32.885 [Lua] INFO [Main] LUA window => ACTIVATED
+22:24:34.902 [Lua] INFO [StateMainMenu] Starting the game with selected character f4ae42f3-25c4-4504-94fd-11da8cea5bbc
+22:24:34.932 [Lua] INFO [BackendManager] title_request: PUT /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/core
+22:24:35.166 [Lua] INFO [SessionBootBase] Changed state nil -> idle
+22:24:35.166 [Lua] INFO [PrivilegesManager] Using permissive privileges manager
+22:24:35.166 [Lua] INFO [SessionBootBase] Changed state idle -> hotjoining
+22:24:35.182 [Lua] INFO [Matchmaker] Resolved dedicated aliases: {
+	"hub-v1",
+	"hub:hash:9ce18f4979a38733",
+	"hub:steam:",
+	"hub:default",
+}
+22:24:35.182 [Lua] INFO [BackendManager] title_request: POST /matchmaker/queueticket
+22:24:35.183 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: StateMainMenu
+22:24:35.183 [Lua] [MOD][DMF][INFO] Attempted to hook 168 delayed functions
+22:24:35.183 [Lua] INFO [PresenceManager] Activity changed main_menu -> loading
+22:24:35.183 [Lua] <<crashify-breadcrumb>>
+             	<<timestamp>128.219748<</timestamp>>
+             	<<value>>Entering Game State StateLoading<</value>>
+             <</crashify-breadcrumb>>
+22:24:35.183 [Lua] INFO [LoadTimesReporter] Starting timer loading_timer
+22:24:35.183 [Lua] INFO [LoadTimesReporter] Starting timer wait_for_network_timer
+22:24:35.183 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: StateLoading
+22:24:35.190 [Lua] [MOD][DMF][INFO] Attempted to hook 168 delayed functions
+22:24:35.200 [Lua] INFO [ConstantElementLoading] State changed StateMainMenu -> StateLoading
+22:24:35.200 [Lua] INFO [ConstantElementLoading] Opening view "loading_view"
+22:24:35.221 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/progression
+22:24:35.221 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters
+22:24:35.221 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/core
+22:24:35.581 warning: [Profiler] [renderer] Stall 103 ms on frame 5637: 
+    ThreadPool::do_work_while_waiting_for_event 103 ms
+22:24:35.634 warning: [Profiler] [main] Stall 146 ms on frame 5637: 
+    Application::update 147 ms
+        game update 147 ms
+            MyGame::update 147 ms
+                Lua->update 146 ms
+22:24:35.738 [Lua] INFO [PartyImmateriumManager] Hot joined hub session, matched_hub_session_id = aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857
+22:24:35.738 [Lua] INFO [BackendManager] title_request: GET /hub/sessions/aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857/serverdetails
+22:24:35.738 [Lua] INFO [SessionBootBase] Changed state hotjoining -> fetchingserverdetails
+22:24:35.988 [Lua] INFO [PartyImmateriumHubSessionBoot] Got server details: {
+	serverDetails = {
+		properties = {
+			aws_auto_scaling_group_name = "aws-asg--prod-blue--us-west--aws-us-west-2--prod--drab-tomato-cricket--5",
+			aws_instance_id = "i-0d8df684c3d04e884",
+			aws_region = "us-west-2",
+			dedicated_type = "aws-asg",
+			fleet_registrar_base_url = "https://fr-prod.atoma.cloud",
+			game_udp_cert = "-----BEGIN CERTIFICATE-----
+MIIE+zCCAuOgAwIBAgIUa0v9hurkaeXiaek2cENXt0q+ZzYwDQYJKoZIhvcNAQEL
+BQAwDTELMAkGA1UEBhMCU0UwHhcNMjIwNzI1MTE0NDEzWhcNNDkxMjEwMTE0NDEz
+WjANMQswCQYDVQQGEwJTRTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIB
+AO+niqQL+tnGo9dscppwh8R0IXN4yqbq0WY08jvCuQH1+NAfamvdCfsdREKsRImb
+lP7LammBYqKC4VNa9cMvquBZbqknAlRnM0E96mI0fyrzP5qe0dDluKvOas+oG1MQ
+oBdEbf7vr7YTPN4RJpBha1r8uUVzzWlOST4Xk5Zbf3T2BZZz5agD1758LzNOYG0M
++2aFmzesJk01c2OJO+I+g+NXfiXRRXGU1SFjA+1nyYVzDsMr2EQi+wNDxxYL1WdD
+vLtF/kW2czuB6uOq2vYyoYAD0lK3srvIagNjB0+uYSg9qOqSYD+bDhiHc9bI5P1l
+mNRf6z4Dc6d/1St/8v6Su3dBgdctlSuGYJuWDF8kVgDFn0qbItp9ZELQqTvYEW0Q
+FYLZV6t0cv78nQ8EuElFdsSS04xIc2bKMPdeb0u1fMwbj8AjpSog5XfQNnDcESBP
+XC2ZLmDMPWmedrCH9WHPqH3idMNqJMNOVWevvKk4DHJSbhLTi/oNlqx6l2z0z4cN
+JTPjDEZytEeyLpZM44jznp0hQ04ZKmJy8HgPF1AR7tcq0dPUEPEihj3QEfC5TmP3
+2F1l7A3Yimbe+X+F2h8xbd1lWvh5zLYKyxCV2sRrDmjd+PSMl+16zG5yiVZbgruK
+1wnEdpM7Uxvs7p7I7M5kJKDm4jOp+zarWcfw5hAEGebVAgMBAAGjUzBRMB0GA1Ud
+DgQWBBTwYmJQtopx/8stbSALs3BYPYxfYzAfBgNVHSMEGDAWgBTwYmJQtopx/8st
+bSALs3BYPYxfYzAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4ICAQCg
++AOy6yxu7TcHA6agbi5h85ar/w5heg92P7sqvI3H3qVfXNNUyo0+nrDiuMkeCAfQ
+L49D/8Xi3rQY6CIFR2ljICJIdIxj6vWi8dIbcRW4fBWc/Bf5O7CaVbcV4TiEFD8v
+6oil4rOILpKot5Um8SXRxILLvSChy5o3BjSXI5V2cA9HoCIn5GhskRmomC4I8nqO
+Wnp4QLsVgFa64tVHuI19q6D73mL0j1S+te4J3OSvNmjvzDQeLqE8GicWe1AGyeIM
+T2bmzRfsApNcqKT/FZc0Vcjs59qHSzBXDeGQejoRx11QZeZ2827EgvIaYdZKQplO
+A0dc5KF1M6YCgxSroPvcNb2/IvHQ8n2Dm+ldzgOUqYrV1uU+ciRl5hNK8wK4YuFI
+4GMaCl1mGLlVFOEREU7wTQDy7pAGGgScmq8575HvZjmGwTWKgKZfFAFqhJ7V2Dis
+h09uMH9QqDGw4q6Qg7O/t+JF1uff6DyW20XK+5JgtELKfXHv19inUeYcXlRtQHEc
+zCaYsjuOjsp/ZbuZ1nPo+P7lYqLCLgxqZw0heh4uEr0cCIP2AB4XdGLm+8xiYqke
+pPEjTYP6wGvmyqsQ9Y8V25nwqNb6+2oRlZ29xvZ3edHBV5Sj9JaacQ2t3/XpaG3P
+KV/1y5rfT9hNPQXcnu4xXqSzMaYgfHyk7c3c3C0//A==
+-----END CERTIFICATE-----
+",
+			host_type = "hub_server",
+			instance_id = "aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857",
+			ip = "44.248.145.208",
+			jwt_sign_key_id = "aws-asg--prod-blue--us-west--aws-us-west-2--prod--drab-tomato-cricket--5",
+			network_hash = "9ce18f4979a38733",
+			port = "35510",
+			reef_name = "us-west",
+			region = "aws-us-west-2",
+		},
+		type = "dedicated",
+	},
+	ticket = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImF3cy1hc2ctLXByb2QtYmx1ZS0tdXMtd2VzdC0tYXdzLXVzLXdlc3QtMi0tcHJvZC0tZHJhYi10b21hdG8tY3JpY2tldC0tNSJ9.eyJwYXJ0aWNpcGFudCI6eyJhY2NvdW50SWQiOiIxY2YzZDU4YS0xOTY5LTQxZTctOTY3Yy0wNmY3MWIwNGQxYjEiLCJjaGFyYWN0ZXJJZCI6IkhVQiJ9LCJleHAiOjE3ODM4OTUxMzUsImluc3RhbmNlSWQiOiJhd3MtYXNnLS1hd3MtdXMtd2VzdC0yLS1kcmFiLXRvbWF0by1jcmlja2V0LS1pLTBkOGRmNjg0YzNkMDRlODg0LS1zZXJ2ZXItMi0tMTc4Mzg4NDg1NyIsInNlc3Npb25JZCI6ImF3cy1hc2ctLWF3cy11cy13ZXN0LTItLWRyYWItdG9tYXRvLWNyaWNrZXQtLWktMGQ4ZGY2ODRjM2QwNGU4ODQtLXNlcnZlci0yLS0xNzgzODg0ODU3Iiwic2Vzc2lvblR5cGUiOiJodWIiLCJzZXNzaW9uU2V0dGluZ3MiOnsic29ydGVkU2V0S2V5Ijoic2Vzc2lvbnNfc29ydGVkMl9wcm9kX2F3cy1hc2ctLXByb2QtYmx1ZS0tdXMtd2VzdC0tYXdzLXVzLXdlc3QtMi0tcHJvZC0tZHJhYi10b21hdG8tY3JpY2tldC0tNV9odWJfYWxsIn0sImJhY2tmaWxsIjpmYWxzZX0.dpZTcPq5GPMDiDXTX0ik8ofzgOhRupV4TTr2qqelnko-ox4GxQG8qu8uAcXErhFYfIdzxP7oTTwB18MdvAikkmKSthK2-ZU3eKt-13FadKbKLRW2cPHrmfuyZg_xQf4-IoIlAwqVSrrqKh8SzQQHhr_c-32wSDnHqhtzvuu0bWZSDCOusaelCL2d1QQU9VM5ZtZYmhOuDYL1dCA2F0P7lAmIDBw6pmSzpqV0mkDAu-nxj_0CDthssDwoPK41JjkfvJeX_Ov6zz2oVUsRqXiBneYmVrTvwGFY4PoWsam_zyDD307XTgC3Pa6QY4muVqe21ETYpuroJ8M8m-WnwDEyDw",
+	vivoxToken = {
+		channelSip = "sip:confctl-g-fatsha0462-da92.hub.aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857@mt2p.vivox.com",
+		channelType = "g",
+		expiresInSeconds = 90,
+		token = "e30.eyJpc3MiOiJmYXRzaGEwNDYyLWRhOTIiLCJleHAiOjE3ODM4OTUxNjUsInZ4YSI6ImpvaW4iLCJ2eGkiOjE3ODM4OTUwNzU5NzAsImYiOiJzaXA6LmZhdHNoYTA0NjItZGE5Mi4xY2YzZDU4YS0xOTY5LTQxZTctOTY3Yy0wNmY3MWIwNGQxYjEuQG10MnAudml2b3guY29tIiwidCI6InNpcDpjb25mY3RsLWctZmF0c2hhMDQ2Mi1kYTkyLmh1Yi5hd3MtYXNnLS1hd3MtdXMtd2VzdC0yLS1kcmFiLXRvbWF0by1jcmlja2V0LS1pLTBkOGRmNjg0YzNkMDRlODg0LS1zZXJ2ZXItMi0tMTc4Mzg4NDg1N0BtdDJwLnZpdm94LmNvbSJ9.bTS25G5xNG6-HZ8YY9QoRJfTNHUFPB6_i2WGZbRN85s",
+		usernameSip = "sip:.fatsha0462-da92.1cf3d58a-1969-41e7-967c-06f71b04d1b1.@mt2p.vivox.com",
+	},
+}
+22:24:35.988 [Lua] INFO [PartyImmateriumHubSessionBoot] Searching for WAN lobby on 44.248.145.208:35510
+22:24:35.988 [Lua] INFO [SessionBootBase] Changed state fetchingserverdetails -> handshake
+22:24:35.989 [Lua] INFO [SessionBootBase] Changed state handshake -> searching
+22:24:36.642 [D3D12_RESOURCE] Render Target '#ID[60a1b6186dddd602]' was not released, refcount: 1
+22:24:36.645 [D3D12_RESOURCE] Render Target '#ID[755c1ae405b532ef]' was not released, refcount: 1
+22:24:38.991 [Lua] INFO [PartyImmateriumHubSessionBoot] Found lobby, joining...
+22:24:38.991 [Lua] INFO [SessionBootBase] Changed state searching -> joining
+22:24:39.175 [Lua] INFO [PartyImmateriumHubSessionBoot] Joined lobby d9d9a948bd9c25f9
+22:24:39.176 [Lua] <<crashify-property>>instance_id = aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857<</crashify-property>>
+22:24:39.176 [Lua] <<crashify-property>>session_id = aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857<</crashify-property>>
+22:24:39.176 [Lua] INFO [SessionBootBase] Changed state joining -> ready
+22:24:39.176 [Lua] <<crashify-property>>peer_id = 97bde5e20ae1e1cd<</crashify-property>>
+22:24:39.176 [Lua] INFO [SessionBootBase] Changed state ready -> idle
+22:24:39.176 [Lua] INFO [ConnectionManager] My peer id is 97bde5e20ae1e1cd.
+22:24:39.176 [Lua] INFO [ConnectionManager] Setting ping timeout to 10.000000
+22:24:39.176 [Lua] [MOD][DMF][INFO] ViewLoader is now available for previously-delayed hooks.
+22:24:39.176 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [ViewLoader] (Origin: function: 0x06032590)
+22:24:39.176 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object ViewLoader
+22:24:39.176 [Lua] [MOD][DMF][INFO] (hook_safe): Hooking 'init' from [ViewLoader] (Origin: function: 0x061ba540)
+22:24:39.191 [Lua] INFO [ConnectionManager] Peer d9d9a948bd9c25f9 is connecting
+22:24:39.375 [Lua] INFO [LocalAwaitConnectionBootedState] Boot complete, notifying host
+22:24:39.492 [Lua] INFO [LocalAwaitConnectionBootedState] Host ready, proceeding to next state
+22:24:39.592 [Lua] INFO [LocalMasterItemsCheckState] Host items version 133319 matches local version
+22:24:39.692 [Lua] INFO [LocalMechanismVerificationState] Sending JWT Ticket, total length 1119 split into 3 chunks
+22:24:39.692 [Lua] INFO [LocalMechanismVerificationState] Sending JWT Ticket part 1/3, string length 500, is_last_part: false
+22:24:39.692 [Lua] INFO [LocalMechanismVerificationState] Sending JWT Ticket part 2/3, string length 500, is_last_part: false
+22:24:39.692 [Lua] INFO [LocalMechanismVerificationState] Sending JWT Ticket part 3/3, string length 119, is_last_part: true
+22:24:40.209 [Lua] INFO [LocalEacCheckState] Eac approved
+22:24:41.177 [Lua] INFO [LocalDataSyncState] session_seed recieved 955811272
+22:24:41.544 [Lua] INFO [MechanismManager] Connecting to mechanism host on channel 3
+22:24:41.661 [Lua] INFO [MechanismManager] Received mechanism "hub" from host.
+22:24:41.661 [Lua] INFO [MechanismManager] Change mechanism <none>->"hub"
+22:24:41.661 warning: [Lua] WARNING [NetworkEventDelegate] Network event not registered "rpc_resend_mission_seed_request"
+22:24:41.677 [Lua] INFO [ConnectionManager] Peer d9d9a948bd9c25f9 is connected
+22:24:41.677 [Lua] INFO [ConnectionManager] Joined host channel(3), peer(d9d9a948bd9c25f9), host_type(hub_server)
+22:24:41.679 [Lua] INFO [Package Sync Client] Add Player, peer_id: 97bde5e20ae1e1cd, local_player_id: 1
+22:24:41.679 [Lua] INFO [ChatManager] Joining channel sip:confctl-g-fatsha0462-da92.hub.aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857@mt2p.vivox.com peer_id: d9d9a948bd9c25f9 tag: HUB enabling voice: false enabling text: true
+22:24:41.679 [Lua] INFO [MultiplayerSession] Joined Server: The Sub-par Cave Conundrum
+22:24:41.679 [Lua] INFO [MatchmakingNotificationHandler] Joined host
+22:24:41.679 [Lua] INFO [ConnectionManager] _peer_connected d9d9a948bd9c25f9
+22:24:41.694 [Vivox] Issuing request req_sessiongroup_add_session
+22:24:41.694 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters/f4ae42f3-25c4-4504-94fd-11da8cea5bbc/difficulty
+22:24:41.694 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters/f4ae42f3-25c4-4504-94fd-11da8cea5bbc/access
+22:24:41.694 [Lua] INFO [BackendManager] title_request: GET /data/campaigns
+22:24:41.694 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters/f4ae42f3-25c4-4504-94fd-11da8cea5bbc/campaigns/player-journey/skip
+22:24:41.694 [Lua] INFO [BackendManager] title_request: GET /tracks/category/expedition
+22:24:41.694 [Lua] INFO [StateLoading] Resetting player game state. New game_state_context: {
+	mission_giver_vo = "none",
+}
+22:24:41.727 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/havoc/latest
+22:24:41.727 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/havoc/eligible
+22:24:41.727 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/havoc/summary
+22:24:41.728 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/mail?source=compensation&limit=100&includeUnreadGlobal=true&includeTranslation=true
+22:24:41.728 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/core
+22:24:41.728 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters/f4ae42f3-25c4-4504-94fd-11da8cea5bbc/data/narrative|events
+22:24:41.844 [Vivox] Sessiongroup added event: sg_.fatsha0462-da92.1cf3d58a-1969-41e7-967c-06f71b04d1b1.
+22:24:41.927 [Lua] INFO [BackendManager] title_request: GET /mission-board
+22:24:41.928 [Lua] INFO [BackendManager] title_request: GET /mission-event
+22:24:41.928 [Lua] INFO [BackendManager] title_request: GET /tracks/f4c6ba69-a1ca-4ee9-bd49-7205715e40e8/graph/layout
+22:24:41.944 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/trackstate/f4c6ba69-a1ca-4ee9-bd49-7205715e40e8?errorOnEmpty=false
+22:24:41.944 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/statistics/expedition|campaign|CAMP002|rotation|ROT01
+22:24:41.944 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters/f4ae42f3-25c4-4504-94fd-11da8cea5bbc/contracts/current?createIfMissing=false
+22:24:41.945 [Vivox] Session added event: sip:confctl-g-fatsha0462-da92.hub.aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857@mt2p.vivox.com
+22:24:42.045 [Vivox] Participant added event: sip:.fatsha0462-da92.026e7932-adc4-43dd-b55c-0dacc3c08156.@mt2p.vivox.com bbb2a58c5f99fdfb|026e7932-adc4-43dd-b55c-0dacc3c08156
+22:24:42.147 warning: [HTTP System] Unhandled cache directive: stale-while-revalidate=30
+22:24:42.147 warning: [HTTP System] Unhandled cache directive: stale-if-error=30
+22:24:42.280 [Lua] INFO [ConnectionManager] Remote peer 4765d023b3258109 connected to host
+22:24:42.282 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:24:42.282 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_inject_ally) over (cryptic_flamethrower) due to higher prio. (5 > 5)
+22:24:42.284 [Lua] INFO [Package Sync Client] Add Player, peer_id: 4765d023b3258109, local_player_id: 1
+22:24:42.287 warning: [Profiler] [main] Stall 108 ms on frame 6027: 
+    Application::update 110 ms
+        game update 110 ms
+            MyGame::update 110 ms
+                Lua->update 108 ms
+22:24:42.333 warning: [Profiler] [renderer] Stall 169 ms on frame 6027: 
+    ThreadPool::do_work_while_waiting_for_event 169 ms
+22:24:42.335 [Vivox] Participant added event: sip:.fatsha0462-da92.1b7f1855-b246-4a3d-bb31-5af6a483badf.@mt2p.vivox.com b4cc6ea29d7380e9|1b7f1855-b246-4a3d-bb31-5af6a483badf
+22:24:42.384 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters/f4ae42f3-25c4-4504-94fd-11da8cea5bbc/contracts/current?createIfMissing=true
+22:24:42.451 [Lua] INFO [ConnectionManager] Remote peer bbb2a58c5f99fdfb connected to host
+22:24:42.452 [Lua] INFO [CharacterSheet] Selecting talent (psyker_sphere_shield) over (psyker_combat_ability_force_field) due to higher prio. (14 > 13)
+22:24:42.454 [Lua] INFO [Package Sync Client] Add Player, peer_id: bbb2a58c5f99fdfb, local_player_id: 1
+22:24:42.534 [Vivox] Participant added event: sip:.fatsha0462-da92.1fd36a77-84b9-4fd0-953d-75e1dc483639.@mt2p.vivox.com 8467a4550c8ca1bd|1fd36a77-84b9-4fd0-953d-75e1dc483639
+22:24:42.551 [Lua] INFO [ConnectionManager] Remote peer 4f7bb2795dcfcc3f connected to host
+22:24:42.554 [Lua] INFO [Package Sync Client] Add Player, peer_id: 4f7bb2795dcfcc3f, local_player_id: 1
+22:24:42.601 [Lua] INFO [MechanismBase] Mechanism hub changing state init -> request_hub_config
+22:24:42.601 [Lua] INFO [MechanismBase] Mechanism hub changing state request_hub_config -> init_hub
+22:24:42.618 [Lua] INFO [MechanismBase] Mechanism hub changing state init_hub -> in_hub
+22:24:42.618 [Lua] INFO [MechanismHub] Loading hub level content/levels/hub/hub_ship/missions/hub_ship with mission hub_ship and circumstance default.
+22:24:42.618 [Lua] INFO [StateLoading] Resetting player game state. New game_state_context: {
+	circumstance_name = "default",
+	mission_giver_vo = "none",
+	mission_name = "hub_ship",
+}
+22:24:42.734 [Vivox] Participant added event: sip:.fatsha0462-da92.27ed64c5-6c92-40fb-8709-ac5edf54b309.@mt2p.vivox.com 4499eb9afdef4d2d|27ed64c5-6c92-40fb-8709-ac5edf54b309
+22:24:42.851 [Lua] INFO [ConnectionManager] Remote peer 683108109710baf7 connected to host
+22:24:42.854 [Lua] INFO [Package Sync Client] Add Player, peer_id: 683108109710baf7, local_player_id: 1
+22:24:42.934 [Vivox] Participant added event: sip:.fatsha0462-da92.3f3e593e-2e30-4eac-9e6b-d388e56b4604.@mt2p.vivox.com 15e0135d190ca25a|3f3e593e-2e30-4eac-9e6b-d388e56b4604
+22:24:43.034 [Lua] INFO [ConnectionManager] Remote peer b4cc6ea29d7380e9 connected to host
+22:24:43.035 [Lua] INFO [CharacterSheet] Selecting talent (zealot_additional_charge_of_ability) over (zealot_attack_speed_post_ability) due to higher prio. (13 > 12)
+22:24:43.037 [Lua] INFO [Package Sync Client] Add Player, peer_id: b4cc6ea29d7380e9, local_player_id: 1
+22:24:43.135 [Vivox] Participant added event: sip:.fatsha0462-da92.40c24569-5f77-4e01-bfa7-06d35bdcaad1.@mt2p.vivox.com 4f7bb2795dcfcc3f|40c24569-5f77-4e01-bfa7-06d35bdcaad1
+22:24:43.235 [Lua] INFO [ConnectionManager] Remote peer dd6bab9ddec9dd19 connected to host
+22:24:43.237 [Lua] INFO [Package Sync Client] Add Player, peer_id: dd6bab9ddec9dd19, local_player_id: 1
+22:24:43.335 [Vivox] Participant added event: sip:.fatsha0462-da92.43a71479-3cac-44ac-a929-58e7da25a8df.@mt2p.vivox.com c2f87aebc204898d|43a71479-3cac-44ac-a929-58e7da25a8df
+22:24:43.401 [Lua] INFO [ConnectionManager] Remote peer 3cd328997a6ed7a6 connected to host
+22:24:43.403 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_inject_ally) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:24:43.404 [Lua] INFO [Package Sync Client] Add Player, peer_id: 3cd328997a6ed7a6, local_player_id: 1
+22:24:43.485 [Lua] INFO [ConnectionManager] Remote peer 011b30ea76b3c7d4 connected to host
+22:24:43.487 [Lua] INFO [Package Sync Client] Add Player, peer_id: 011b30ea76b3c7d4, local_player_id: 1
+22:24:43.535 [Vivox] Participant added event: sip:.fatsha0462-da92.593bc0f2-5863-47e1-b582-677299a6d63f.@mt2p.vivox.com dd6bab9ddec9dd19|593bc0f2-5863-47e1-b582-677299a6d63f
+22:24:43.635 [Lua] INFO [ConnectionManager] Remote peer 15e0135d190ca25a connected to host
+22:24:43.638 [Lua] INFO [Package Sync Client] Add Player, peer_id: 15e0135d190ca25a, local_player_id: 1
+22:24:43.718 [Lua] INFO [ConnectionManager] Remote peer 22bcc44af822295c connected to host
+22:24:43.721 [Lua] INFO [Package Sync Client] Add Player, peer_id: 22bcc44af822295c, local_player_id: 1
+22:24:43.735 [Vivox] Participant added event: sip:.fatsha0462-da92.5dc5707f-4a73-4e0f-b6bd-50f3a2e77c18.@mt2p.vivox.com 011b30ea76b3c7d4|5dc5707f-4a73-4e0f-b6bd-50f3a2e77c18
+22:24:43.819 [Lua] INFO [ConnectionManager] Remote peer 220399d6eee67f66 connected to host
+22:24:43.821 [Lua] INFO [Package Sync Client] Add Player, peer_id: 220399d6eee67f66, local_player_id: 1
+22:24:43.936 [Vivox] Participant added event: sip:.fatsha0462-da92.65c49b3f-407f-4d3a-a3e8-802773e4ac19.@mt2p.vivox.com 683108109710baf7|65c49b3f-407f-4d3a-a3e8-802773e4ac19
+22:24:43.952 [Lua] INFO [ConnectionManager] Remote peer 7c45be6d9bba2db3 connected to host
+22:24:43.955 [Lua] INFO [Package Sync Client] Add Player, peer_id: 7c45be6d9bba2db3, local_player_id: 1
+22:24:44.119 [Lua] INFO [ConnectionManager] Remote peer c2f87aebc204898d connected to host
+22:24:44.120 [Lua] INFO [CharacterSheet] Selecting talent (zealot_increased_duration) over (zealot_stealth) due to higher prio. (13 > 12)
+22:24:44.122 [Lua] INFO [Package Sync Client] Add Player, peer_id: c2f87aebc204898d, local_player_id: 1
+22:24:44.136 [Vivox] Participant added event: sip:.fatsha0462-da92.778f275d-216b-4fae-bfe8-142a0f0859a5.@mt2p.vivox.com 3cd328997a6ed7a6|778f275d-216b-4fae-bfe8-142a0f0859a5
+22:24:44.269 [Lua] INFO [ConnectionManager] Remote peer 4499eb9afdef4d2d connected to host
+22:24:44.270 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:24:44.270 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_inject_ally) over (cryptic_flamethrower) due to higher prio. (5 > 5)
+22:24:44.271 [Lua] INFO [Package Sync Client] Add Player, peer_id: 4499eb9afdef4d2d, local_player_id: 1
+22:24:44.319 [Lua] INFO [ConnectionManager] Remote peer a312db86fb6ef8da connected to host
+22:24:44.321 [Lua] INFO [Package Sync Client] Add Player, peer_id: a312db86fb6ef8da, local_player_id: 1
+22:24:44.336 [Vivox] Participant added event: sip:.fatsha0462-da92.7c7c19d6-6ea4-4523-9a3a-9d4cc0c4b274.@mt2p.vivox.com 7c45be6d9bba2db3|7c7c19d6-6ea4-4523-9a3a-9d4cc0c4b274
+22:24:44.369 [Lua] INFO [ConnectionManager] Remote peer 8467a4550c8ca1bd connected to host
+22:24:44.371 [Lua] INFO [Package Sync Client] Add Player, peer_id: 8467a4550c8ca1bd, local_player_id: 1
+22:24:44.436 [Lua] INFO [ConnectionManager] Remote peer b1759de03bb70359 connected to host
+22:24:44.438 [Lua] INFO [Package Sync Client] Add Player, peer_id: b1759de03bb70359, local_player_id: 1
+22:24:44.539 [Vivox] Participant added event: sip:.fatsha0462-da92.b683ccf4-ec67-4ae6-898e-17878985ee28.@mt2p.vivox.com 4765d023b3258109|b683ccf4-ec67-4ae6-898e-17878985ee28
+22:24:44.703 [Lua] INFO [Profile Sync Client] rpc_profile_synced_by_all, player:set_profile(), peer_id: 4499eb9afdef4d2d, local_player_id: 1
+22:24:44.736 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:24:44.736 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_inject_ally) over (cryptic_flamethrower) due to higher prio. (5 > 5)
+22:24:44.738 [Vivox] Participant added event: sip:.fatsha0462-da92.bff5f123-d892-44ef-892d-98a3cf64d76a.@mt2p.vivox.com 220399d6eee67f66|bff5f123-d892-44ef-892d-98a3cf64d76a
+22:24:44.936 [Vivox] Participant added event: sip:.fatsha0462-da92.cc3804eb-da37-4ada-b78e-8dd4cce5a220.@mt2p.vivox.com b1759de03bb70359|cc3804eb-da37-4ada-b78e-8dd4cce5a220
+22:24:45.070 [Lua] INFO [StateLoading] [_start_loading] needs_load_level(true), mission_name(hub_ship), circumstance_name(default), side_mission(default)
+22:24:45.070 [Lua] INFO [LoadTimesReporter] Stopping timer wait_for_network_timer
+22:24:45.070 [Lua] INFO [LoadTimesReporter] Starting timer resource_loading_timer
+22:24:45.137 [Vivox] Participant added event: sip:.fatsha0462-da92.cf2c3eaa-c3ce-481c-bd30-42a6acf1a115.@mt2p.vivox.com a312db86fb6ef8da|cf2c3eaa-c3ce-481c-bd30-42a6acf1a115
+22:24:45.304 [Lua] INFO [TalentLayoutParser] Failed parsing talent string. Could not locate ";" for version number. ("")
+22:24:45.337 [Vivox] Participant added event: sip:.fatsha0462-da92.f0a8d931-ca24-4692-81a1-1d8a35d919a7.@mt2p.vivox.com 22bcc44af822295c|f0a8d931-ca24-4692-81a1-1d8a35d919a7
+22:24:45.537 [Vivox] Text stream updated event: session_text_connecting
+22:24:45.637 [Vivox] Text stream updated event: session_text_connected
+22:24:45.737 [Vivox] Participant added event: sip:.fatsha0462-da92.1cf3d58a-1969-41e7-967c-06f71b04d1b1.@mt2p.vivox.com 97bde5e20ae1e1cd|1cf3d58a-1969-41e7-967c-06f71b04d1b1
+22:24:46.974 warning: [ResourceManager] Don't know how to load `#ID[81f59b9ae1d7ebc2]` `#ID[87dc8d65c44e1bef]`
+22:24:46.974 warning: [ResourceManager] Don't know how to load `#ID[81f59b9ae1d7ebc2]` `#ID[b1c784f33db81f02]`
+22:24:53.718 warning: [ResourceManager] Ignoring resource lookup for unknown resource type `#ID[87dc8d65c44e1bef].#ID[81f59b9ae1d7ebc2]`
+22:24:53.718 warning: [ResourceManager] Ignoring resource lookup for unknown resource type `#ID[b1c784f33db81f02].#ID[81f59b9ae1d7ebc2]`
+22:25:03.410 [Window] Window => inactive
+22:25:03.410 [Lua] INFO [Main] LUA window => DEACTIVATED
+22:25:06.214 [MOC] Using moc implementation AVX2
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering level named: "content/levels/hub/hub_ship/missions/hub_ship" with id: 1
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_barber/world.level" with id: 2
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_credits/world.level" with id: 3
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_contracts/world.level" with id: 4
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/mourningstar/world.level" with id: 5
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_premium/world.level" with id: 6
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_penances/world.level" with id: 7
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_havoc/world.level" with id: 8
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_cosmetics/world.level" with id: 9
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_training/world.level" with id: 10
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_journal/world.level" with id: 11
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/vista/world.level" with id: 12
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_horde/world.level" with id: 13
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_expeditions/world.level" with id: 14
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/feature_interaction_crafting/world.level" with id: 15
+22:25:06.246 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/hub/hub_ship/missions/hub_ship_themes/default/theme_default_hub_ship.level" with id: 16
+22:25:07.791 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: StateLoading
+22:25:07.791 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.791 [Lua] <<crashify-breadcrumb>>
+             	<<timestamp>160.840396<</timestamp>>
+             	<<value>>Entering Game State StateGameplay<</value>>
+             <</crashify-breadcrumb>>
+22:25:07.791 [Lua] <<crashify-property>>mission = hub_ship<</crashify-property>>
+22:25:07.791 [Lua] <<crashify-breadcrumb>>
+             	<<timestamp>160.840396<</timestamp>>
+             	<<value>>StateGameplay:on_enter(): hub_ship<</value>>
+             <</crashify-breadcrumb>>
+22:25:07.791 [Lua] <<crashify-property>>circumstance = default<</crashify-property>>
+22:25:07.791 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFrameRate
+22:25:07.791 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.791 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayStateInit
+22:25:07.791 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.791 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: StateGameplay
+22:25:07.791 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.792 [Lua] INFO [ConstantElementLoading] State changed StateLoading -> GameplayStateInit
+22:25:07.808 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFrameRate
+22:25:07.808 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.808 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepOutOfBounds
+22:25:07.808 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.825 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepOutOfBounds
+22:25:07.825 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.881 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNavWorld
+22:25:07.881 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.883 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNavWorld
+22:25:07.883 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.883 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepDebug
+22:25:07.883 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.900 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepDebug
+22:25:07.900 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.900 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFreeFlight
+22:25:07.900 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.916 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFreeFlight
+22:25:07.916 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.916 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepGameSession
+22:25:07.917 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.933 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepGameSession
+22:25:07.933 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.933 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepGameMode
+22:25:07.933 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.950 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepGameMode
+22:25:07.950 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.950 [Lua] <<crashify-property>>num_missions_started = 1<</crashify-property>>
+22:25:07.950 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepMission
+22:25:07.950 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.967 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepMission
+22:25:07.967 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.967 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepBoneLod
+22:25:07.967 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.983 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepBoneLod
+22:25:07.983 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:07.984 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNavigation
+22:25:07.984 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:08.000 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNavigation
+22:25:08.000 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:08.000 [Lua] [MOD][DMF][INFO] ActionBase is now available for previously-delayed hooks.
+22:25:08.000 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [ActionBase] (Origin: function: 0x09635a18)
+22:25:08.001 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'fixed_update' from [PsykerSmiteTargetingActionModule] (Origin: function: 0x0b7980a0)
+22:25:08.001 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'fixed_update' from [SmartTargetingActionModule] (Origin: function: 0x0ae42d48)
+22:25:08.001 [Lua] [MOD][DMF][INFO] WarpChargeActionModule is now available for previously-delayed hooks.
+22:25:08.001 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [WarpChargeActionModule] (Origin: function: 0x0c5d8050)
+22:25:08.001 [Lua] [MOD][DMF][INFO] ActionCharacterStateChange is now available for previously-delayed hooks.
+22:25:08.001 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [ActionCharacterStateChange] (Origin: function: 0x0b34c9c8)
+22:25:08.001 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'finish' from [ActionCharacterStateChange] (Origin: function: 0x03fd66e8)
+22:25:08.001 [Lua] [MOD][DMF][INFO] ActionHandler is now available for previously-delayed hooks.
+22:25:08.001 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [ActionHandler] (Origin: function: 0x0ae4ec90)
+22:25:08.001 [Lua] [MOD][DMF][INFO] PlayerUnitAbilityExtension is now available for previously-delayed hooks.
+22:25:08.001 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [PlayerUnitAbilityExtension] (Origin: function: 0x08682d08)
+22:25:08.001 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking 'init' from [PlayerUnitAbilityExtension] (Origin: function: 0x0b1d4728)
+22:25:08.001 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking 'use_ability_charge' from [PlayerUnitAbilityExtension] (Origin: function: 0x06347be8)
+22:25:08.002 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking 'extensions_ready' from [PlayerUnitActionInputExtension] (Origin: function: 0x0b2788e0)
+22:25:08.002 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'bot_queue_action_input' from [PlayerUnitActionInputExtension] (Origin: function: 0x02af2b28)
+22:25:08.002 [Lua] [MOD][DMF][INFO] PlayerUnitHologramExtension is now available for previously-delayed hooks.
+22:25:08.002 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [PlayerUnitHologramExtension] (Origin: function: 0x08ce3af0)
+22:25:08.002 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'anim_event_with_variable_float' from [AuthoritativePlayerUnitAnimationExtension] (Origin: function: 0x087c1318)
+22:25:08.002 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'anim_event' from [AuthoritativePlayerUnitAnimationExtension] (Origin: function: 0x00f81a80)
+22:25:08.002 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'anim_event_with_variable_int' from [AuthoritativePlayerUnitAnimationExtension] (Origin: function: 0x00eeacf8)
+22:25:08.002 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'anim_event_1p' from [AuthoritativePlayerUnitAnimationExtension] (Origin: function: 0x08a4e168)
+22:25:08.002 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'anim_event_with_variable_float_1p' from [AuthoritativePlayerUnitAnimationExtension] (Origin: function: 0x091922d0)
+22:25:08.002 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'anim_event_with_variable_floats' from [AuthoritativePlayerUnitAnimationExtension] (Origin: function: 0x075ce658)
+22:25:08.002 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'anim_event_with_variable_floats_1p' from [AuthoritativePlayerUnitAnimationExtension] (Origin: function: 0x04c34860)
+22:25:08.003 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking '_update_health_stations' from [BotBehaviorExtension] (Origin: function: 0x05e07a88)
+22:25:08.003 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking '_update_ammo' from [BotBehaviorExtension] (Origin: function: 0x074391f8)
+22:25:08.003 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking '_verify_target_ally_aid_destination' from [BotBehaviorExtension] (Origin: function: 0x05a847d8)
+22:25:08.003 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking '_refresh_destination' from [BotBehaviorExtension] (Origin: function: 0x02c1e388)
+22:25:08.003 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_init_blackboard_components' from [BotBehaviorExtension] (Origin: function: 0x01f679b8)
+22:25:08.003 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking 'update' from [BotBehaviorExtension] (Origin: function: 0x060fe9a0)
+22:25:08.003 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'evaluate' from [BtRandomUtilityNode] (Origin: function: 0x0103d4c8)
+22:25:08.004 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'shoot_hit_scan' from [table: 0x01479a20] (Origin: function: 0x0697a8e0)
+22:25:08.004 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'sweep' from [table: 0x01479a20] (Origin: function: 0x049ef638)
+22:25:08.004 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'melee' from [table: 0x01479a20] (Origin: function: 0x049dcb68)
+22:25:08.004 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'update_lag_compensation_melee' from [table: 0x01479a20] (Origin: function: 0x08b4ae48)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'enter' from [BtBotActivateAbilityAction] (Origin: function: 0x08a44da0)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking 'enter' from [BtBotInventorySwitchAction] (Origin: function: 0x0c3a4070)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'enter' from [BtBotMeleeAction] (Origin: function: 0x0b95d6d8)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_choose_attack' from [BtBotMeleeAction] (Origin: function: 0x0bd3ec50)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_should_defend' from [BtBotMeleeAction] (Origin: function: 0x0898e950)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_should_push' from [BtBotMeleeAction] (Origin: function: 0x0ae3b920)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_allow_engage' from [BtBotMeleeAction] (Origin: function: 0x0c67ac38)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_is_in_engage_range' from [BtBotMeleeAction] (Origin: function: 0x0897eff8)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking '_set_new_aim_target' from [BtBotShootAction] (Origin: function: 0x02fe2740)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_aim_position' from [BtBotShootAction] (Origin: function: 0x0c132c08)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking 'enter' from [BtBotShootAction] (Origin: function: 0x0b67a528)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_update_aim' from [BtBotShootAction] (Origin: function: 0x02ff2e98)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_wanted_aim_rotation' from [BtBotShootAction] (Origin: function: 0x0c132c30)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_should_aim' from [BtBotShootAction] (Origin: function: 0x02fde178)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_start_aiming' from [BtBotShootAction] (Origin: function: 0x02fe6560)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_stop_aiming' from [BtBotShootAction] (Origin: function: 0x02fe7440)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_may_fire' from [BtBotShootAction] (Origin: function: 0x06d02f70)
+22:25:08.007 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_fire' from [BtBotShootAction] (Origin: function: 0x06ce15f8)
+22:25:08.009 [Lua] [MOD][DMF][INFO] Buff is now available for previously-delayed hooks.
+22:25:08.009 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [Buff] (Origin: function: 0x0c0ff180)
+22:25:08.010 [Lua] [MOD][DMF][INFO] MinionBuffExtension is now available for previously-delayed hooks.
+22:25:08.010 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [MinionBuffExtension] (Origin: function: 0x0b7ac510)
+22:25:08.010 [Lua] [MOD][DMF][INFO] PlayerUnitBuffExtension is now available for previously-delayed hooks.
+22:25:08.010 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [PlayerUnitBuffExtension] (Origin: function: 0x0b723400)
+22:25:08.010 [Lua] [MOD][DMF][INFO] CharacterStateMachine is now available for previously-delayed hooks.
+22:25:08.010 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [CharacterStateMachine] (Origin: function: 0x0bd3da08)
+22:25:08.010 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking 'init' from [CharacterStateMachineExtension] (Origin: function: 0x0bd3e3a0)
+22:25:08.011 [Lua] [MOD][DMF][INFO] DestructibleExtension is now available for previously-delayed hooks.
+22:25:08.011 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [DestructibleExtension] (Origin: function: 0x0c16aa40)
+22:25:08.011 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'teleport_bots' from [DoorExtension] (Origin: function: 0x0c234fa8)
+22:25:08.011 [Lua] [MOD][DMF][INFO] PlayerUnitFxExtension is now available for previously-delayed hooks.
+22:25:08.011 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [PlayerUnitFxExtension] (Origin: function: 0x0ad50750)
+22:25:08.011 [Lua] [MOD][DMF][INFO] ProjectileFxExtension is now available for previously-delayed hooks.
+22:25:08.011 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [ProjectileFxExtension] (Origin: function: 0x0b842a70)
+22:25:08.011 [Lua] [MOD][DMF][INFO] FxSystem is now available for previously-delayed hooks.
+22:25:08.011 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [FxSystem] (Origin: function: 0x0b04cfd8)
+22:25:08.012 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'pickup' from [table: 0x0acc73d8] (Origin: function: 0x0acc7520)
+22:25:08.012 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking '_update_pickups_and_deployables_near_player' from [BotGroup] (Origin: function: 0x0b75f448)
+22:25:08.012 [Lua] [MOD][BestBots][INFO] (hook_safe): Hooking 'init' from [BotGroup] (Origin: function: 0x0acc7dc8)
+22:25:08.012 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_update_mule_pickups' from [BotGroup] (Origin: function: 0x0b75f8a8)
+22:25:08.012 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'aoe_threat_created' from [BotGroup] (Origin: function: 0x0acc7e98)
+22:25:08.012 [Lua] [MOD][DMF][INFO] HazardPropExtension is now available for previously-delayed hooks.
+22:25:08.012 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HazardPropExtension] (Origin: function: 0x0b821f60)
+22:25:08.012 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'set_current_state' from [HazardPropExtension] (Origin: function: 0x0b8229d8)
+22:25:08.012 [Lua] [MOD][DMF][INFO] HuskHealthExtension is now available for previously-delayed hooks.
+22:25:08.012 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HuskHealthExtension] (Origin: function: 0x0be515c0)
+22:25:08.012 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'update' from [BotUnitInput] (Origin: function: 0x0b4c4c58)
+22:25:08.012 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_update_actions' from [BotUnitInput] (Origin: function: 0x0b4c4b30)
+22:25:08.012 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_update_movement' from [BotUnitInput] (Origin: function: 0x0b4c4c78)
+22:25:08.013 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'stop' from [AmmunitionInteraction] (Origin: function: 0x0c6f6b40)
+22:25:08.013 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'stop' from [GrenadeInteraction] (Origin: function: 0x0b7886e0)
+22:25:08.013 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'stop' from [HealthStationInteraction] (Origin: function: 0x0b9bc6a8)
+22:25:08.013 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'stop' from [PocketableInteraction] (Origin: function: 0x0acd1b70)
+22:25:08.013 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'stop' from [PullUpInteraction] (Origin: function: 0x0c06c150)
+22:25:08.013 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'stop' from [RemoveNetInteraction] (Origin: function: 0x0c06d2a8)
+22:25:08.013 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'stop' from [RescueInteraction] (Origin: function: 0x0c06f0f8)
+22:25:08.013 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'stop' from [ReviveInteraction] (Origin: function: 0x0c3c0178)
+22:25:08.013 [Lua] [MOD][DMF][INFO] InteracteeExtension is now available for previously-delayed hooks.
+22:25:08.013 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [InteracteeExtension] (Origin: function: 0x0c659a20)
+22:25:08.013 [Lua] [MOD][DMF][INFO] LiquidAreaExtension is now available for previously-delayed hooks.
+22:25:08.013 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [LiquidAreaExtension] (Origin: function: 0x0c4f4648)
+22:25:08.013 [Lua] [MOD][DMF][INFO] HuskLiquidAreaExtension is now available for previously-delayed hooks.
+22:25:08.013 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HuskLiquidAreaExtension] (Origin: function: 0x0c69fc40)
+22:25:08.014 [Lua] [MOD][DMF][INFO] PlayerUnitMoodExtension is now available for previously-delayed hooks.
+22:25:08.014 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [PlayerUnitMoodExtension] (Origin: function: 0x0bc417a8)
+22:25:08.015 [Lua] [MOD][DMF][INFO] PlayerUnitOutlineExtension is now available for previously-delayed hooks.
+22:25:08.015 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [PlayerUnitOutlineExtension] (Origin: function: 0x0c09db38)
+22:25:08.015 [Lua] [MOD][DMF][INFO] OutlineSystem is now available for previously-delayed hooks.
+22:25:08.015 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [OutlineSystem] (Origin: function: 0x0b8074e8)
+22:25:08.015 [Lua] [MOD][BestBots][INFO] (hook): Hooking '_update_target_enemy' from [BotPerceptionExtension] (Origin: function: 0x0c10d1c8)
+22:25:08.016 [Lua] [MOD][DMF][INFO] SideMissionPickupExtension is now available for previously-delayed hooks.
+22:25:08.016 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [SideMissionPickupExtension] (Origin: function: 0x0b5917c0)
+22:25:08.016 [Lua] [MOD][DMF][INFO] SmartTag is now available for previously-delayed hooks.
+22:25:08.016 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [SmartTag] (Origin: function: 0x0c328618)
+22:25:08.016 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'set_tag' from [SmartTagSystem] (Origin: function: 0x0c32b2f0)
+22:25:08.016 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'set_contextual_unit_tag' from [SmartTagSystem] (Origin: function: 0x0c32b3a0)
+22:25:08.016 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'trigger_tag_interaction' from [SmartTagSystem] (Origin: function: 0x0c32b3e8)
+22:25:08.017 [Lua] [MOD][DMF][INFO] SmokeFogSystem is now available for previously-delayed hooks.
+22:25:08.017 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [SmokeFogSystem] (Origin: function: 0x0b5168f0)
+22:25:08.017 [Lua] [MOD][DMF][INFO] MinionSuppressionExtension is now available for previously-delayed hooks.
+22:25:08.017 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [MinionSuppressionExtension] (Origin: function: 0x0c35c4d0)
+22:25:08.025 [Lua] [MOD][DMF][INFO] MinionVisualLoadoutExtension is now available for previously-delayed hooks.
+22:25:08.025 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [MinionVisualLoadoutExtension] (Origin: function: 0x0bc48e78)
+22:25:08.025 [Lua] [MOD][DMF][INFO] PlayerUnitVisualLoadoutExtension is now available for previously-delayed hooks.
+22:25:08.026 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [PlayerUnitVisualLoadoutExtension] (Origin: function: 0x0be05dc8)
+22:25:08.026 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'init' from [PlayerUnitVisualLoadoutExtension] (Origin: function: 0x0be06620)
+22:25:08.027 [Lua] [MOD][DMF][INFO] ActionReloadState is now available for previously-delayed hooks.
+22:25:08.027 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [ActionReloadState] (Origin: function: 0x0bb494a0)
+22:25:08.027 [Lua] [MOD][DMF][INFO] ActionUnwield is now available for previously-delayed hooks.
+22:25:08.027 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [ActionUnwield] (Origin: function: 0x0ba828a0)
+22:25:08.028 [Lua] [MOD][DMF][INFO] PlayerUnitWeaponExtension is now available for previously-delayed hooks.
+22:25:08.028 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad0e38)
+22:25:08.028 [Lua] [MOD][DMF][INFO] WeaponSystem is now available for previously-delayed hooks.
+22:25:08.028 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [WeaponSystem] (Origin: function: 0x0bad3d10)
+22:25:08.028 [Lua] [MOD][BestBots][INFO] (hook): Hooking 'queue_perils_of_the_warp_elite_kills_achievement' from [WeaponSystem] (Origin: function: 0x0bad4f50)
+22:25:08.028 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepExtensions
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object WarpChargeActionModule
+22:25:08.028 [Lua] [MOD][FullAuto][INFO] (hook_safe): Hooking 'finish' from [WarpChargeActionModule] (Origin: function: 0x02a583f8)
+22:25:08.028 [Lua] [MOD][FullAuto][INFO] (hook_safe): Hooking 'start' from [WarpChargeActionModule] (Origin: function: 0x03f57600)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object MinionSuppressionExtension
+22:25:08.028 [Lua] [MOD][creature_spawner][INFO] (hook_origin): Hooking '_get_threshold_and_max_value' from [MinionSuppressionExtension] (Origin: function: 0x0c35d140)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 3 delayed hooks for object HuskHealthExtension
+22:25:08.028 [Lua] [MOD][Healthbars][INFO] (hook_safe): Hooking 'init' from [HuskHealthExtension] (Origin: function: 0x0be51d38)
+22:25:08.028 [Lua] [MOD][debuff_indicator][INFO] (hook_safe): Hooking 'init' from [HuskHealthExtension] (Origin: function: 0x0be51d38)
+22:25:08.028 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'init' from [HuskHealthExtension] (Origin: function: 0x0be51d38)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object ActionBase
+22:25:08.028 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking 'finish' from [ActionBase] (Origin: function: 0x013d4210)
+22:25:08.028 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking 'start' from [ActionBase] (Origin: function: 0x045ed010)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object InteracteeExtension
+22:25:08.028 [Lua] [MOD][CollectibleFinder][INFO] (hook): Hooking 'stopped' from [InteracteeExtension] (Origin: function: 0x0b77db48)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object SideMissionPickupExtension
+22:25:08.028 [Lua] [MOD][CollectibleFinder][INFO] (hook_safe): Hooking '_register_to_mission_objective' from [SideMissionPickupExtension] (Origin: function: 0x0b592000)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object ActionCharacterStateChange
+22:25:08.028 [Lua] [MOD][guarantee_ability_activation][INFO] (hook): Hooking 'finish' from [ActionCharacterStateChange] (Origin: function: 0x03fd66e8)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object HazardPropExtension
+22:25:08.028 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'set_current_state' from [HazardPropExtension] (Origin: function: 0x0b8229d8)
+22:25:08.028 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'set_content' from [HazardPropExtension] (Origin: function: 0x0b822130)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 9 delayed hooks for object CharacterStateMachine
+22:25:08.028 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking 'server_correction_occurred' from [CharacterStateMachine] (Origin: function: 0x0bd3e278)
+22:25:08.028 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking '_change_state' from [CharacterStateMachine] (Origin: function: 0x0bd3e440)
+22:25:08.028 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking 'fixed_update' from [CharacterStateMachine] (Origin: function: 0x0bd3db38)
+22:25:08.028 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking 'server_correction_occurred' from [CharacterStateMachine] (Origin: function: 0x0bd3e278)
+22:25:08.028 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking '_change_state' from [CharacterStateMachine] (Origin: function: 0x0bd3e440)
+22:25:08.028 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking 'fixed_update' from [CharacterStateMachine] (Origin: function: 0x0bd3db38)
+22:25:08.028 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook_safe): Hooking 'server_correction_occurred' from [CharacterStateMachine] (Origin: function: 0x0bd3e278)
+22:25:08.028 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook_safe): Hooking '_change_state' from [CharacterStateMachine] (Origin: function: 0x0bd3e440)
+22:25:08.028 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook_safe): Hooking 'fixed_update' from [CharacterStateMachine] (Origin: function: 0x0bd3db38)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object Buff
+22:25:08.028 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'init' from [Buff] (Origin: function: 0x0c0ffa28)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object ProjectileFxExtension
+22:25:08.028 [Lua] [MOD][clear_smoke][INFO] (hook_safe): Hooking 'destroy' from [ProjectileFxExtension] (Origin: function: 0x0b843320)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object WeaponSystem
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'rpc_trigger_husk_explosion' from [WeaponSystem] (Origin: function: 0x0bad4ec8)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object MinionBuffExtension
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'has_keyword' from [MinionBuffExtension] (Origin: function: 0x0bcbf538)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object MinionVisualLoadoutExtension
+22:25:08.028 [Lua] [MOD][creature_spawner][INFO] (hook): Hooking 'init' from [MinionVisualLoadoutExtension] (Origin: function: 0x0bc49788)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object SmartTag
+22:25:08.028 [Lua] [MOD][pointer][INFO] (hook_safe): Hooking 'init' from [SmartTag] (Origin: function: 0x0c328ed0)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 8 delayed hooks for object LiquidAreaExtension
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'update' from [LiquidAreaExtension] (Origin: function: 0x0c4f5400)
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook_safe): Hooking '_calculate_broadphase_size' from [LiquidAreaExtension] (Origin: function: 0x0c4f5dc0)
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'set_drawer' from [LiquidAreaExtension] (Origin: function: 0x0c4f5380)
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking '_set_filled' from [LiquidAreaExtension] (Origin: function: 0x0c4f47d0)
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'destroy' from [LiquidAreaExtension] (Origin: function: 0x0c4f55c8)
+22:25:08.028 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'destroy' from [LiquidAreaExtension] (Origin: function: 0x0c4f55c8)
+22:25:08.028 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking '_calculate_broadphase_size' from [LiquidAreaExtension] (Origin: function: 0x0c4f5dc0)
+22:25:08.028 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'init' from [LiquidAreaExtension] (Origin: function: 0x0c4f51f8)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object PlayerUnitVisualLoadoutExtension
+22:25:08.028 [Lua] [MOD][fashion_randomizer][INFO] (hook): Hooking '_unequip_item_from_slot' from [PlayerUnitVisualLoadoutExtension] (Origin: function: 0x0be06940)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object PlayerUnitMoodExtension
+22:25:08.028 [Lua] [MOD][DisableScreenEffects][INFO] (hook): Hooking '_add_mood' from [PlayerUnitMoodExtension] (Origin: function: 0x0bc42330)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 6 delayed hooks for object FxSystem
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'rpc_start_template_effect' from [FxSystem] (Origin: function: 0x0b04e578)
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'start_template_effect' from [FxSystem] (Origin: function: 0x0b04e2a8)
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'rpc_trigger_vfx' from [FxSystem] (Origin: function: 0x0b04e6a8)
+22:25:08.028 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'trigger_vfx' from [FxSystem] (Origin: function: 0x0b04e458)
+22:25:08.028 [Lua] [MOD][DisableScreenEffects][INFO] (hook): Hooking 'stop_template_effect' from [FxSystem] (Origin: function: 0x0b04e308)
+22:25:08.028 [Lua] [MOD][DisableScreenEffects][INFO] (hook): Hooking 'start_template_effect' from [FxSystem] (Origin: function: 0x0b04e2a8)
+22:25:08.028 [Lua] [MOD][DMF][INFO] Attempting to hook 16 delayed hooks for object PlayerUnitWeaponExtension
+22:25:08.028 [Lua] [MOD][uptime][INFO] (hook_safe): Hooking 'on_slot_unwielded' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad1818)
+22:25:08.028 [Lua] [MOD][uptime][INFO] (hook_safe): Hooking 'on_slot_wielded' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad17a8)
+22:25:08.028 [Lua] [MOD][show_crit_chance][INFO] (hook_safe): Hooking 'on_slot_wielded' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad17a8)
+22:25:08.028 [Lua] [MOD][show_crit_chance][INFO] (hook_safe): Hooking 'update' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad0fa8)
+22:25:08.028 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking 'server_correction_occurred' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad18c8)
+22:25:08.028 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking 'on_slot_wielded' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad17a8)
+22:25:08.028 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking 'fixed_update' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad1950)
+22:25:08.029 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking 'server_correction_occurred' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad18c8)
+22:25:08.029 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking 'on_slot_wielded' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad17a8)
+22:25:08.029 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking 'fixed_update' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad1950)
+22:25:08.029 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook): Hooking 'can_wield' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad1840)
+22:25:08.029 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook_safe): Hooking 'server_correction_occurred' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad18c8)
+22:25:08.029 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook_safe): Hooking 'on_slot_wielded' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad17a8)
+22:25:08.029 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook_safe): Hooking 'fixed_update' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad1950)
+22:25:08.029 [Lua] [MOD][FullAuto][INFO] (hook_safe): Hooking 'fixed_update' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad1950)
+22:25:08.029 [Lua] [MOD][FullAuto][INFO] (hook_safe): Hooking 'on_slot_wielded' from [PlayerUnitWeaponExtension] (Origin: function: 0x0bad17a8)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object PlayerUnitBuffExtension
+22:25:08.029 [Lua] [MOD][DisableScreenEffects][INFO] (hook): Hooking '_stop_fx' from [PlayerUnitBuffExtension] (Origin: function: 0x0afaf998)
+22:25:08.029 [Lua] [MOD][DisableScreenEffects][INFO] (hook): Hooking '_start_fx' from [PlayerUnitBuffExtension] (Origin: function: 0x0afaf958)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object PlayerUnitHologramExtension
+22:25:08.029 [Lua] [MOD][PlayerOutlines][INFO] (hook): Hooking 'update' from [PlayerUnitHologramExtension] (Origin: function: 0x07fb0810)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object PlayerUnitFxExtension
+22:25:08.029 [Lua] [MOD][DisableScreenEffects][INFO] (hook): Hooking 'spawn_exclusive_particle' from [PlayerUnitFxExtension] (Origin: function: 0x0ad518e8)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object ActionUnwield
+22:25:08.029 [Lua] [MOD][transonic_stance_colors][INFO] (hook_safe): Hooking 'finish' from [ActionUnwield] (Origin: function: 0x0ba83370)
+22:25:08.029 [Lua] [MOD][transonic_stance_colors][INFO] (hook_safe): Hooking 'start' from [ActionUnwield] (Origin: function: 0x0ba83280)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object SmokeFogSystem
+22:25:08.029 [Lua] [MOD][clear_smoke][INFO] (hook): Hooking 'update' from [SmokeFogSystem] (Origin: function: 0x0b517658)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 8 delayed hooks for object HuskLiquidAreaExtension
+22:25:08.029 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'update' from [HuskLiquidAreaExtension] (Origin: function: 0x0c6a04d8)
+22:25:08.029 [Lua] [MOD][vfx_swapper][INFO] (hook_safe): Hooking '_calculate_liquid_size' from [HuskLiquidAreaExtension] (Origin: function: 0x0c69fd70)
+22:25:08.029 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'set_drawer' from [HuskLiquidAreaExtension] (Origin: function: 0x0c6a0498)
+22:25:08.029 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking '_set_liquid_filled' from [HuskLiquidAreaExtension] (Origin: function: 0x0c6a04f8)
+22:25:08.029 [Lua] [MOD][vfx_swapper][INFO] (hook): Hooking 'destroy' from [HuskLiquidAreaExtension] (Origin: function: 0x0c6a04b8)
+22:25:08.029 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'destroy' from [HuskLiquidAreaExtension] (Origin: function: 0x0c6a04b8)
+22:25:08.029 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking '_calculate_liquid_size' from [HuskLiquidAreaExtension] (Origin: function: 0x0c69fd70)
+22:25:08.029 [Lua] [MOD][danger_zone][INFO] (hook_safe): Hooking 'init' from [HuskLiquidAreaExtension] (Origin: function: 0x0c6a0458)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object PlayerUnitOutlineExtension
+22:25:08.029 [Lua] [MOD][PlayerOutlines][INFO] (hook_safe): Hooking 'extensions_ready' from [PlayerUnitOutlineExtension] (Origin: function: 0x0c09e428)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 4 delayed hooks for object ActionHandler
+22:25:08.029 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking 'server_correction_occurred' from [ActionHandler] (Origin: function: 0x0938cd08)
+22:25:08.029 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking '_finish_action' from [ActionHandler] (Origin: function: 0x05f71950)
+22:25:08.029 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking 'start_action' from [ActionHandler] (Origin: function: 0x0b19b798)
+22:25:08.029 [Lua] [MOD][FullAuto][INFO] (hook_safe): Hooking 'start_action' from [ActionHandler] (Origin: function: 0x0b19b798)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object DestructibleExtension
+22:25:08.029 [Lua] [MOD][CollectibleFinder][INFO] (hook_safe): Hooking 'set_collectible_data' from [DestructibleExtension] (Origin: function: 0x0c16b918)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object ActionReloadState
+22:25:08.029 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking 'finish' from [ActionReloadState] (Origin: function: 0x0bb49f38)
+22:25:08.029 [Lua] [MOD][guarantee_special_action][INFO] (hook_safe): Hooking 'start' from [ActionReloadState] (Origin: function: 0x0bb49e90)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object OutlineSystem
+22:25:08.029 [Lua] [MOD][threat_detector][INFO] (hook_safe): Hooking 'on_remove_extension' from [OutlineSystem] (Origin: function: 0x0b808320)
+22:25:08.029 [Lua] [MOD][threat_detector][INFO] (hook_safe): Hooking 'on_add_extension' from [OutlineSystem] (Origin: function: 0x0b808298)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempting to hook 8 delayed hooks for object PlayerUnitAbilityExtension
+22:25:08.029 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking '_equip_ability' from [PlayerUnitAbilityExtension] (Origin: function: 0x0ad4e820)
+22:25:08.029 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking 'fixed_update' from [PlayerUnitAbilityExtension] (Origin: function: 0x080bb4e0)
+22:25:08.029 [Lua] [MOD][guarantee_ability_activation][INFO] (hook): Hooking 'can_use_ability' from [PlayerUnitAbilityExtension] (Origin: function: 0x08a43e60)
+22:25:08.029 [Lua] [MOD][guarantee_ability_activation][INFO] (hook_safe): Hooking 'use_ability_charge' from [PlayerUnitAbilityExtension] (Origin: function: 0x06347be8)
+22:25:08.029 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook_safe): Hooking '_equip_ability' from [PlayerUnitAbilityExtension] (Origin: function: 0x0ad4e820)
+22:25:08.029 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook_safe): Hooking 'fixed_update' from [PlayerUnitAbilityExtension] (Origin: function: 0x080bb4e0)
+22:25:08.029 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook): Hooking 'can_wield' from [PlayerUnitAbilityExtension] (Origin: function: 0x08656ed0)
+22:25:08.029 [Lua] [MOD][guarantee_weapon_swap][INFO] (hook_safe): Hooking 'use_ability_charge' from [PlayerUnitAbilityExtension] (Origin: function: 0x06347be8)
+22:25:08.029 [Lua] [MOD][DMF][INFO] Attempted to hook 167 delayed functions
+22:25:08.054 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepExtensions
+22:25:08.054 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.055 [Lua] INFO [DifficultyManager] Difficulty initialized to challenge 3, resistance 3
+22:25:08.065 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepManagers
+22:25:08.065 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.071 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepManagers
+22:25:08.071 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.071 [Lua] INFO [NvidiaAIAgent] Nvidia AI Agent initialized
+22:25:08.071 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNvidiaAiAgent
+22:25:08.071 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.088 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNvidiaAiAgent
+22:25:08.088 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.088 [Lua] INFO [UnitSpawnerManager] Registered level "[Level '#ID[8aaa27ad87976cf4]']", id: 1
+22:25:08.109 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepExtensionUnits
+22:25:08.109 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.345 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepExtensionUnits
+22:25:08.345 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.345 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNetworkEvents
+22:25:08.345 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.373 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNetworkEvents
+22:25:08.373 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.373 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepTimer
+22:25:08.373 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.389 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepTimer
+22:25:08.389 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.389 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitGameModeDependencies
+22:25:08.389 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.406 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitGameModeDependencies
+22:25:08.406 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.406 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNavWorldVolume
+22:25:08.406 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.439 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNavWorldVolume
+22:25:08.439 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.439 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNavSpawnPoints
+22:25:08.439 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.473 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNavSpawnPoints
+22:25:08.473 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.473 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepMainPathOcclusion
+22:25:08.473 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.506 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepMainPathOcclusion
+22:25:08.506 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.506 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFinalizeNavigation
+22:25:08.506 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.523 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFinalizeNavigation
+22:25:08.523 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.523 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepPlayerEnterGame
+22:25:08.523 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.556 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepPlayerEnterGame
+22:25:08.556 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.556 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepWwiseGameSync
+22:25:08.556 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.609 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepWwiseGameSync
+22:25:08.609 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.609 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepVoiceOver
+22:25:08.609 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.626 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepVoiceOver
+22:25:08.626 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.626 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNetworkStory
+22:25:08.626 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.643 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNetworkStory
+22:25:08.643 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.657 [Lua] INFO [NarrativeManager] No current chapter to complete in story horde_intro
+22:25:08.658 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitLevelSpawned
+22:25:08.658 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.660 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitLevelSpawned
+22:25:08.660 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.660 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFinalizeExtensions
+22:25:08.660 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.693 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFinalizeExtensions
+22:25:08.693 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.693 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepPacing
+22:25:08.693 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.710 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepPacing
+22:25:08.710 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.710 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepTerrorEvent
+22:25:08.710 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.727 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepTerrorEvent
+22:25:08.727 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.727 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepMutator
+22:25:08.727 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.743 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepMutator
+22:25:08.743 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.743 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFinalizeDebug
+22:25:08.743 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.760 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFinalizeDebug
+22:25:08.760 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.760 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepBreedTester
+22:25:08.760 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.793 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepBreedTester
+22:25:08.793 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.793 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepMissionServer
+22:25:08.793 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.810 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepMissionServer
+22:25:08.810 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.810 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepStateLastChecks
+22:25:08.810 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.827 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepStateLastChecks
+22:25:08.827 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:08.827 [Lua] INFO [LoadTimesReporter] Stopping timer resource_loading_timer
+22:25:08.827 [Lua] INFO [LoadTimesReporter] Starting timer wait_for_spawn_timer
+22:25:08.827 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepStateWaitForGroup
+22:25:08.827 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:10.036 [Lua] INFO [ConnectionManager] Remote peer 220399d6eee67f66 disconnected from host
+22:25:10.121 [Vivox] Participant removed event: sip:.fatsha0462-da92.bff5f123-d892-44ef-892d-98a3cf64d76a.@mt2p.vivox.com
+22:25:19.130 [Lua] INFO [ConnectionManager] Remote peer 873ece6b0ae8d0e8 connected to host
+22:25:19.133 [Lua] INFO [Package Sync Client] Add Player, peer_id: 873ece6b0ae8d0e8, local_player_id: 1
+22:25:19.231 [Vivox] Participant added event: sip:.fatsha0462-da92.20efaf23-f053-430a-909c-ae0c873f1f41.@mt2p.vivox.com 873ece6b0ae8d0e8|20efaf23-f053-430a-909c-ae0c873f1f41
+22:25:19.480 [Lua] INFO [ConnectionManager] Remote peer 49cb53d71f54aa0f connected to host
+22:25:19.483 [Lua] INFO [Package Sync Client] Add Player, peer_id: 49cb53d71f54aa0f, local_player_id: 1
+22:25:19.631 [Vivox] Participant added event: sip:.fatsha0462-da92.e61557bb-8099-4286-a8c9-965abd3f0b69.@mt2p.vivox.com 49cb53d71f54aa0f|e61557bb-8099-4286-a8c9-965abd3f0b69
+22:25:22.433 [Lua] INFO [Profile Sync Client] rpc_profile_synced_by_all, player:set_profile(), peer_id: 683108109710baf7, local_player_id: 1
+22:25:27.088 [Lua] INFO [Profile Sync Client] rpc_profile_synced_by_all, player:set_profile(), peer_id: 683108109710baf7, local_player_id: 1
+22:25:32.928 [Lua] INFO [StateGameplay] [GameplayInitStepStateWaitForGroup][rpc_group_loaded] channel_id(3), spawn_group(190), expected_spawn_group(190), peer_id(97bde5e20ae1e1cd)
+22:25:32.945 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepStateWaitForGroup
+22:25:32.945 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:32.945 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepStateLast
+22:25:32.945 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:32.961 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayStateInit
+22:25:32.961 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:32.961 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepStateLast
+22:25:32.961 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:32.961 [Lua] INFO [LoadTimesReporter] Stopping timer loading_timer
+22:25:33.027 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayStateRun
+22:25:33.033 [Lua] [MOD][DMF][INFO] Attempted to hook 74 delayed functions
+22:25:33.056 [Lua] INFO [ConstantElementLoading] State changed GameplayStateInit -> GameplayStateRun
+22:25:33.056 [Lua] INFO [ConstantElementLoading] Closing view "loading_view"
+22:25:33.078 warning: [Profiler] [main] Stall 117 ms on frame 9020: 
+    Application::update 117 ms
+        game update 117 ms
+            MyGame::update 117 ms
+                Lua->update 117 ms
+22:25:33.082 [Lua] INFO [ConstantElementLoading] Opening view "blank_view"
+22:25:33.095 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters
+22:25:33.095 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/core
+22:25:33.095 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/progression
+22:25:33.361 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.361 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_aura_weapon_improved) over (cryptic_coherency_regen_aura) due to higher prio. (4 > -1)
+22:25:33.362 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_improved) over (cryptic_servo_skull_order) due to higher prio. (4 > -1)
+22:25:33.362 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_inject_ally) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:25:33.384 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.384 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_aura_weapon_improved) over (cryptic_coherency_regen_aura) due to higher prio. (4 > -1)
+22:25:33.384 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_order) due to higher prio. (5 > -1)
+22:25:33.384 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:25:33.384 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:25:33.384 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_inject_ally) over (cryptic_flamethrower) due to higher prio. (5 > 5)
+22:25:33.386 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.386 [Lua] INFO [CharacterSheet] Selecting talent (psyker_aura_crit_chance_aura) over (psyker_aura_ability_cooldown) due to higher prio. (9 > -1)
+22:25:33.388 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.388 [Lua] INFO [CharacterSheet] Selecting talent (veteran_increased_damage_coherency) over (veteran_aura_gain_ammo_on_elite_kill) due to higher prio. (10 > -1)
+22:25:33.389 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.389 [Lua] INFO [CharacterSheet] Selecting talent (zealot_corruption_healing_coherency_improved) over (zealot_toughness_damage_coherency) due to higher prio. (10 > -1)
+22:25:33.389 [Lua] INFO [CharacterSheet] Selecting talent (zealot_resist_death_healing) over (zealot_resist_death) due to higher prio. (7 > 6)
+22:25:33.389 [Lua] INFO [CharacterSheet] Selecting talent (zealot_increased_duration) over (zealot_stealth) due to higher prio. (13 > 12)
+22:25:33.390 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.390 [Lua] INFO [CharacterSheet] Selecting talent (adamant_companion_coherency) over (adamant_companion_aura) due to higher prio. (9 > -1)
+22:25:33.390 [Lua] INFO [CharacterSheet] Selecting talent (adamant_companion_coherency) over (adamant_companion_aura) due to higher prio. (9 > -1)
+22:25:33.390 [Lua] INFO [CharacterSheet] Selecting talent (adamant_companion_coherency) over (adamant_companion_aura) due to higher prio. (9 > -1)
+22:25:33.390 [Lua] INFO [CharacterSheet] Selecting talent (adamant_whistle) over (adamant_grenade) due to higher prio. (5 > -1)
+22:25:33.390 [Lua] INFO [CharacterSheet] Selecting talent (adamant_whistle) over (adamant_grenade) due to higher prio. (5 > -1)
+22:25:33.392 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.395 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.398 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.398 [Lua] INFO [CharacterSheet] Selecting talent (zealot_additional_charge_of_ability) over (zealot_attack_speed_post_ability) due to higher prio. (13 > 12)
+22:25:33.398 [Lua] INFO [CharacterSheet] Selecting talent (zealot_toughness_damage_reduction_coherency_improved) over (zealot_toughness_damage_coherency) due to higher prio. (10 > -1)
+22:25:33.399 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.399 [Lua] INFO [CharacterSheet] Selecting talent (psyker_cooldown_aura_improved) over (psyker_aura_ability_cooldown) due to higher prio. (9 > -1)
+22:25:33.399 [Lua] INFO [CharacterSheet] Selecting talent (psyker_sphere_shield) over (psyker_combat_ability_force_field) due to higher prio. (14 > 13)
+22:25:33.400 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.402 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.403 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.403 [Lua] INFO [CharacterSheet] Selecting talent (psyker_aura_crit_chance_aura) over (psyker_aura_ability_cooldown) due to higher prio. (9 > -1)
+22:25:33.407 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.407 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_aura_weapon_improved) over (cryptic_coherency_regen_aura) due to higher prio. (4 > -1)
+22:25:33.407 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_order) due to higher prio. (5 > -1)
+22:25:33.407 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:25:33.407 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:25:33.407 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_inject_ally) over (cryptic_flamethrower) due to higher prio. (5 > 5)
+22:25:33.409 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.411 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.411 [Lua] INFO [CharacterSheet] Selecting talent (zealot_resist_death_healing) over (zealot_resist_death) due to higher prio. (7 > 6)
+22:25:33.411 [Lua] INFO [CharacterSheet] Selecting talent (zealot_toughness_damage_reduction_coherency_improved) over (zealot_toughness_damage_coherency) due to higher prio. (10 > -1)
+22:25:33.412 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.412 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_ammo_aura) over (cryptic_coherency_regen_aura) due to higher prio. (7 > -1)
+22:25:33.412 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_grenade_ability_arc_grenade) over (cryptic_servo_skull_order) due to higher prio. (4 > -1)
+22:25:33.414 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:25:33.414 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_coherency_regen_aura_improved) over (cryptic_coherency_regen_aura) due to higher prio. (6 > -1)
+22:25:33.554 [Lua] INFO [AdaptiveClockHandlerClient] Clock synced clock_start:10251.131910 clock_offset:0.106987 last_frame:307533
+22:25:33.554 [Lua] INFO [UnitSpawnerManager] hotjoin sync level_unit_index (6379)
+22:25:33.640 [Lua] INFO [UnitSpawnerManager] 4 : rpc_is_fully_hot_join_synced
+22:25:33.648 [Lua] [MOD][BetterTide][ECHO] BetterTide: resolved dodge template 'base_ogryn_fast' for combat blade -- distance_scale=1.1100000023841861 speed_modifier=1 base_distance=3
+22:25:33.648 [Lua] [MOD][BetterTide][ECHO] BetterTide: resolved sprint template 'base_ogryn_assault' for combat blade -- sprint_speed_mod=0.79500001072883708 sprint_forward_acceleration=0.79500001072883708
+22:25:33.665 [Lua] INFO [CharacterSheet] Selecting talent (ogryn_melee_damage_coherency_improved) over (ogryn_melee_damage_coherency) due to higher prio. (12 > -1)
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 683108109710baf7 joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 8467a4550c8ca1bd joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member bbb2a58c5f99fdfb joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 97bde5e20ae1e1cd joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member dd6bab9ddec9dd19 joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member b4cc6ea29d7380e9 joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 22bcc44af822295c joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 4765d023b3258109 joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 49cb53d71f54aa0f joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 4f7bb2795dcfcc3f joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 873ece6b0ae8d0e8 joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 7c45be6d9bba2db3 joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member b1759de03bb70359 joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 15e0135d190ca25a joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 011b30ea76b3c7d4 joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 4499eb9afdef4d2d joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member a312db86fb6ef8da joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member c2f87aebc204898d joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member 3cd328997a6ed7a6 joined
+22:25:33.667 [Lua] INFO [GameSessionManager] Member d9d9a948bd9c25f9 joined
+22:25:33.669 [Lua] INFO [PlayerUnitAbilityExtension] Equipping ability "ogryn_charge_increased_distance" of type "combat_ability" from server correction
+22:25:33.669 [Lua] INFO [PlayerUnitAbilityExtension] Equipping ability "ogryn_grenade_box_cluster" of type "grenade_ability" from server correction
+22:25:33.737 [Lua] [MOD][DMF][INFO] HudElementNameplates is now available for previously-delayed hooks.
+22:25:33.737 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HudElementNameplates] (Origin: function: 0x0e2e41a8)
+22:25:33.737 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object HudElementNameplates
+22:25:33.737 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking 'update' from [HudElementNameplates] (Origin: function: 0x0e2e4ac0)
+22:25:33.737 [Lua] [MOD][DMF][INFO] HudElementInteraction is now available for previously-delayed hooks.
+22:25:33.737 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HudElementInteraction] (Origin: function: 0x0e31c2f8)
+22:25:33.737 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object HudElementInteraction
+22:25:33.737 [Lua] [MOD][NumericUI][INFO] (hook_safe): Hooking 'update' from [HudElementInteraction] (Origin: function: 0x0e31d068)
+22:25:33.737 [Lua] [MOD][CollectibleFinder][INFO] (hook_safe): Hooking '_on_interaction_marker_spawned' from [HudElementInteraction] (Origin: function: 0x0e31d0c8)
+22:25:33.738 [Lua] [MOD][DMF][INFO] HudElementWorldMarkers is now available for previously-delayed hooks.
+22:25:33.738 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HudElementWorldMarkers] (Origin: function: 0x0e32c4d8)
+22:25:33.738 [Lua] [MOD][DMF][INFO] Attempting to hook 5 delayed hooks for object HudElementWorldMarkers
+22:25:33.738 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking 'event_add_world_marker_unit' from [HudElementWorldMarkers] (Origin: function: 0x0e32d288)
+22:25:33.738 [Lua] [MOD][Healthbars][INFO] (hook): Hooking 'event_add_world_marker_unit' from [HudElementWorldMarkers] (Origin: function: 0x0e32d288)
+22:25:33.738 [Lua] [MOD][Healthbars][INFO] (hook_safe): Hooking 'init' from [HudElementWorldMarkers] (Origin: function: 0x0e32d180)
+22:25:33.738 [Lua] [MOD][debuff_indicator][INFO] (hook_safe): Hooking 'init' from [HudElementWorldMarkers] (Origin: function: 0x0e32d180)
+22:25:33.738 [Lua] [MOD][CollectibleFinder][INFO] (hook_safe): Hooking 'init' from [HudElementWorldMarkers] (Origin: function: 0x0e32d180)
+22:25:33.738 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'on_enter' from [table: 0x0e352070] (Origin: function: 0x0e3525a8)
+22:25:33.738 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'on_enter' from [table: 0x0e3551b0] (Origin: function: 0x0e3558c0)
+22:25:33.738 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'on_enter' from [table: 0x0e3581f0] (Origin: function: 0x0e358818)
+22:25:33.739 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'create_widget_defintion' from [table: 0x0e37a238] (Origin: function: 0x0e37ad78)
+22:25:33.739 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'create_widget_defintion' from [table: 0x0e37e1c8] (Origin: function: 0x0e37ed08)
+22:25:33.740 warning: [Profiler] [renderer] Stall 193 ms on frame 9040: 
+    ThreadPool::do_work_while_waiting_for_event 193 ms
+22:25:33.828 [Lua] [MOD][DMF][INFO] HudElementPlayerPanelBase is now available for previously-delayed hooks.
+22:25:33.828 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HudElementPlayerPanelBase] (Origin: function: 0x0e499a90)
+22:25:33.828 [Lua] [MOD][DMF][INFO] HudElementPersonalPlayerPanel is now available for previously-delayed hooks.
+22:25:33.828 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HudElementPersonalPlayerPanel] (Origin: function: 0x0e49bf60)
+22:25:33.828 [Lua] [MOD][DMF][INFO] HudElementTeamPlayerPanelHub is now available for previously-delayed hooks.
+22:25:33.828 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HudElementTeamPlayerPanelHub] (Origin: function: 0x0e49f928)
+22:25:33.828 [Lua] [MOD][DMF][INFO] HudElementTeamPlayerPanel is now available for previously-delayed hooks.
+22:25:33.828 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HudElementTeamPlayerPanel] (Origin: function: 0x0e4a2000)
+22:25:33.828 [Lua] [MOD][DMF][INFO] HudElementTeamPanelHandler is now available for previously-delayed hooks.
+22:25:33.828 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HudElementTeamPanelHandler] (Origin: function: 0x0e4a2948)
+22:25:33.828 [Lua] [MOD][DMF][INFO] Attempting to hook 4 delayed hooks for object HudElementTeamPanelHandler
+22:25:33.828 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking 'update' from [HudElementTeamPanelHandler] (Origin: function: 0x0e4a45d0)
+22:25:33.828 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking '_add_panel' from [HudElementTeamPanelHandler] (Origin: function: 0x0e4a43f8)
+22:25:33.828 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking '_remove_panel' from [HudElementTeamPanelHandler] (Origin: function: 0x0e4a44a8)
+22:25:33.828 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking 'init' from [HudElementTeamPanelHandler] (Origin: function: 0x0e4a3c08)
+22:25:33.945 warning: [Profiler] [renderer] Stall 204 ms on frame 9040: 
+    ThreadPool::do_work_while_waiting_for_event 204 ms
+22:25:33.962 [Lua] INFO [ConstantElementLoading] Closing view "blank_view"
+22:25:33.971 [Lua] INFO [BackendManager] title_request: GET /tracks/dec942ce-b6ba-439c-95e2-022c5d71394d
+22:25:33.972 warning: [Profiler] [main] Stall 418 ms on frame 9040: 
+    Application::update 419 ms
+        game update 419 ms
+            MyGame::update 419 ms
+                Lua->update 418 ms
+22:25:33.980 [Lua] INFO [PlayerUnitDataExtension] Panic started. Received state package from the future, this is likely because we haven't run any fixed frames yet or had a major stall. Received frame (307542), last frame (307533).
+22:25:33.997 [Lua] INFO [PresenceManager] Activity changed loading -> hub
+22:25:34.088 warning: [Profiler] [renderer] Stall 101 ms on frame 9040: 
+    RI::update_world 101 ms
+        update_world 101 ms
+            RenderWorld::update_state 101 ms
+22:25:34.125 warning: [Profiler] [main] Stall 125 ms on frame 9041: 
+    Application::update 151 ms
+        RI::wait_for_fence 125 ms
+22:25:34.127 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/trackstate/dec942ce-b6ba-439c-95e2-022c5d71394d?errorOnEmpty=false
+22:25:34.127 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/rewards/commendation?limit=1
+22:25:34.127 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters/f4ae42f3-25c4-4504-94fd-11da8cea5bbc/contracts/current?createIfMissing=true
+22:25:34.127 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/progression/character/f4ae42f3-25c4-4504-94fd-11da8cea5bbc
+22:25:34.130 [Lua] INFO [PlayerUnitDataExtension] Panic resolved, took 0.159 seconds.
+22:25:36.380 [Lua] INFO [UIProfileSpawner] [cb_on_unit_3p_streaming_complete] unit: [Unit '#ID[7e8ce97452215da6]']
+22:25:37.414 [Lua] INFO [ConnectionManager] Remote peer 4499eb9afdef4d2d disconnected from host
+22:25:37.415 [Lua] INFO [GameSessionManager] Member 4499eb9afdef4d2d left
+22:25:37.466 [Vivox] Participant removed event: sip:.fatsha0462-da92.27ed64c5-6c92-40fb-8709-ac5edf54b309.@mt2p.vivox.com
+22:25:51.684 [Lua] INFO [ConnectionManager] Remote peer 67393ae6f140d373 connected to host
+22:25:51.686 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:25:51.686 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_inject_ally) over (cryptic_flamethrower) due to higher prio. (5 > 5)
+22:25:51.689 [Lua] INFO [Package Sync Client] Add Player, peer_id: 67393ae6f140d373, local_player_id: 1
+22:25:51.912 [Window] Window => active
+22:25:51.912 [Lua] INFO [Main] LUA window => ACTIVATED
+22:25:51.930 [Vivox] Participant added event: sip:.fatsha0462-da92.74522b40-ea9a-412b-912e-251dbcacdec6.@mt2p.vivox.com 67393ae6f140d373|74522b40-ea9a-412b-912e-251dbcacdec6
+22:25:52.688 [Lua] INFO [ConnectionManager] Remote peer 7c45be6d9bba2db3 disconnected from host
+22:25:52.688 [Lua] INFO [GameSessionManager] Member 7c45be6d9bba2db3 left
+22:25:55.706 [Lua] INFO [ConnectionManager] Remote peer 873ece6b0ae8d0e8 disconnected from host
+22:25:55.707 [Lua] INFO [GameSessionManager] Member 873ece6b0ae8d0e8 left
+22:25:55.804 [Vivox] Participant removed event: sip:.fatsha0462-da92.20efaf23-f053-430a-909c-ae0c873f1f41.@mt2p.vivox.com
+22:25:56.282 warning: [Profiler] [renderer] Stall 173 ms on frame 10127: 
+    RI::render_world 179 ms
+        RenderWorld::render 179 ms
+            setup rendering job 176 ms
+                render_job 176 ms
+                    render_culled_scene 176 ms
+                        async_rendering(run_job/wait) 176 ms
+                            ThreadPool::do_work_while_waiting_for_signal 173 ms
+22:25:56.299 warning: [Profiler] [main] Stall 184 ms on frame 10128: 
+    Application::update 197 ms
+        RI::wait_for_fence 184 ms
+22:25:56.876 [Lua] INFO [Profile Sync Client] rpc_profile_synced_by_all, player:set_profile(), peer_id: 49cb53d71f54aa0f, local_player_id: 1
+22:26:02.009 [Lua] INFO [OutlineSystem] Outline default_both_skeleton not found for PlayerUnitOutlineExtension, ignoring it
+22:26:02.010 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_order) due to higher prio. (5 > -1)
+22:26:02.010 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:26:02.010 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_flamethrower) over (cryptic_servo_skull_improved) due to higher prio. (5 > 4)
+22:26:02.010 [Lua] INFO [CharacterSheet] Selecting talent (cryptic_servo_skull_inject_ally) over (cryptic_flamethrower) due to higher prio. (5 > 5)
+22:26:02.015 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:26:02.015 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:26:02.016 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:26:02.016 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:26:02.016 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:26:02.016 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:26:02.016 [Lua] INFO [EquipmentComponent] Neck lock events not found in state machine for [Unit '#ID[f888cbd0f5a35360]']
+22:26:02.018 [Lua] INFO [GameSessionManager] Member 67393ae6f140d373 joined
+22:26:04.554 [Lua] INFO [ScriptWorld] Registering level named: "content/levels/ui/training_grounds/training_grounds" with id: 1
+22:26:04.956 warning: [Profiler] [main] Stall 106 ms on frame 10594: 
+    Application::update 107 ms
+        game update 107 ms
+            MyGame::update 107 ms
+                Lua->update 106 ms
+22:26:05.928 [Lua] INFO [ConnectionManager] Remote peer 15e0135d190ca25a disconnected from host
+22:26:05.929 [Lua] INFO [GameSessionManager] Member 15e0135d190ca25a left
+22:26:05.996 [Vivox] Participant removed event: sip:.fatsha0462-da92.3f3e593e-2e30-4eac-9e6b-d388e56b4604.@mt2p.vivox.com
+22:26:06.863 [Lua] INFO [MultiplayerSessionManager] Resetting multiplayer session with reason Hosting training grounds singleplayer mission ...
+22:26:06.864 error:   [Unit] Unit: '#ID[b9b4f74d51b62887]' has still childs attached to it, please unlink them before destroying the unit
+	child 0: '#ID[8da5c62a27b9c775]'
+	child 1: '#ID[8dbfacf73145179b]'
+22:26:06.871 error:   [Unit] Unit: '#ID[b9b4f74d51b62887]' has still childs attached to it, please unlink them before destroying the unit
+	child 0: '#ID[8da5c62a27b9c775]'
+	child 1: '#ID[8dbfacf73145179b]'
+22:26:06.874 error:   [Unit] Unit: '#ID[b9b4f74d51b62887]' has still childs attached to it, please unlink them before destroying the unit
+	child 0: '#ID[612e279a094793fa]'
+	child 1: '#ID[250bfc2495f43669]'
+22:26:06.874 error:   [Unit] Unit: '#ID[b9b4f74d51b62887]' has still childs attached to it, please unlink them before destroying the unit
+	child 0: '#ID[b2eba403ebeb2dec]'
+	child 1: '#ID[8dbfacf73145179b]'
+22:26:06.888 error:   [Unit] Unit: '#ID[428d141d510e06e4]' has still childs attached to it, please unlink them before destroying the unit
+	child 0: '#ID[c35a3fdc36cd42b1]'
+	child 1: '#ID[c35a3fdc36cd42b1]'
+	child 2: '#ID[c35a3fdc36cd42b1]'
+	child 3: '#ID[b28208c65553a973]'
+	child 4: '#ID[bd474aa1c3f2b4ff]'
+22:26:06.901 error:   [Unit] Unit: '#ID[b9b4f74d51b62887]' has still childs attached to it, please unlink them before destroying the unit
+	child 0: '#ID[612e279a094793fa]'
+	child 1: '#ID[250bfc2495f43669]'
+22:26:06.904 error:   [Unit] Unit: '#ID[b9b4f74d51b62887]' has still childs attached to it, please unlink them before destroying the unit
+	child 0: '#ID[8da5c62a27b9c775]'
+	child 1: '#ID[8dbfacf73145179b]'
+22:26:06.909 [Lua] INFO [ConnectionManager] Channel 3 to peer d9d9a948bd9c25f9 was disconnected with game reason Hosting training grounds singleplayer mission
+22:26:06.909 [Lua] INFO [ConnectionManager] Left host d9d9a948bd9c25f9
+22:26:06.910 [Lua] INFO [ChatManager] Leaving channel sip:confctl-g-fatsha0462-da92.hub.aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857@mt2p.vivox.com
+22:26:06.910 [Vivox] Issuing request req_sessiongroup_remove_session
+22:26:06.910 [Lua] INFO [MatchmakingNotificationHandler] Disconnected from host
+22:26:06.910 [Lua] INFO [ConnectionManager] _peer_disconnected d9d9a948bd9c25f9
+22:26:06.910 [Lua] INFO [ConnectionManager] Remote peer b4cc6ea29d7380e9 disconnected from host
+22:26:06.910 [Lua] INFO [ConnectionManager] Remote peer c2f87aebc204898d disconnected from host
+22:26:06.911 [Lua] INFO [ConnectionManager] Remote peer 683108109710baf7 disconnected from host
+22:26:06.911 [Lua] INFO [ConnectionManager] Remote peer 8467a4550c8ca1bd disconnected from host
+22:26:06.911 [Lua] INFO [ConnectionManager] Remote peer bbb2a58c5f99fdfb disconnected from host
+22:26:06.911 [Lua] INFO [ConnectionManager] Remote peer dd6bab9ddec9dd19 disconnected from host
+22:26:06.912 [Lua] INFO [ConnectionManager] Remote peer 011b30ea76b3c7d4 disconnected from host
+22:26:06.912 [Lua] INFO [ConnectionManager] Remote peer 22bcc44af822295c disconnected from host
+22:26:06.912 [Lua] INFO [ConnectionManager] Remote peer 4765d023b3258109 disconnected from host
+22:26:06.913 [Lua] INFO [ConnectionManager] Remote peer 49cb53d71f54aa0f disconnected from host
+22:26:06.913 [Lua] INFO [ConnectionManager] Remote peer a312db86fb6ef8da disconnected from host
+22:26:06.913 [Lua] INFO [ConnectionManager] Remote peer b1759de03bb70359 disconnected from host
+22:26:06.914 [Lua] INFO [ConnectionManager] Remote peer 3cd328997a6ed7a6 disconnected from host
+22:26:06.914 [Lua] INFO [ConnectionManager] Remote peer 4f7bb2795dcfcc3f disconnected from host
+22:26:06.915 [Lua] INFO [ConnectionManager] Remote peer 67393ae6f140d373 disconnected from host
+22:26:06.915 [Lua] INFO [MechanismManager] Disconnecting from mechanism host on channel 3
+22:26:06.915 [Lua] INFO [MechanismManager] Leaving mechanism "hub"
+22:26:06.915 [Lua] INFO [ConnectionSingleplayer] session_seed created 1049286495
+22:26:06.915 [Lua] INFO [SessionBootBase] Changed state nil -> ready
+22:26:06.915 [Lua] INFO [MultiplayerSessionManager] Booting multiplayer session as host
+22:26:06.915 [Lua] INFO [MechanismManager] Change mechanism <none>->"onboarding"
+22:26:06.918 [Connection] Dropped game chunk from d9d9a948bd9c25f9 because channel 4 can't communicate, state: 2
+22:26:06.918 [Connection] Dropped game_session chunk from d9d9a948bd9c25f9 because channel 4 can't communicate, state: 2
+22:26:06.918 [Connection] Dropped game chunk from d9d9a948bd9c25f9 because channel 4 can't communicate, state: 2
+22:26:06.918 [Connection] Dropped game_session chunk from d9d9a948bd9c25f9 because channel 4 can't communicate, state: 2
+22:26:06.918 [Lua] INFO [GameSessionManager] Member d9d9a948bd9c25f9 left with game reason game_request
+22:26:06.919 [Lua] INFO [MechanismBase] Mechanism onboarding changing state init -> gameplay
+22:26:06.919 [Lua] INFO [MechanismOnboarding] Using dev parameters for challenge and resistance (5/3)
+22:26:06.920 [Vivox] Text stream updated event: session_text_disconnecting
+22:26:06.934 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: StateGameplay
+22:26:06.934 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object HudElementPlayerPanelBase
+22:26:06.934 [Lua] [MOD][NumericUI][INFO] (hook_safe): Hooking 'destroy' from [HudElementPlayerPanelBase] (Origin: function: 0x0e49a400)
+22:26:06.934 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object HudElementPersonalPlayerPanel
+22:26:06.934 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking 'update' from [HudElementPersonalPlayerPanel] (Origin: function: 0x0ae12b98)
+22:26:06.934 [Lua] [MOD][NumericUI][INFO] (hook): Hooking '_update_player_features' from [HudElementPersonalPlayerPanel] (Origin: function: 0x0e49a880)
+22:26:06.934 [Lua] [MOD][DMF][INFO] Attempting to hook 3 delayed hooks for object HudElementTeamPlayerPanel
+22:26:06.934 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking 'update' from [HudElementTeamPlayerPanel] (Origin: function: 0x0e4a2738)
+22:26:06.934 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'init' from [HudElementTeamPlayerPanel] (Origin: function: 0x0e4a26b0)
+22:26:06.934 [Lua] [MOD][NumericUI][INFO] (hook): Hooking '_update_player_features' from [HudElementTeamPlayerPanel] (Origin: function: 0x0e49a880)
+22:26:06.934 [Lua] [MOD][DMF][INFO] Attempting to hook 2 delayed hooks for object HudElementTeamPlayerPanelHub
+22:26:06.934 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking '_set_rich_presence' from [HudElementTeamPlayerPanelHub] (Origin: function: 0x0e49a1c8)
+22:26:06.934 [Lua] [MOD][true_level][INFO] (hook_safe): Hooking 'init' from [HudElementTeamPlayerPanelHub] (Origin: function: 0x0e4a0bf0)
+22:26:06.935 [Lua] [MOD][DMF][INFO] Attempted to hook 62 delayed functions
+22:26:06.935 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayStateRun
+22:26:06.935 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:06.940 [Lua] INFO [NvidiaAIAgent] Nvidia AI Agent destroyed
+22:26:06.940 [Lua] INFO [GameSessionManager] Member b4cc6ea29d7380e9 left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member c2f87aebc204898d left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 683108109710baf7 left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 8467a4550c8ca1bd left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member bbb2a58c5f99fdfb left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 97bde5e20ae1e1cd left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member dd6bab9ddec9dd19 left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 011b30ea76b3c7d4 left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 22bcc44af822295c left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 4765d023b3258109 left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 49cb53d71f54aa0f left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member a312db86fb6ef8da left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member b1759de03bb70359 left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 3cd328997a6ed7a6 left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 4f7bb2795dcfcc3f left
+22:26:06.940 [Lua] INFO [GameSessionManager] Member 67393ae6f140d373 left
+22:26:06.978 [Lua] <<crashify-property>>in_havoc_mission = <</crashify-property>>
+22:26:06.978 [Lua] INFO [WorldLevelDespawnManager] despawing world:level_world, level:content/levels/hub/hub_ship/missions/hub_ship
+22:26:06.978 [Lua] INFO [WorldLevelDespawnManager] despawning units
+22:26:07.000 [Lua] INFO [PresenceManager] Activity changed hub -> loading
+22:26:07.000 [Lua] <<crashify-breadcrumb>>
+             	<<timestamp>219.983520<</timestamp>>
+             	<<value>>Entering Game State StateLoading<</value>>
+             <</crashify-breadcrumb>>
+22:26:07.000 [Lua] INFO [LoadTimesReporter] Starting timer loading_timer
+22:26:07.000 [Lua] INFO [LoadTimesReporter] Starting timer wait_for_network_timer
+22:26:07.000 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: StateLoading
+22:26:07.008 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:07.008 [Connection] Dropped game_session chunk from d9d9a948bd9c25f9 because channel 4 can't communicate, state: 2
+22:26:07.008 [Connection] Dropped game_session chunk from d9d9a948bd9c25f9 because channel 4 can't communicate, state: 2
+22:26:07.008 [Lua] <<crashify-property>>peer_id = 97bde5e20ae1e1cd<</crashify-property>>
+22:26:07.008 [Lua] INFO [ConnectionManager] My peer id is 97bde5e20ae1e1cd.
+22:26:07.008 [Lua] INFO [ConnectionManager] Setting ping timeout to 10.000000
+22:26:07.027 [Lua] INFO [Package Sync Client] Add Player, peer_id: 97bde5e20ae1e1cd, local_player_id: 1
+22:26:07.028 [Lua] INFO [LoadingHost] Setting state initial_spawn
+22:26:07.028 [Lua] INFO [StateLoading] waiting_for_despawn
+22:26:07.035 [Lua] INFO [ConstantElementLoading] State changed GameplayStateRun -> StateLoading
+22:26:07.035 [Lua] INFO [ConstantElementLoading] Opening view "loading_view"
+22:26:07.052 warning: [Profiler] [main] Stall 118 ms on frame 10707: 
+    Application::update 119 ms
+        game update 119 ms
+            MyGame::update 119 ms
+                Lua->update 118 ms
+22:26:07.056 [Connection] Dropped game_session chunk from d9d9a948bd9c25f9 because channel 4 can't communicate, state: 2
+22:26:07.056 [Connection] Dropped game chunk from d9d9a948bd9c25f9 because channel 4 can't communicate, state: 2
+22:26:07.056 [Connection] Dropped game chunk from d9d9a948bd9c25f9 because channel 4 can't communicate, state: 2
+22:26:07.056 [Connection] Dropped game chunk from d9d9a948bd9c25f9 because channel 3 can't communicate, state: 2
+22:26:07.056 [Lua] INFO [StateLoading] waiting for despawn
+22:26:07.057 [Vivox] Text stream updated event: session_text_disconnected
+22:26:07.096 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/progression
+22:26:07.096 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/characters
+22:26:07.096 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/core
+22:26:07.097 [Lua] INFO [StateLoading] waiting for despawn
+22:26:07.152 [Lua] INFO [StateLoading] waiting for despawn
+22:26:07.153 [Lua] INFO [PresenceManager] Activity changed loading -> training_grounds
+22:26:07.198 [Lua] INFO [StateLoading] waiting for despawn
+22:26:07.198 [Vivox] Participant removed event: sip:.fatsha0462-da92.1cf3d58a-1969-41e7-967c-06f71b04d1b1.@mt2p.vivox.com
+22:26:07.242 [Lua] INFO [StateLoading] waiting for despawn
+22:26:07.243 [Lua] INFO [WorldLevelDespawnManager] despawning themes
+22:26:07.265 [Lua] INFO [StateLoading] waiting for despawn
+22:26:07.266 [Lua] INFO [WorldLevelDespawnManager] despawning level
+22:26:07.282 [Lua] INFO [StateLoading] waiting for despawn
+22:26:07.283 [Lua] INFO [WorldLevelDespawnManager] despawning world
+22:26:07.290 [Lua] INFO [WorldLevelDespawnManager] total despawn time: 0.34726109999996879
+22:26:07.299 [Lua] INFO [StateLoading] [_start_loading] needs_load_level(true), mission_name(tg_shooting_range), circumstance_name(default), side_mission(default)
+22:26:07.300 [Lua] INFO [LoadingManager] Deleting shelved loading client
+22:26:07.300 [Lua] INFO [LoadingHost] Setting state initial_spawn
+22:26:07.303 [Lua] INFO [LoadTimesReporter] Stopping timer wait_for_network_timer
+22:26:07.303 [Lua] INFO [LoadTimesReporter] Starting timer resource_loading_timer
+22:26:07.303 [Lua] INFO [StateLoading] despawn_done
+22:26:07.306 [Lua] INFO [LoadingHost] [update] LoadingTimes: Spawn Group (0), Start processing
+22:26:07.427 warning: [Profiler] [main] Stall 112 ms on frame 10716: 
+    Application::update 113 ms
+        game update 112 ms
+            MyGame::update 112 ms
+                Lua->update 112 ms
+22:26:07.427 warning: [Profiler] [renderer] Stall 111 ms on frame 10716: 
+    ThreadPool::do_work_while_waiting_for_event 111 ms
+22:26:07.446 [Vivox] Session removed event: sip:confctl-g-fatsha0462-da92.hub.aws-asg--aws-us-west-2--drab-tomato-cricket--i-0d8df684c3d04e884--server-2--1783884857@mt2p.vivox.com
+22:26:07.542 [Vivox] Sessiongroup removed event: sg_.fatsha0462-da92.1cf3d58a-1969-41e7-967c-06f71b04d1b1.
+22:26:07.876 [Handshaker] Aborting handshake with d9d9a948bd9c25f9. Reason: no_references
+22:26:07.876 [Handshaker] Lost connection 11667273 to d9d9a948bd9c25f9
+22:26:07.892 [Connection] Unknown connection detected when parsing connection id
+22:26:08.466 [D3D12_RESOURCE] Render Target '#ID[755c1ae405b532ef]' was not released, refcount: 2
+22:26:08.467 [D3D12_RESOURCE] Render Target '#ID[60a1b6186dddd602]' was not released, refcount: 2
+22:26:46.860 [MOC] Using moc implementation AVX2
+22:26:46.893 [Lua] INFO [ScriptWorld] Registering level named: "content/levels/training_grounds/missions/mission_tg_basic_combat_01" with id: 1
+22:26:46.893 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/training_grounds/backdrop_a/world.level" with id: 2
+22:26:46.893 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/training_grounds/arena_a/world.level" with id: 3
+22:26:46.893 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/training_grounds/backdrop_b/world.level" with id: 4
+22:26:46.893 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/training_grounds/shooting_range_a/world.level" with id: 5
+22:26:46.893 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/training_grounds/arena_b/world.level" with id: 6
+22:26:46.893 [Lua] INFO [ScriptWorld] Registering sub level named: "content/levels/training_grounds/missions/training_grounds_themes/default/theme_default_training_grounds.level" with id: 7
+22:26:47.016 [Lua] INFO [HostWaitForMissionBriefingDoneState] no mission_intro_view active
+22:26:47.016 [Lua] INFO [LoadingHost] [update] LoadingTimes: Spawn Group (0) Finished Loading Level Packages (initial_spawn)
+22:26:47.016 [Lua] INFO [LoadingHost] [update] LoadingTimes: Enable 1 new peers in PackageSynchronizerHost
+22:26:48.250 [Lua] INFO [LoadingHost] [update] LoadingTimes: Spawn Group (0) Finished Loading Profile Packages (initial_spawn)
+22:26:48.250 [Lua] INFO [LoadingHost] Setting state wait_for_end_load
+22:26:48.284 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: StateLoading
+22:26:48.284 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.284 [Lua] <<crashify-breadcrumb>>
+             	<<timestamp>261.333197<</timestamp>>
+             	<<value>>Entering Game State StateGameplay<</value>>
+             <</crashify-breadcrumb>>
+22:26:48.284 [Lua] <<crashify-property>>mission = tg_shooting_range<</crashify-property>>
+22:26:48.284 [Lua] <<crashify-breadcrumb>>
+             	<<timestamp>261.333197<</timestamp>>
+             	<<value>>StateGameplay:on_enter(): tg_shooting_range<</value>>
+             <</crashify-breadcrumb>>
+22:26:48.284 [Lua] <<crashify-property>>circumstance = default<</crashify-property>>
+22:26:48.284 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFrameRate
+22:26:48.284 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.284 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayStateInit
+22:26:48.284 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.284 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: StateGameplay
+22:26:48.284 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.284 [Lua] INFO [ConstantElementLoading] State changed StateLoading -> GameplayStateInit
+22:26:48.300 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFrameRate
+22:26:48.300 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.300 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepOutOfBounds
+22:26:48.300 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.317 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepOutOfBounds
+22:26:48.317 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.318 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNavWorld
+22:26:48.318 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.334 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNavWorld
+22:26:48.334 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.334 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepDebug
+22:26:48.334 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.350 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepDebug
+22:26:48.350 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.350 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFreeFlight
+22:26:48.350 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.367 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFreeFlight
+22:26:48.367 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.367 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepGameSession
+22:26:48.367 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.384 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepGameSession
+22:26:48.384 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.384 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepGameMode
+22:26:48.384 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.400 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepGameMode
+22:26:48.400 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.401 [Lua] <<crashify-property>>num_missions_started = 2<</crashify-property>>
+22:26:48.401 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepMission
+22:26:48.401 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.417 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepMission
+22:26:48.417 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.417 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepBoneLod
+22:26:48.417 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.434 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepBoneLod
+22:26:48.434 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.445 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNavigation
+22:26:48.445 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.450 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNavigation
+22:26:48.450 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.451 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepExtensions
+22:26:48.451 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.481 [Lua] INFO [WeaponSystem] allocating took 1.435ms (1028 allocated)
+22:26:48.481 warning: [Lua] WARNING [VolumeEventSystem] Couldn't find any level volume data for level "content/levels/training_grounds/shooting_range_a/world", no volume events will run on this level
+The volume_data file should have been auto generated when saving the level in the editor, just add a reference to it in the level package.
+22:26:48.489 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepExtensions
+22:26:48.489 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.490 [Lua] INFO [DifficultyManager] Difficulty initialized to challenge 5, resistance 3
+22:26:48.491 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepManagers
+22:26:48.491 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.506 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepManagers
+22:26:48.506 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.506 [Lua] INFO [NvidiaAIAgent] Nvidia AI Agent initialized
+22:26:48.506 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNvidiaAiAgent
+22:26:48.506 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.523 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNvidiaAiAgent
+22:26:48.523 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.523 [Lua] INFO [UnitSpawnerManager] Registered level "[Level '#ID[ced8f88f36931b15]']", id: 1
+22:26:48.525 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepExtensionUnits
+22:26:48.525 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.593 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepExtensionUnits
+22:26:48.593 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.593 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNetworkEvents
+22:26:48.593 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.609 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNetworkEvents
+22:26:48.609 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.609 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepTimer
+22:26:48.609 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.626 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepTimer
+22:26:48.626 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.626 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitGameModeDependencies
+22:26:48.626 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.643 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitGameModeDependencies
+22:26:48.643 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.643 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNavWorldVolume
+22:26:48.643 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.676 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNavWorldVolume
+22:26:48.676 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.678 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNavSpawnPoints
+22:26:48.678 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.709 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNavSpawnPoints
+22:26:48.710 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.710 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepMainPathOcclusion
+22:26:48.710 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.731 [Lua] INFO [RoamerPacing] Generating Roamers using seed -1013793486
+22:26:48.743 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepMainPathOcclusion
+22:26:48.743 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.743 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFinalizeNavigation
+22:26:48.743 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.760 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFinalizeNavigation
+22:26:48.760 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.760 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepPlayerEnterGame
+22:26:48.760 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.797 [Lua] INFO [CharacterSheet] Selecting talent (ogryn_melee_damage_coherency_improved) over (ogryn_melee_damage_coherency) due to higher prio. (12 > -1)
+22:26:48.797 [Lua] INFO [PlayerUnitAbilityExtension] Equipping ability "ogryn_charge_increased_distance" of type "combat_ability"
+22:26:48.797 [Lua] INFO [PlayerUnitAbilityExtension] Equipping ability "ogryn_grenade_box_cluster" of type "grenade_ability"
+22:26:48.804 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepPlayerEnterGame
+22:26:48.804 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.804 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepWwiseGameSync
+22:26:48.804 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.893 [Lua] INFO [BackendManager] title_request: GET /data/1cf3d58a-1969-41e7-967c-06f71b04d1b1/account/data/feature_horde
+22:26:48.893 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepWwiseGameSync
+22:26:48.893 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.897 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepVoiceOver
+22:26:48.897 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.910 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepVoiceOver
+22:26:48.910 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.910 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepNetworkStory
+22:26:48.910 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.926 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepNetworkStory
+22:26:48.926 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.926 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitLevelSpawned
+22:26:48.926 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.943 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitLevelSpawned
+22:26:48.943 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.943 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFinalizeExtensions
+22:26:48.943 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.976 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFinalizeExtensions
+22:26:48.976 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.976 warning: [Lua] WARNING [MonsterPacing] Removed monsters monster spawn type since found no spawners.
+22:26:48.976 warning: [Lua] WARNING [MonsterPacing] Removed captains monster spawn type since found no spawners.
+22:26:48.976 warning: [Lua] WARNING [MonsterPacing] Removed witches monster spawn type since found no spawners.
+22:26:48.976 warning: [Lua] WARNING [MonsterPacing] Failed generating monster spawns, found no spawners.
+22:26:48.976 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepPacing
+22:26:48.976 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.993 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepPacing
+22:26:48.993 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:48.993 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepTerrorEvent
+22:26:48.993 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.010 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepTerrorEvent
+22:26:49.010 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.010 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepMutator
+22:26:49.010 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.026 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepMutator
+22:26:49.026 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.026 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepFinalizeDebug
+22:26:49.026 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.043 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepFinalizeDebug
+22:26:49.043 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.043 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepBreedTester
+22:26:49.043 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.076 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepBreedTester
+22:26:49.076 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.076 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepMissionServer
+22:26:49.076 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.093 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepMissionServer
+22:26:49.093 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.093 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepStateLastChecks
+22:26:49.093 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.110 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepStateLastChecks
+22:26:49.110 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.110 [Lua] INFO [LoadTimesReporter] Stopping timer resource_loading_timer
+22:26:49.110 [Lua] INFO [LoadTimesReporter] Starting timer wait_for_spawn_timer
+22:26:49.110 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepStateWaitForGroup
+22:26:49.110 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.127 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepStateWaitForGroup
+22:26:49.127 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.127 [Lua] INFO [LoadingHost] LoadingTimes: Spawn Group (0) ready
+22:26:49.127 [Lua] INFO [LoadingHost] Setting state hot_join
+22:26:49.127 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayInitStepStateLast
+22:26:49.127 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.143 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayStateInit
+22:26:49.143 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.143 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: exit, state: GameplayInitStepStateLast
+22:26:49.143 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.143 [Lua] INFO [LoadTimesReporter] Stopping timer loading_timer
+22:26:49.143 [Lua] INFO [GameModeBase] [_change_state] Switching game mode state from "loading" to "in_game"
+22:26:49.143 [Lua] INFO [GameModeTrainingGrounds] [_game_mode_state_changed] new_state: in_game; old_state: loading
+22:26:49.145 [Lua] DMF:ON_GAME_STATE_CHANGED(), status: enter, state: GameplayStateRun
+22:26:49.152 [Lua] [MOD][DMF][INFO] Attempted to hook 54 delayed functions
+22:26:49.160 [Lua] INFO [TrainingGrounds] Scenario started (shooting_range.init)
+22:26:49.160 [Lua] INFO [TrainingGrounds] Step started (init)
+22:26:49.161 [Lua] INFO [TrainingGrounds] Step stopped (init)
+22:26:49.161 [Lua] INFO [TrainingGrounds] Step started (make_player_invulnerable)
+22:26:49.161 [Lua] INFO [TrainingGrounds] Step stopped (make_player_invulnerable)
+22:26:49.161 [Lua] INFO [TrainingGrounds] Step started (nil)
+22:26:49.161 [Lua] INFO [TrainingGrounds] Scenario started (shooting_range.portal_loop)
+22:26:49.161 [Lua] INFO [TrainingGrounds] Step started (portal_loop)
+22:26:49.161 [Lua] INFO [TrainingGrounds] Event registered (leave_shooting_range)
+22:26:49.162 [Lua] INFO [TrainingGrounds] Step stopped (nil)
+22:26:49.162 [Lua] INFO [TrainingGrounds] Step started (nil)
+22:26:49.162 [Lua] INFO [TrainingGrounds] Scenario started (shooting_range.pickup_loop)
+22:26:49.162 [Lua] INFO [TrainingGrounds] Step started (pickup_loop)
+22:26:49.163 [Lua] INFO [TrainingGrounds] Step stopped (nil)
+22:26:49.163 [Lua] INFO [TrainingGrounds] Step started (nil)
+22:26:49.163 [Lua] INFO [TrainingGrounds] Scenario started (shooting_range.enemies_loop)
+22:26:49.163 [Lua] INFO [TrainingGrounds] Step started (enemies_loop)
+22:26:49.163 [Lua] INFO [TrainingGrounds] Step stopped (nil)
+22:26:49.163 [Lua] INFO [TrainingGrounds] Step started (nil)
+22:26:49.163 [Lua] INFO [TrainingGrounds] Scenario started (shooting_range.chest_loop)
+22:26:49.163 [Lua] INFO [TrainingGrounds] Step started (chest_loop)
+22:26:49.163 [Lua] INFO [TrainingGrounds] Event registered (shooting_range_chest_interact)
+22:26:49.164 [Lua] INFO [TrainingGrounds] Step stopped (nil)
+22:26:49.164 [Lua] INFO [TrainingGrounds] Step started (sr_unperceivable_loop)
+22:26:49.173 [Lua] [MOD][DMF][INFO] HudElementPlayerBuffs is now available for previously-delayed hooks.
+22:26:49.173 [Lua] [MOD][DMF][INFO] (hook): Hooking 'new' from [HudElementPlayerBuffs] (Origin: function: 0x0cbe0f90)
+22:26:49.173 [Lua] [MOD][DMF][INFO] Attempting to hook 1 delayed hooks for object HudElementPlayerBuffs
+22:26:49.173 [Lua] [MOD][uptime][INFO] (hook_safe): Hooking '_update_buffs' from [HudElementPlayerBuffs] (Origin: function: 0x0dfc6340)
+22:26:49.174 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'on_enter' from [table: 0x0e352070] (Origin: function: 0x0e3525a8)
+22:26:49.174 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'on_enter' from [table: 0x0e3551b0] (Origin: function: 0x0e3558c0)
+22:26:49.174 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'on_enter' from [table: 0x0e3581f0] (Origin: function: 0x0e358818)
+22:26:49.174 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'create_widget_defintion' from [table: 0x0e37a238] (Origin: function: 0x0e37ad78)
+22:26:49.174 [Lua] [MOD][NumericUI][INFO] (hook): Hooking 'create_widget_defintion' from [table: 0x0e37e1c8] (Origin: function: 0x0e37ed08)
+22:26:4
