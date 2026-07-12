@@ -120,6 +120,43 @@ local function register_hooks()
 					end
 				end
 			)
+
+			_mod:hook(
+				AuthoritativePlayerUnitAnimationExtension,
+				"anim_event_with_variable_int",
+				function(func, self, event_name, variable_name, variable_value)
+					if not _is_bot_unit(self) then
+						return func(self, event_name, variable_name, variable_value)
+					end
+
+					local unit = self and self._unit
+					local variable_index
+					local failure_reason
+					if unit then
+						variable_index, failure_reason = _safe_animation_find_variable(unit, variable_name)
+					end
+
+					if not variable_index then
+						if _debug_enabled() then
+							_debug_log(
+								"animation_guard:int:" .. tostring(variable_name) .. ":" .. tostring(failure_reason),
+								_fixed_time(),
+								"animation guard fell back to plain anim_event for int variable "
+									.. tostring(variable_name)
+									.. " ("
+									.. tostring(failure_reason)
+									.. ")",
+								nil,
+								"info"
+							)
+						end
+
+						return self:anim_event(event_name)
+					end
+
+					return func(self, event_name, variable_name, variable_value)
+				end
+			)
 		end
 	)
 end
