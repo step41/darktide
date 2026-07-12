@@ -113,6 +113,7 @@ function M.load_and_init(ctx)
 	modules.PocketablePickup = load_module(mod, "pocketable_pickup")
 	modules.SmartTagOrders = load_module(mod, "smart_tag_orders")
 	modules.BotProfileTemplates = load_module(mod, "bot_profile_templates")
+	modules.RealCharacterRoster = load_module(mod, "real_character_roster")
 	modules.BotProfiles = load_module(mod, "bot_profiles")
 	modules.BotCompensation = load_module(mod, "bot_compensation")
 	modules.HumanLikeness = load_module(mod, "human_likeness")
@@ -180,6 +181,7 @@ function M.load_and_init(ctx)
 	local PocketablePickup = modules.PocketablePickup
 	local SmartTagOrders = modules.SmartTagOrders
 	local BotProfileTemplates = modules.BotProfileTemplates
+	local RealCharacterRoster = modules.RealCharacterRoster
 	local BotProfiles = modules.BotProfiles
 	local BotCompensation = modules.BotCompensation
 	local HumanLikeness = modules.HumanLikeness
@@ -200,11 +202,18 @@ function M.load_and_init(ctx)
 		combat_ability_identity = CombatAbilityIdentity,
 	})
 
+	RealCharacterRoster.init({
+		mod = mod,
+		debug_log = ctx.debug_log,
+		debug_enabled = ctx.debug_enabled,
+	})
+
 	BotProfiles.init({
 		mod = mod,
 		debug_log = ctx.debug_log,
 		debug_enabled = ctx.debug_enabled,
 		profile_templates = BotProfileTemplates,
+		real_character_roster = RealCharacterRoster,
 	})
 
 	BotCompensation.init({

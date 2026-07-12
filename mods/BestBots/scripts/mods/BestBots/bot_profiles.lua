@@ -11,8 +11,10 @@
 local _mod
 local _debug_log
 local _debug_enabled
+local _real_character_roster
 
--- Spawn counter: incremented per add_bot call within a mission, maps to slot 1-5.
+-- Spawn counter: incremented per add_bot call within a mission, maps to the
+-- Nth active (non-"None") slot -- see _compute_active_slots.
 -- Reset on GameplayStateRun enter.
 local _spawn_counter = 0
 
@@ -27,6 +29,17 @@ local SLOT_SETTING_IDS = {
 	"bot_slot_4_profile",
 	"bot_slot_5_profile",
 	"bot_slot_6_profile",
+}
+
+-- Real-character selection per slot (merged in from the former BestTeam mod).
+-- A slot with a real character selected takes priority over its class choice.
+local CHARACTER_SETTING_IDS = {
+	"character_1",
+	"character_2",
+	"character_3",
+	"character_4",
+	"character_5",
+	"character_6",
 }
 
 local ATTACHMENT_SLOT_NAMES = {
@@ -103,6 +116,36 @@ local function _get_slot_profile_choice(slot_index)
 	end
 
 	return _mod:get(setting_id) or "none"
+end
+
+local function _get_character_choice(slot_index)
+	if not _mod then
+		return "none"
+	end
+
+	local setting_id = CHARACTER_SETTING_IDS[slot_index]
+	if not setting_id then
+		return "none"
+	end
+
+	return _mod:get(setting_id) or "none"
+end
+
+-- A slot is active if either a real character or an AI class is selected for
+-- it. Returns an ordered list of slot NUMBERS (1-6, skipping "None" gaps) so
+-- the Nth bot the game actually spawns maps to the Nth active slot, not to
+-- a fixed slot index -- e.g. slot 1 = None, slot 2 = Zealot must give the
+-- one bot that spawns Zealot, not fall through to a default Veteran.
+local function _compute_active_slots()
+	local active = {}
+
+	for slot_index = 1, #SLOT_SETTING_IDS do
+		if _get_slot_profile_choice(slot_index) ~= "none" or _get_character_choice(slot_index) ~= "none" then
+			active[#active + 1] = slot_index
+		end
+	end
+
+	return active
 end
 
 local function _deep_copy_profile(source)
@@ -453,19 +496,26 @@ end
 -- Extracted from the hook for testability.
 local function resolve_profile(profile)
 	_spawn_counter = _spawn_counter + 1
-	local slot_index = _spawn_counter
+	local spawn_number = _spawn_counter
 
-	if slot_index > #SLOT_SETTING_IDS then
+	local active_slots = _compute_active_slots()
+	if spawn_number > #active_slots then
 		return profile, false
 	end
 
-	-- Real backend character profiles (Tertium-assigned player characters) always
-	-- have a persistent `name` field from the character backend. Vanilla bot profiles
-	-- (including Tertium "None" pass-throughs) never have `name` — they use
-	-- `name_list_id` instead. Neither `character_id` nor `current_level` is reliable:
-	-- vanilla bots get character_id="high_bot_N" and current_level=1 after parse_profile().
+	-- Map this spawn to the Nth ACTIVE slot, not the Nth configured slot --
+	-- "None" slots are skipped entirely so gaps don't desync the mapping
+	-- (see _compute_active_slots).
+	local slot_index = active_slots[spawn_number]
+
+	-- Real backend character profiles always have a persistent `name` field
+	-- from the character backend. Vanilla bot profiles (including "None"
+	-- pass-throughs) never have `name` — they use `name_list_id` instead.
+	-- Neither `character_id` nor `current_level` is reliable: vanilla bots get
+	-- character_id="high_bot_N" and current_level=1 after parse_profile().
 	-- This check is load-order-independent and handles both #68 scenarios:
-	-- (a) real Tertium veterans preserved, (b) Tertium "None" stubs overridden.
+	-- (a) real veterans preserved, (b) "None" stubs overridden. It now mainly
+	-- guards against an actual human player or another mod occupying this slot.
 	local has_real_character = profile.character_id or profile.name
 	if has_real_character then
 		if _debug_enabled() then
@@ -484,14 +534,33 @@ local function resolve_profile(profile)
 		return profile, false
 	end
 
-	-- If another mod (Tertium4Or5/6) already swapped the profile to a non-veteran
-	-- class, yield — vanilla only spawns veterans, so a non-veteran archetype means
-	-- another mod provided a real player character for this slot.
+	-- If another mod already swapped the profile to a non-veteran class, yield —
+	-- vanilla only spawns veterans, so a non-veteran archetype means another mod
+	-- provided a real player character for this slot.
 	-- Note: profile.archetype can be a resolved table (with .name field) or a string.
 	local archetype = profile.archetype
 	local archetype_name = type(archetype) == "table" and archetype.name or archetype
 	if archetype_name and archetype_name ~= "veteran" then
 		return profile, false
+	end
+
+	-- Real character selection (merged in from the former BestTeam mod) takes
+	-- priority over an AI class choice for the same slot. If the roster hasn't
+	-- finished fetching yet, fall through to the class choice below instead of
+	-- blocking the spawn.
+	local character_choice = _get_character_choice(slot_index)
+	if character_choice ~= "none" and _real_character_roster then
+		local character_profile = _real_character_roster.get_character_profile(character_choice)
+		if character_profile then
+			if _debug_enabled() then
+				_debug_log(
+					"bot_profiles:character_injected:" .. tostring(slot_index),
+					0,
+					"bot slot " .. tostring(slot_index) .. " → real character " .. tostring(character_choice)
+				)
+			end
+			return character_profile, true
+		end
 	end
 
 	local choice = _get_slot_profile_choice(slot_index)
@@ -596,6 +665,31 @@ local function register_hooks()
 		return func(self, local_player_id, resolved)
 	end)
 
+	-- Merged in from the former BestTeam mod. Composes two concerns in one
+	-- place rather than two mods' hooks coordinating through cross-mod settings
+	-- reads: (1) the party-expansion toggle raises the engine's own bot-slot
+	-- ceiling beyond vanilla, (2) the result is then capped down to however many
+	-- slots are actually configured (character or class chosen, not "None"), so
+	-- an unconfigured slot never gets a default-Veteran filler.
+	_mod:hook("PlayerUnitSpawnManager", "_num_available_bot_slots", function(func, self, ...)
+		local base_num = func(self, ...)
+		local expanded_num = base_num + (_mod:get("enable_expanded_party") and 3 or 0)
+		local active_count = #_compute_active_slots()
+
+		return math.min(expanded_num, active_count)
+	end)
+
+	_mod:hook_require(
+		"scripts/ui/hud/elements/team_panel_handler/hud_element_team_panel_handler_settings",
+		function(settings)
+			if _mod:get("enable_expanded_party") then
+				settings.max_panels = 7
+			else
+				settings.max_panels = 6
+			end
+		end
+	)
+
 	-- Guard against 1.11+ network-sync profile overwrite (#65).
 	-- ProfileSynchronizerClient reconstructs the profile from JSON (losing weapon
 	-- overrides, running validate_talent_layouts) then calls set_profile, replacing
@@ -651,6 +745,7 @@ return {
 		_debug_log = deps.debug_log
 		_debug_enabled = deps.debug_enabled
 		_profile_templates = deps.profile_templates
+		_real_character_roster = deps.real_character_roster
 		assert(_profile_templates, "BestBots: bot_profiles requires profile_templates")
 	end,
 	register_hooks = register_hooks,

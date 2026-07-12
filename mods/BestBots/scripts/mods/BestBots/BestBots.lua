@@ -336,6 +336,7 @@ local GrenadeFallback, HealingDeferral = Modules.GrenadeFallback, Modules.Healin
 local AmmoPolicy, ComWheelResponse, MulePickup = Modules.AmmoPolicy, Modules.ComWheelResponse, Modules.MulePickup
 local PocketablePickup, SmartTagOrders, BotProfiles =
 	Modules.PocketablePickup, Modules.SmartTagOrders, Modules.BotProfiles
+local RealCharacterRoster = Modules.RealCharacterRoster
 local BotCompensation, HumanLikeness = Modules.BotCompensation, Modules.HumanLikeness
 local TargetTypeHysteresis = Modules.TargetTypeHysteresis
 local WeakspotAim, ChargeNavValidation = Modules.WeakspotAim, Modules.ChargeNavValidation
@@ -519,6 +520,7 @@ AmmoPolicy.register_hooks()
 ComWheelResponse.register_hooks()
 MulePickup.register_hooks()
 SmartTagOrders.register_hooks()
+RealCharacterRoster.register_hooks()
 BotProfiles.register_hooks()
 EngagementLeash.register_hooks()
 ReviveAbility.register_hooks()
@@ -1081,6 +1083,17 @@ mod:command("bb_reset", "Reset all BestBots settings to their default values", f
 end)
 
 function mod.on_game_state_changed(status, state)
+	-- Merged in from the former BestTeam mod: kick off the real-character
+	-- roster fetch as early as possible so it's populated before bot slots
+	-- resolve. Isolated in its own block/pcall so a fetch failure can't
+	-- affect the GameplayStateRun reset logic below.
+	if status == "enter" and state == "StateLoading" then
+		local ok, err = pcall(RealCharacterRoster.fetch_all_profiles)
+		if not ok then
+			mod:warning("BestBots: real character roster fetch failed: " .. tostring(err))
+		end
+	end
+
 	if status == "enter" and state == "GameplayStateRun" then
 		_refresh_debug_log_level()
 		Perf.enter_run()

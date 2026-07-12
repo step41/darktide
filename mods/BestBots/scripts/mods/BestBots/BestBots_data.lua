@@ -1,5 +1,6 @@
 local mod = get_mod("BestBots")
 local Settings = mod:io_dofile("BestBots/scripts/mods/BestBots/settings")
+local RealCharacterRoster = mod:io_dofile("BestBots/scripts/mods/BestBots/real_character_roster")
 local DEFAULTS = Settings.DEFAULTS
 
 local BOT_PROFILE_OPTIONS = {
@@ -54,6 +55,22 @@ local function make_checkbox(setting_id, sub_widgets)
 	end
 
 	return widget
+end
+
+-- Unlike make_slot_dropdown, this intentionally shares ONE options table
+-- across all 6 dropdowns: RealCharacterRoster.character_options is populated
+-- asynchronously after the account's character list is fetched, and every
+-- dropdown needs to see that same live update. Entries here are raw display
+-- strings (character names), not loc keys, except the "None" placeholder --
+-- so this doesn't hit the compounding-fallback-wrap issue make_slot_dropdown's
+-- per-dropdown copies exist to avoid.
+local function make_character_dropdown(slot)
+	return {
+		setting_id = "character_" .. tostring(slot),
+		type = "dropdown",
+		default_value = "none",
+		options = RealCharacterRoster.character_options,
+	}
 end
 
 return {
@@ -133,6 +150,21 @@ return {
 						},
 					},
 					make_checkbox("enable_bot_incoming_damage_reduction"),
+				},
+			},
+			{
+				-- Merged in from the former BestTeam mod. A real character
+				-- selected here takes priority over that slot's class choice.
+				setting_id = "real_characters_group",
+				type = "group",
+				sub_widgets = {
+					make_checkbox("enable_expanded_party"),
+					make_character_dropdown(1),
+					make_character_dropdown(2),
+					make_character_dropdown(3),
+					make_character_dropdown(4),
+					make_character_dropdown(5),
+					make_character_dropdown(6),
 				},
 			},
 			{

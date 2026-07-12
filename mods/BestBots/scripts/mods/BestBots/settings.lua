@@ -165,6 +165,8 @@ M.DEFAULTS = {
 	bot_slot_4_profile = "none",
 	bot_slot_5_profile = "none",
 	bot_slot_6_profile = "none",
+	-- Merged in from the former BestTeam mod (was "four_bots").
+	enable_expanded_party = false,
 	bot_weapon_quality = "auto",
 	bot_survivability_profile = "auto",
 	enable_bot_incoming_damage_reduction = true,
