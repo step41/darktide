@@ -492,20 +492,6 @@ local function resolve_profile(profile)
 	-- This check is load-order-independent and handles both #68 scenarios:
 	-- (a) real veterans preserved, (b) "None" stubs overridden. It now mainly
 	-- guards against an actual human player or another mod occupying this slot.
-	-- TEMPORARY: unconditional echoes (not gated behind Enable Debug Logs)
-	-- while diagnosing why real characters/archetypes aren't being applied.
-	-- Remove once confirmed working.
-	_mod:echo(
-		"BestBots: resolve_profile spawn="
-			.. tostring(spawn_number)
-			.. " slot="
-			.. tostring(slot_index)
-			.. " incoming profile.character_id="
-			.. tostring(profile.character_id)
-			.. " profile.name="
-			.. tostring(profile.name)
-	)
-
 	-- BUG FIX (confirmed via console log 2026-07-12): this used to be
 	-- `profile.character_id or profile.name`, an OR. But the comment above
 	-- already says character_id is unreliable (vanilla bots get
@@ -515,12 +501,13 @@ local function resolve_profile(profile)
 	-- reliable signal; character_id must not be part of this check at all.
 	local has_real_character = profile.name ~= nil
 	if has_real_character then
-		_mod:echo(
-			"BestBots: resolve_profile slot="
-				.. tostring(slot_index)
-				.. " YIELDING: incoming profile already has character_id/name "
-				.. "(another mod or the game already assigned a real player here)"
-		)
+		if _debug_enabled() then
+			_debug_log(
+				"bot_profiles:yield:" .. tostring(slot_index),
+				0,
+				"slot " .. tostring(slot_index) .. " yielding: incoming profile already has a real character"
+			)
+		end
 		return profile, false
 	end
 
@@ -530,14 +517,18 @@ local function resolve_profile(profile)
 	-- Note: profile.archetype can be a resolved table (with .name field) or a string.
 	local archetype = profile.archetype
 	local archetype_name = type(archetype) == "table" and archetype.name or archetype
-	_mod:echo("BestBots: resolve_profile slot=" .. tostring(slot_index) .. " incoming archetype=" .. tostring(archetype_name))
 	if archetype_name and archetype_name ~= "veteran" then
-		_mod:echo("BestBots: resolve_profile slot=" .. tostring(slot_index) .. " YIELDING: incoming archetype already non-veteran")
+		if _debug_enabled() then
+			_debug_log(
+				"bot_profiles:yield:" .. tostring(slot_index),
+				0,
+				"slot " .. tostring(slot_index) .. " yielding: incoming archetype already non-veteran"
+			)
+		end
 		return profile, false
 	end
 
 	local choice = _get_slot_profile_choice(slot_index)
-	_mod:echo("BestBots: resolve_profile slot=" .. tostring(slot_index) .. " configured choice=" .. tostring(choice))
 	if choice == "none" then
 		return profile, false
 	end
@@ -549,30 +540,22 @@ local function resolve_profile(profile)
 	-- such character exists yet, or if the roster hasn't finished fetching.
 	if _real_character_roster then
 		local character_profile = _real_character_roster.get_character_profile_by_archetype(choice)
-		_mod:echo(
-			"BestBots: resolve_profile slot="
-				.. tostring(slot_index)
-				.. " real character lookup for '"
-				.. tostring(choice)
-				.. "' found="
-				.. tostring(character_profile ~= nil)
-		)
 		if character_profile then
+			if _debug_enabled() then
+				_debug_log(
+					"bot_profiles:real_character:" .. tostring(slot_index),
+					0,
+					"slot " .. tostring(slot_index) .. " → real character for '" .. tostring(choice) .. "'"
+				)
+			end
 			return character_profile, true
 		end
 	else
-		_mod:echo("BestBots: resolve_profile slot=" .. tostring(slot_index) .. " _real_character_roster is NIL")
+		_warn_resolution("roster_unavailable", "real_character_roster dependency is nil; only generic profiles will be used")
 	end
 
 	local resolved = _resolve_profile_template(choice)
 	if not resolved then
-		_mod:echo(
-			"BestBots: resolve_profile slot="
-				.. tostring(slot_index)
-				.. " GENERIC TEMPLATE RESOLUTION FAILED for '"
-				.. tostring(choice)
-				.. "' -- bot stays on incoming (likely vanilla default) profile"
-		)
 		return profile, false
 	end
 
@@ -581,23 +564,12 @@ local function resolve_profile(profile)
 	-- holding vanilla veteran weapons. Reject before touching `profile`.
 	local resolved_loadout = resolved.loadout
 	if not (resolved_loadout and resolved_loadout.slot_primary and resolved_loadout.slot_secondary) then
-		_mod:echo(
-			"BestBots: resolve_profile slot="
-				.. tostring(slot_index)
-				.. " GENERIC TEMPLATE for '"
-				.. tostring(choice)
-				.. "' missing slot_primary/slot_secondary -- bot stays on incoming profile"
-		)
 		_warn_resolution(
 			"missing_weapon_slots:" .. tostring(choice),
 			"resolved profile for " .. tostring(choice) .. " is missing slot_primary or slot_secondary"
 		)
 		return profile, false
 	end
-
-	_mod:echo(
-		"BestBots: resolve_profile slot=" .. tostring(slot_index) .. " applying GENERIC TEMPLATE for '" .. tostring(choice) .. "'"
-	)
 
 	-- Mutate the vanilla profile in-place rather than replacing it entirely.
 	-- The vanilla profile has cosmetic slots, body data, and visual_loadout already
@@ -672,28 +644,25 @@ local function register_hooks()
 		return func(self, local_player_id, resolved)
 	end)
 
-	-- Merged in from the former BestTeam mod. Composes two concerns in one
-	-- place rather than two mods' hooks coordinating through cross-mod settings
-	-- reads: (1) the party-expansion toggle raises the engine's own bot-slot
-	-- ceiling beyond vanilla, (2) the result is then capped down to however many
-	-- slots are actually configured (character or class chosen, not "None"), so
-	-- an unconfigured slot never gets a default-Veteran filler.
+	-- Merged in from the former BestTeam mod. No separate expansion toggle --
+	-- the number of bot slots the engine is allowed to fill is driven entirely
+	-- by how many of the 6 slot dropdowns have a non-"None" archetype chosen.
+	-- This both raises the vanilla ceiling (normally capped around 3) when
+	-- more slots are configured, and prevents wasting a slot on a filler bot
+	-- when fewer are configured.
 	_mod:hook("PlayerUnitSpawnManager", "_num_available_bot_slots", function(func, self, ...)
-		local base_num = func(self, ...)
-		local expanded_num = base_num + (_mod:get("enable_expanded_party") and 3 or 0)
-		local active_count = #_compute_active_slots()
+		func(self, ...) -- call through for hook-chain compatibility with other mods
 
-		return math.min(expanded_num, active_count)
+		return #_compute_active_slots()
 	end)
 
+	-- max_panels sizes the HUD team roster panel. Always reserve room for the
+	-- maximum possible party (6 bots + 1 human) -- unused panels are simply
+	-- not filled, so there's no need to react to the current slot config here.
 	_mod:hook_require(
 		"scripts/ui/hud/elements/team_panel_handler/hud_element_team_panel_handler_settings",
 		function(settings)
-			if _mod:get("enable_expanded_party") then
-				settings.max_panels = 7
-			else
-				settings.max_panels = 6
-			end
+			settings.max_panels = 7
 		end
 	)
 

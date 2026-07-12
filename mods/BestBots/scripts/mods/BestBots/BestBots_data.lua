@@ -66,6 +66,12 @@ return {
 				setting_id = "bot_profiles_group",
 				type = "group",
 				sub_widgets = {
+					make_slot_dropdown(1, DEFAULTS.bot_slot_1_profile),
+					make_slot_dropdown(2, DEFAULTS.bot_slot_2_profile),
+					make_slot_dropdown(3, DEFAULTS.bot_slot_3_profile),
+					make_slot_dropdown(4, DEFAULTS.bot_slot_4_profile),
+					make_slot_dropdown(5, DEFAULTS.bot_slot_5_profile),
+					make_slot_dropdown(6, DEFAULTS.bot_slot_6_profile),
 					{
 						setting_id = "behavior_profile",
 						type = "dropdown",
@@ -103,13 +109,6 @@ return {
 							make_numeric("human_timing_opportunistic_jitter_max_ms", { 0, 1500 }, 25),
 						},
 					},
-					make_slot_dropdown(1, DEFAULTS.bot_slot_1_profile),
-					make_slot_dropdown(2, DEFAULTS.bot_slot_2_profile),
-					make_slot_dropdown(3, DEFAULTS.bot_slot_3_profile),
-					make_slot_dropdown(4, DEFAULTS.bot_slot_4_profile),
-					make_slot_dropdown(5, DEFAULTS.bot_slot_5_profile),
-					make_slot_dropdown(6, DEFAULTS.bot_slot_6_profile),
-					make_checkbox("enable_expanded_party"),
 					{
 						setting_id = "bot_weapon_quality",
 						type = "dropdown",

@@ -489,29 +489,25 @@ return {
 		en = "Bot slot 4",
 	},
 	bot_slot_4_profile_description = {
-		en = "Requires 'Enable expanded party' below. Same class/real-character behavior as slots 1-3. "
+		en = "Same class/real-character behavior as slots 1-3. Selecting a class here brings this bot "
+			.. "into the match, raising the party size beyond the base game's normal cap. "
 			.. "None leaves the slot empty -- no bot spawns for it.",
 	},
 	bot_slot_5_profile = {
 		en = "Bot slot 5",
 	},
 	bot_slot_5_profile_description = {
-		en = "Requires 'Enable expanded party' below. Same class/real-character behavior as slots 1-3. "
+		en = "Same class/real-character behavior as slots 1-3. Selecting a class here brings this bot "
+			.. "into the match, raising the party size beyond the base game's normal cap. "
 			.. "None leaves the slot empty -- no bot spawns for it.",
 	},
 	bot_slot_6_profile = {
 		en = "Bot slot 6",
 	},
 	bot_slot_6_profile_description = {
-		en = "Requires 'Enable expanded party' below. Same class/real-character behavior as slots 1-3. "
+		en = "Same class/real-character behavior as slots 1-3. Selecting a class here brings this bot "
+			.. "into the match, raising the party size beyond the base game's normal cap. "
 			.. "None leaves the slot empty -- no bot spawns for it.",
-	},
-	-- Party size (merged in from the former BestTeam mod)
-	enable_expanded_party = {
-		en = "Enable expanded party",
-	},
-	enable_expanded_party_description = {
-		en = "Raises the party size beyond the base game's 4-player cap, up to 7 total.",
 	},
 	bot_profile_none = {
 		en = "None (slot empty)",
