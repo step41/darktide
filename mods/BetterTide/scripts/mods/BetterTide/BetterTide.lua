@@ -335,59 +335,65 @@ end
 
 apply_ogryn_combatblade_speed_and_heavy_timing()
 
--- Attack speed + damage, discovered structurally rather than by a
--- hardcoded action-name list -- the 3 marks turned out to use genuinely
--- different action sets for their light-attack chains (m1/m2:
--- action_left_light/action_right_light, m2 also has a separate
--- action_light_pushfollow_combo, m3 instead uses action_light_1/2/3) and
--- different damage profile names per mark (e.g. m2 alone references
--- combat_blade_smiter_pushfollow). A hardcoded list would silently miss
--- actions on whichever mark doesn't use that exact name.
+-- Damage, discovered structurally rather than by a hardcoded action-name
+-- list -- the 3 marks turned out to use genuinely different action sets
+-- for their light-attack chains (m1/m2: action_left_light/
+-- action_right_light, m2 also has a separate action_light_pushfollow_combo,
+-- m3 instead uses action_light_1/2/3) and different damage profile names
+-- per mark (e.g. m2 alone references combat_blade_smiter_pushfollow). A
+-- hardcoded list would silently miss actions on whichever mark doesn't use
+-- that exact name.
 --
 -- Any action with a `damage_profile` field is a real attack (verified: no
 -- non-attack action -- block/push/wield/unwield/melee_start_*/inspect --
 -- has this exact field; action_push has inner_damage_profile/
 -- outer_damage_profile instead, a different key, so it's correctly
--- excluded). Attack speed: explicit 1.5-2x multiplier requested on top of
--- the Combat Blade's own current speed (not knife parity -- unlike dodge/
--- sprint, no comparison to the real Combat Knife was asked for here).
--- total_time is a plain number (not a *_template string), so scaling it
--- directly is safe. Runs after the heavy-timing pass above, so the two
--- heavy actions get this multiplier on top of their existing knife-parity
--- total_time (1s), not on top of vanilla Ogryn's slower 2s.
+-- excluded).
 --
--- Damage: melee/special damage profiles have no ranges.min/max block
--- (that's the ranged-pellet-only shape used by the Ripper Gun below) --
--- damage is driven entirely by power_distribution.attack/.impact threshold
--- pairs, so dividing those by the multiplier raises effective damage the
--- same way lowering the Ripper Gun's bayonet-special thresholds did.
--- Every combat_blade_*-prefixed profile (and special_uppercut_plus) is
--- confirmed exclusive to this weapon family via a repo-wide search, so
--- in-place mutation is safe -- no shared-table risk, unlike stamina's
--- "default". Deduplicated by table identity across ALL 3 marks (not
--- reset per mark) since some damage profile objects are the same shared
--- table referenced by more than one mark/action -- without this, scaling
--- would compound (e.g. 2x becomes 4x) wherever that overlap happens.
-local ogryn_combatblade_attack_speed_multiplier = 1.75
+-- Melee/special damage profiles have no ranges.min/max block (that's the
+-- ranged-pellet-only shape used by the Ripper Gun below) -- damage is
+-- driven entirely by power_distribution.attack/.impact threshold pairs, so
+-- dividing those by the multiplier raises effective damage the same way
+-- lowering the Ripper Gun's bayonet-special thresholds did. Every
+-- combat_blade_*-prefixed profile (and special_uppercut_plus) is confirmed
+-- exclusive to this weapon family via a repo-wide search, so in-place
+-- mutation is safe -- no shared-table risk, unlike stamina's "default".
+-- Deduplicated by table identity across ALL 3 marks (not reset per mark)
+-- since some damage profile objects are the same shared table referenced
+-- by more than one mark/action -- without this, scaling would compound
+-- (e.g. 2x becomes 4x) wherever that overlap happens.
+--
+-- NOTE: attack SPEED (scaling total_time) was tried here and reverted --
+-- it broke combo chaining, cut animations short, and made attacks miss
+-- entirely. Root cause: hit registration (damage_window_start/.end) and
+-- combo-chain advancement (chain_time) are both computed against a
+-- SEPARATE `time_scale` value derived from weapon_handling_template, not
+-- from total_time (confirmed in scripts/extension_systems/weapon/actions/
+-- action_sweep.lua's _is_within_damage_window: damage_window_end /
+-- time_scale, compared directly against elapsed action time). Shrinking
+-- total_time alone left the action ending/transitioning away before its
+-- own (unmoved) damage window and chain-advance point were ever reached.
+-- A correct fix needs to speed up time_scale in step with total_time, but
+-- weapon_handling_template is a *_template string -- same preparse-rename
+-- hazard as dodge_template/sprint_template/stamina_template -- so it needs
+-- a proper runtime hook (like the stamina and dodge_cooldown hooks above),
+-- not a source-table edit. Left for a follow-up rather than shipping
+-- another guess.
 local ogryn_combatblade_damage_multiplier = 2
 local ogryn_combatblade_scaled_damage_profiles = {}
 
-local function apply_ogryn_combatblade_attack_speed_and_damage()
+local function apply_ogryn_combatblade_damage()
     for _, weapon_template in ipairs(ogryn_combatblade_templates) do
         for _, action in pairs(weapon_template.actions) do
-            if action.damage_profile then
-                action.total_time = action.total_time / ogryn_combatblade_attack_speed_multiplier
-
-                if not ogryn_combatblade_scaled_damage_profiles[action.damage_profile] then
-                    ogryn_combatblade_scaled_damage_profiles[action.damage_profile] = true
-                    _scale_power_distribution_thresholds(action.damage_profile, 1 / ogryn_combatblade_damage_multiplier)
-                end
+            if action.damage_profile and not ogryn_combatblade_scaled_damage_profiles[action.damage_profile] then
+                ogryn_combatblade_scaled_damage_profiles[action.damage_profile] = true
+                _scale_power_distribution_thresholds(action.damage_profile, 1 / ogryn_combatblade_damage_multiplier)
             end
         end
     end
 end
 
-apply_ogryn_combatblade_attack_speed_and_damage()
+apply_ogryn_combatblade_damage()
 
 ---- OGRYN RIPPER GUN TWEAKS ----
 -- _scale_numeric_leaves is defined at the top of the file (shared helper).
