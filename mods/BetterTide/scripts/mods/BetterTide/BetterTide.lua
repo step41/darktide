@@ -32,6 +32,33 @@ local function _deep_copy(source)
     return copy
 end
 
+-- _scale_power_distribution_thresholds: melee/special damage profiles have
+-- no ranges.min/max block (that's a ranged-pellet-only shape) -- damage is
+-- driven entirely by power_distribution.attack/.impact threshold pairs
+-- (lower threshold = less weapon power needed to reach max damage = higher
+-- effective damage). These profiles also contain armor_damage_modifier
+-- tables (lerp value ENUM references, not magnitudes) and other unrelated
+-- numeric fields (finesse_boost percentages, ragdoll_push_force, etc.) at
+-- the same or deeper nesting levels, so a blind _scale_numeric_leaves over
+-- the whole profile would corrupt those too. This walks the full tree but
+-- only ever scales the contents of a table actually named
+-- "power_distribution", leaving everything else untouched.
+local function _scale_power_distribution_thresholds(node, factor)
+    if type(node) ~= "table" then
+        return
+    end
+
+    if node.power_distribution then
+        _scale_numeric_leaves(node.power_distribution, factor)
+    end
+
+    for key, value in pairs(node) do
+        if key ~= "power_distribution" and type(value) == "table" then
+            _scale_power_distribution_thresholds(value, factor)
+        end
+    end
+end
+
 ---- OGRYN ----
 local ogryn_archetype = require("scripts/settings/archetype/archetypes/ogryn_archetype")
 local archetype_toughness_templates = require("scripts/settings/toughness/archetype_toughness_templates")
@@ -81,6 +108,7 @@ apply_ogryn_tweaks()
 local weapon_dodge_templates = require("scripts/settings/dodge/weapon_dodge_templates")
 local weapon_sprint_templates = require("scripts/settings/sprint/weapon_sprint_templates")
 local weapon_stamina_templates = require("scripts/settings/stamina/weapon_stamina_templates")
+local damage_profile_templates = require("scripts/settings/damage/damage_profile_templates")
 local ogryn_combatblade_templates = {
     require("scripts/settings/equipment/weapon_templates/combat_blades/ogryn_combatblade_p1_m1"),
     require("scripts/settings/equipment/weapon_templates/combat_blades/ogryn_combatblade_p1_m2"),
@@ -114,7 +142,7 @@ end
 -- difference, that's strong evidence of an actual bug worth digging into
 -- further rather than a magnitude problem.
 local ogryn_combatblade_mobility_multiplier = 1
-local ogryn_combatblade_sprint_test_multiplier = 8
+local ogryn_combatblade_sprint_test_multiplier = 5
 local ogryn_combatblade_move_speed = 5.8 * ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_heavy_total_time = 1
 local ogryn_combatblade_heavy_actions = { "action_left_heavy", "action_right_heavy" }
@@ -307,6 +335,60 @@ end
 
 apply_ogryn_combatblade_speed_and_heavy_timing()
 
+-- Attack speed + damage, discovered structurally rather than by a
+-- hardcoded action-name list -- the 3 marks turned out to use genuinely
+-- different action sets for their light-attack chains (m1/m2:
+-- action_left_light/action_right_light, m2 also has a separate
+-- action_light_pushfollow_combo, m3 instead uses action_light_1/2/3) and
+-- different damage profile names per mark (e.g. m2 alone references
+-- combat_blade_smiter_pushfollow). A hardcoded list would silently miss
+-- actions on whichever mark doesn't use that exact name.
+--
+-- Any action with a `damage_profile` field is a real attack (verified: no
+-- non-attack action -- block/push/wield/unwield/melee_start_*/inspect --
+-- has this exact field; action_push has inner_damage_profile/
+-- outer_damage_profile instead, a different key, so it's correctly
+-- excluded). Attack speed: explicit 1.5-2x multiplier requested on top of
+-- the Combat Blade's own current speed (not knife parity -- unlike dodge/
+-- sprint, no comparison to the real Combat Knife was asked for here).
+-- total_time is a plain number (not a *_template string), so scaling it
+-- directly is safe. Runs after the heavy-timing pass above, so the two
+-- heavy actions get this multiplier on top of their existing knife-parity
+-- total_time (1s), not on top of vanilla Ogryn's slower 2s.
+--
+-- Damage: melee/special damage profiles have no ranges.min/max block
+-- (that's the ranged-pellet-only shape used by the Ripper Gun below) --
+-- damage is driven entirely by power_distribution.attack/.impact threshold
+-- pairs, so dividing those by the multiplier raises effective damage the
+-- same way lowering the Ripper Gun's bayonet-special thresholds did.
+-- Every combat_blade_*-prefixed profile (and special_uppercut_plus) is
+-- confirmed exclusive to this weapon family via a repo-wide search, so
+-- in-place mutation is safe -- no shared-table risk, unlike stamina's
+-- "default". Deduplicated by table identity across ALL 3 marks (not
+-- reset per mark) since some damage profile objects are the same shared
+-- table referenced by more than one mark/action -- without this, scaling
+-- would compound (e.g. 2x becomes 4x) wherever that overlap happens.
+local ogryn_combatblade_attack_speed_multiplier = 1.75
+local ogryn_combatblade_damage_multiplier = 2
+local ogryn_combatblade_scaled_damage_profiles = {}
+
+local function apply_ogryn_combatblade_attack_speed_and_damage()
+    for _, weapon_template in ipairs(ogryn_combatblade_templates) do
+        for _, action in pairs(weapon_template.actions) do
+            if action.damage_profile then
+                action.total_time = action.total_time / ogryn_combatblade_attack_speed_multiplier
+
+                if not ogryn_combatblade_scaled_damage_profiles[action.damage_profile] then
+                    ogryn_combatblade_scaled_damage_profiles[action.damage_profile] = true
+                    _scale_power_distribution_thresholds(action.damage_profile, 1 / ogryn_combatblade_damage_multiplier)
+                end
+            end
+        end
+    end
+end
+
+apply_ogryn_combatblade_attack_speed_and_damage()
+
 ---- OGRYN RIPPER GUN TWEAKS ----
 -- _scale_numeric_leaves is defined at the top of the file (shared helper).
 local rippergun_templates = {
@@ -340,7 +422,8 @@ apply_rippergun_speed()
 -- special_action_name = "action_stab") has no ranges block; its damage is
 -- driven entirely by per-target power_distribution thresholds, so halving
 -- those reaches the same effective-damage increase the pellet buff gets.
-local damage_profile_templates = require("scripts/settings/damage/damage_profile_templates")
+-- (damage_profile_templates required near the top of the file, shared with
+-- the Combat Blade damage section above.)
 local rippergun_damage_multiplier = 2
 local rippergun_special_power_divisor = 0.5
 
