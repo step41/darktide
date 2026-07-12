@@ -57,6 +57,7 @@ local function register_hooks()
 
 			AuthoritativePlayerUnitAnimationExtension[ANIMATION_EXTENSION_SENTINEL] = true
 
+			-- Guard anim_event_with_variable_float (line 77)
 			_mod:hook(
 				AuthoritativePlayerUnitAnimationExtension,
 				"anim_event_with_variable_float",
@@ -75,9 +76,9 @@ local function register_hooks()
 					if not variable_index then
 						if _debug_enabled() then
 							_debug_log(
-								"animation_guard:" .. tostring(variable_name) .. ":" .. tostring(failure_reason),
+								"animation_guard:float:" .. tostring(variable_name) .. ":" .. tostring(failure_reason),
 								_fixed_time(),
-								"animation guard fell back to plain anim_event for "
+								"animation guard fell back to plain anim_event for float "
 									.. tostring(variable_name)
 									.. " ("
 									.. tostring(failure_reason)
@@ -94,6 +95,7 @@ local function register_hooks()
 				end
 			)
 
+			-- Guard anim_event (plain — catches post-fallback crashes)
 			_mod:hook(
 				AuthoritativePlayerUnitAnimationExtension,
 				"anim_event",
@@ -121,6 +123,7 @@ local function register_hooks()
 				end
 			)
 
+			-- Guard anim_event_with_variable_int (line 227)
 			_mod:hook(
 				AuthoritativePlayerUnitAnimationExtension,
 				"anim_event_with_variable_int",
@@ -141,7 +144,7 @@ local function register_hooks()
 							_debug_log(
 								"animation_guard:int:" .. tostring(variable_name) .. ":" .. tostring(failure_reason),
 								_fixed_time(),
-								"animation guard fell back to plain anim_event for int variable "
+								"animation guard fell back to plain anim_event for int "
 									.. tostring(variable_name)
 									.. " ("
 									.. tostring(failure_reason)
@@ -155,6 +158,126 @@ local function register_hooks()
 					end
 
 					return func(self, event_name, variable_name, variable_value)
+				end
+			)
+
+			-- Guard anim_event_1p (first person variant)
+			_mod:hook(
+				AuthoritativePlayerUnitAnimationExtension,
+				"anim_event_1p",
+				function(func, self, event_name)
+					if not _is_bot_unit(self) then
+						return func(self, event_name)
+					end
+
+					local fp_unit = self and self._first_person_unit
+					if fp_unit then
+						local ok = pcall(func, self, event_name)
+						if not ok then
+							if _debug_enabled() then
+								_debug_log(
+									"animation_guard:anim_event_1p:" .. tostring(event_name),
+									_fixed_time(),
+									"animation guard suppressed invalid anim_event_1p for "
+										.. tostring(event_name),
+									nil,
+									"info"
+								)
+							end
+						end
+					end
+				end
+			)
+
+			-- Guard anim_event_with_variable_float_1p (first person float variant)
+			_mod:hook(
+				AuthoritativePlayerUnitAnimationExtension,
+				"anim_event_with_variable_float_1p",
+				function(func, self, event_name, variable_name, variable_value)
+					if not _is_bot_unit(self) then
+						return func(self, event_name, variable_name, variable_value)
+					end
+
+					local fp_unit = self and self._first_person_unit
+					local variable_index
+					local failure_reason
+					if fp_unit then
+						variable_index, failure_reason = _safe_animation_find_variable(fp_unit, variable_name)
+					end
+
+					if not variable_index then
+						if _debug_enabled() then
+							_debug_log(
+								"animation_guard:float_1p:" .. tostring(variable_name) .. ":" .. tostring(failure_reason),
+								_fixed_time(),
+								"animation guard fell back to plain anim_event_1p for float "
+									.. tostring(variable_name)
+									.. " ("
+									.. tostring(failure_reason)
+									.. ")",
+								nil,
+								"info"
+							)
+						end
+
+						return self:anim_event_1p(event_name)
+					end
+
+					return func(self, event_name, variable_name, variable_value)
+				end
+			)
+
+			-- Guard anim_event_with_variable_floats (multi-float variant)
+			_mod:hook(
+				AuthoritativePlayerUnitAnimationExtension,
+				"anim_event_with_variable_floats",
+				function(func, self, event_name, ...)
+					if not _is_bot_unit(self) then
+						return func(self, event_name, ...)
+					end
+
+					local ok = pcall(func, self, event_name, ...)
+					if not ok then
+						if _debug_enabled() then
+							_debug_log(
+								"animation_guard:floats:" .. tostring(event_name),
+								_fixed_time(),
+								"animation guard suppressed invalid anim_event_with_variable_floats for "
+									.. tostring(event_name),
+								nil,
+								"info"
+							)
+						end
+
+						return self:anim_event(event_name)
+					end
+				end
+			)
+
+			-- Guard anim_event_with_variable_floats_1p (multi-float first person variant)
+			_mod:hook(
+				AuthoritativePlayerUnitAnimationExtension,
+				"anim_event_with_variable_floats_1p",
+				function(func, self, event_name, ...)
+					if not _is_bot_unit(self) then
+						return func(self, event_name, ...)
+					end
+
+					local ok = pcall(func, self, event_name, ...)
+					if not ok then
+						if _debug_enabled() then
+							_debug_log(
+								"animation_guard:floats_1p:" .. tostring(event_name),
+								_fixed_time(),
+								"animation guard suppressed invalid anim_event_with_variable_floats_1p for "
+									.. tostring(event_name),
+								nil,
+								"info"
+							)
+						end
+
+						return self:anim_event_1p(event_name)
+					end
 				end
 			)
 		end
