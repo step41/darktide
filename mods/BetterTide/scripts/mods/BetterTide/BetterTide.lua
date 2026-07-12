@@ -142,7 +142,7 @@ end
 -- difference, that's strong evidence of an actual bug worth digging into
 -- further rather than a magnitude problem.
 local ogryn_combatblade_mobility_multiplier = 1
-local ogryn_combatblade_sprint_test_multiplier = 5
+local ogryn_combatblade_sprint_test_multiplier = 2.6
 local ogryn_combatblade_move_speed = 5.8 * ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_heavy_total_time = 1
 local ogryn_combatblade_heavy_actions = { "action_left_heavy", "action_right_heavy" }
