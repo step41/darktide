@@ -91,11 +91,26 @@ apply_ogryn_combatblade_dodge_and_sprint()
 -- the resolved stamina values when the weapon being resolved is one of the
 -- 3 Combat Blade templates -- every other weapon using "default" (including
 -- the Powermaul) is completely unaffected.
+--
+-- WeaponTweakTemplates.create() returns ALREADY-RESOLVED templates: every
+-- {lerp_basic, lerp_perfect} pair in the raw source table has already been
+-- collapsed into a single plain number by the engine's own lerp step. An
+-- earlier version of this hook assigned combat_knife_p1's RAW (unresolved)
+-- lerp-pair tables directly into that resolved structure -- a table where
+-- the UI stats code expects a number, which crashed instantly on opening
+-- the weapon inspect panel (confirmed via crash log: math.lua:28,
+-- "attempt to compare number with table", inside math.clamp). Fixed by
+-- assigning plain, already-resolved numbers instead -- combat_knife_p1's
+-- lerp_perfect (best-case/lowest-cost) values, matching a maxed-quality
+-- knife's actual resolved cost profile.
 local WeaponTweakTemplates = require("scripts/extension_systems/weapon/utilities/weapon_tweak_templates")
 local WeaponTweakTemplateSettings = require("scripts/settings/equipment/weapon_templates/weapon_tweak_template_settings")
 local template_types = WeaponTweakTemplateSettings.template_types
 local ogryn_combatblade_stamina_modifier = 7
-local ogryn_combatblade_stamina_costs = weapon_stamina_templates.combat_knife_p1
+local ogryn_combatblade_sprint_cost_per_second = weapon_stamina_templates.combat_knife_p1.sprint_cost_per_second.lerp_perfect
+local ogryn_combatblade_block_cost_inner = weapon_stamina_templates.combat_knife_p1.block_cost_default.inner.lerp_perfect
+local ogryn_combatblade_block_cost_outer = weapon_stamina_templates.combat_knife_p1.block_cost_default.outer.lerp_perfect
+local ogryn_combatblade_push_cost = weapon_stamina_templates.combat_knife_p1.push_cost.lerp_perfect
 
 mod:hook(WeaponTweakTemplates, "create", function(func, lerp_values, weapon_template, override_lerp_value_or_nil)
     local templates = func(lerp_values, weapon_template, override_lerp_value_or_nil)
@@ -104,9 +119,12 @@ mod:hook(WeaponTweakTemplates, "create", function(func, lerp_values, weapon_temp
         local resolved_stamina_templates = templates[template_types.stamina]
         for _, resolved_stamina in pairs(resolved_stamina_templates) do
             resolved_stamina.stamina_modifier = ogryn_combatblade_stamina_modifier
-            resolved_stamina.sprint_cost_per_second = ogryn_combatblade_stamina_costs.sprint_cost_per_second
-            resolved_stamina.block_cost_default = ogryn_combatblade_stamina_costs.block_cost_default
-            resolved_stamina.push_cost = ogryn_combatblade_stamina_costs.push_cost
+            resolved_stamina.sprint_cost_per_second = ogryn_combatblade_sprint_cost_per_second
+            resolved_stamina.block_cost_default = {
+                inner = ogryn_combatblade_block_cost_inner,
+                outer = ogryn_combatblade_block_cost_outer,
+            }
+            resolved_stamina.push_cost = ogryn_combatblade_push_cost
         end
     end
 
