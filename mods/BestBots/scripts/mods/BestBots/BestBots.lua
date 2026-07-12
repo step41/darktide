@@ -1083,24 +1083,21 @@ mod:command("bb_reset", "Reset all BestBots settings to their default values", f
 end)
 
 function mod.on_game_state_changed(status, state)
-	-- Diagnostic: which (status, state) pairs actually fire, to confirm or
-	-- correct the StateMainMenu/StateLoading assumption below. Remove once
-	-- the real-character roster fetch is confirmed working.
-	if _debug_enabled() then
-		_debug_log("state:transition:" .. tostring(status) .. ":" .. tostring(state), 0, "game_state_changed(" .. tostring(status) .. ", " .. tostring(state) .. ")")
-	end
+	-- TEMPORARY diagnostic (unconditional, not gated behind Enable Debug Logs):
+	-- which (status, state) pairs actually fire, since gated logging showed
+	-- nothing last test pass. Remove once the real-character roster fetch is
+	-- confirmed working.
+	mod:echo("BestBots: game_state_changed(" .. tostring(status) .. ", " .. tostring(state) .. ")")
 
 	-- Merged in from the former BestTeam mod: kick off the real-character
-	-- roster fetch as early as possible so the character_N dropdowns are
-	-- populated before the player opens mod settings. StateMainMenu (the hub)
-	-- is the primary trigger -- that's where players actually configure bot
-	-- slots, well before StateLoading, which only fires once a mission is
-	-- already launching (too late to be useful for the dropdown). StateLoading
-	-- is kept as a fallback in case the roster fetch never fired (e.g. the
-	-- player was already at the hub when this mod version first loaded).
-	-- Isolated in its own block/pcall so a fetch failure can't affect the
-	-- GameplayStateRun reset logic below.
-	if status == "enter" and (state == "StateMainMenu" or state == "StateLoading") then
+	-- roster fetch at every plausible opportunity -- StateMainMenu (the hub,
+	-- where slots actually get configured), StateLoading (mission launching,
+	-- fallback), and GameplayStateRun (fallback for later missions this
+	-- session if the earlier triggers never fired). fetch_all_profiles() is
+	-- idempotent, so firing it more than once is harmless. Isolated in its
+	-- own block/pcall so a fetch failure can't affect the GameplayStateRun
+	-- reset logic below.
+	if status == "enter" and (state == "StateMainMenu" or state == "StateLoading" or state == "GameplayStateRun") then
 		local ok, err = pcall(RealCharacterRoster.fetch_all_profiles)
 		if not ok then
 			mod:warning("BestBots: real character roster fetch failed: " .. tostring(err))

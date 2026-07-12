@@ -20,13 +20,18 @@ local _debug_enabled
 -- change mid-session).
 local _profiles_by_archetype = {}
 
+-- TEMPORARY: unconditional echoes (not gated behind Enable Debug Logs) while
+-- diagnosing why real characters aren't being found. Remove once confirmed
+-- working.
 local function fetch_all_profiles()
 	local data_service = Managers and Managers.data_service
 	local profiles_service = data_service and data_service.profiles
 	if not profiles_service then
+		_mod:echo("BestBots: real_character_roster: data_service.profiles unavailable, skipping fetch")
 		return
 	end
 
+	_mod:echo("BestBots: real_character_roster: requesting fetch_all_profiles()")
 	profiles_service:fetch_all_profiles()
 end
 
@@ -35,10 +40,17 @@ local function _handle_fetched_profiles(data)
 
 	table.clear(_profiles_by_archetype)
 
-	for _, profile in pairs(data.profiles) do
+	for _, profile in pairs(data.profiles or {}) do
 		profile.original_name = profile.name
 
 		local archetype_key = profile.archetype and profile.archetype.name
+		_mod:echo(
+			"BestBots: real_character_roster: found character '"
+				.. tostring(profile.name)
+				.. "' archetype='"
+				.. tostring(archetype_key)
+				.. "'"
+		)
 		if archetype_key and not _profiles_by_archetype[archetype_key] then
 			_profiles_by_archetype[archetype_key] = profile
 		end
@@ -46,13 +58,7 @@ local function _handle_fetched_profiles(data)
 		real_character_count = real_character_count + 1
 	end
 
-	if _debug_enabled and _debug_enabled() then
-		_debug_log(
-			"real_character_roster:fetched",
-			0,
-			"fetched " .. tostring(real_character_count) .. " real character(s)"
-		)
-	end
+	_mod:echo("BestBots: real_character_roster: fetched " .. tostring(real_character_count) .. " real character(s) total")
 end
 
 local M = {}
@@ -64,22 +70,29 @@ function M.get_character_profile_by_archetype(archetype_key)
 end
 
 function M.register_hooks()
-	_mod:hook("ProfilesService", "fetch_all_profiles", function(func, ...)
-		local profiles_promise = func(...)
+	_mod:echo("BestBots: real_character_roster.register_hooks() running")
 
-		profiles_promise:next(function(data)
-			local ok, err = pcall(_handle_fetched_profiles, data)
-			if not ok and _mod.warning then
-				_mod:warning("BestBots: real_character_roster failed to process fetched profiles: " .. tostring(err))
-			end
-		end):catch(function(err)
-			if _mod.warning then
-				_mod:warning("BestBots: real_character_roster fetch_all_profiles promise rejected: " .. tostring(err))
-			end
+	local hook_ok, hook_err = pcall(function()
+		_mod:hook("ProfilesService", "fetch_all_profiles", function(func, ...)
+			_mod:echo("BestBots: real_character_roster: fetch_all_profiles() hook fired (caller: game or us)")
+
+			local profiles_promise = func(...)
+
+			profiles_promise:next(function(data)
+				local ok, err = pcall(_handle_fetched_profiles, data)
+				if not ok then
+					_mod:echo("BestBots: real_character_roster: FAILED processing fetched profiles: " .. tostring(err))
+				end
+			end):catch(function(err)
+				_mod:echo("BestBots: real_character_roster: fetch promise REJECTED: " .. tostring(err))
+			end)
+
+			return profiles_promise
 		end)
-
-		return profiles_promise
 	end)
+	if not hook_ok then
+		_mod:echo("BestBots: real_character_roster: FAILED to install ProfilesService hook: " .. tostring(hook_err))
+	end
 
 	local ProfileUtils = require("scripts/utilities/profile_utils")
 	_mod:hook(ProfileUtils, "generate_random_name", function(func, profile)
@@ -88,6 +101,11 @@ function M.register_hooks()
 		end
 		return func(profile)
 	end)
+
+	-- Best-effort immediate attempt, in addition to the state-based triggers
+	-- in BestBots.lua -- harmless no-op if the backend isn't ready yet this
+	-- early (mod load time).
+	fetch_all_profiles()
 end
 
 M.fetch_all_profiles = fetch_all_profiles
