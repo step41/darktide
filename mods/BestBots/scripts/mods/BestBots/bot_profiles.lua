@@ -26,6 +26,7 @@ local SLOT_SETTING_IDS = {
 	"bot_slot_3_profile",
 	"bot_slot_4_profile",
 	"bot_slot_5_profile",
+	"bot_slot_6_profile",
 }
 
 local ATTACHMENT_SLOT_NAMES = {

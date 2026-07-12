@@ -164,6 +164,7 @@ M.DEFAULTS = {
 	bot_slot_3_profile = "ogryn",
 	bot_slot_4_profile = "none",
 	bot_slot_5_profile = "none",
+	bot_slot_6_profile = "none",
 	bot_weapon_quality = "auto",
 	bot_survivability_profile = "auto",
 	enable_bot_incoming_damage_reduction = true,

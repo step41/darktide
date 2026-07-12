@@ -497,6 +497,12 @@ return {
 	bot_slot_5_profile_description = {
 		en = "Only used when a Tertium mod adds a fifth bot. None keeps the base-game Veteran bot.",
 	},
+	bot_slot_6_profile = {
+		en = "Bot slot 6 (Tertium)",
+	},
+	bot_slot_6_profile_description = {
+		en = "Only used when a Tertium mod adds a sixth bot. None keeps the base-game Veteran bot.",
+	},
 	bot_profile_none = {
 		en = "None (base-game Veteran)",
 	},

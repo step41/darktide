@@ -108,6 +108,7 @@ return {
 					make_slot_dropdown(3, DEFAULTS.bot_slot_3_profile),
 					make_slot_dropdown(4, DEFAULTS.bot_slot_4_profile),
 					make_slot_dropdown(5, DEFAULTS.bot_slot_5_profile),
+					make_slot_dropdown(6, DEFAULTS.bot_slot_6_profile),
 					{
 						setting_id = "bot_weapon_quality",
 						type = "dropdown",
