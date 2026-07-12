@@ -85,6 +85,29 @@ end
 
 apply_ogryn_combatblade_dodge_and_sprint()
 
+-- TEMPORARY diagnostic: confirms the source-table mutation above actually
+-- took effect, and separately confirms what the engine's per-call resolver
+-- (WeaponTweakTemplates.create, hooked below) produces for the Combat Blade
+-- at actual weapon-resolve time. Needed because the user reports no dodge/
+-- sprint difference at all (neither in the stats panel nor in gameplay
+-- feel) despite the source values changing here -- this will show whether
+-- the mutation landed, and whether the resolved (post-lerp) values the game
+-- actually uses reflect it. Remove once confirmed working.
+mod:echo(
+    "BetterTide: ogryn_fast dodge after mutation -- distance_scale.lerp_perfect="
+        .. tostring(weapon_dodge_templates.ogryn_fast.distance_scale.lerp_perfect)
+        .. " speed_modifier.lerp_perfect="
+        .. tostring(weapon_dodge_templates.ogryn_fast.speed_modifier.lerp_perfect)
+        .. " base_distance="
+        .. tostring(weapon_dodge_templates.ogryn_fast.base_distance)
+)
+mod:echo(
+    "BetterTide: ogryn_assault sprint after mutation -- sprint_speed_mod.lerp_basic="
+        .. tostring(weapon_sprint_templates.ogryn_assault.sprint_speed_mod.lerp_basic)
+        .. " sprint_forward_acceleration.lerp_perfect="
+        .. tostring(weapon_sprint_templates.ogryn_assault.sprint_forward_acceleration.lerp_perfect)
+)
+
 -- Stamina's vanilla template ("default") is shared with the Powermaul, so
 -- overwriting it in place would buff that weapon too. Instead, hook the
 -- per-call template resolver (WeaponTweakTemplates.create) and only patch
@@ -112,6 +135,13 @@ local ogryn_combatblade_block_cost_inner = weapon_stamina_templates.combat_knife
 local ogryn_combatblade_block_cost_outer = weapon_stamina_templates.combat_knife_p1.block_cost_default.outer.lerp_perfect
 local ogryn_combatblade_push_cost = weapon_stamina_templates.combat_knife_p1.push_cost.lerp_perfect
 
+-- TEMPORARY diagnostic (see above): logs once per weapon_template the first
+-- time it's resolved, showing the actual RESOLVED (post-lerp) dodge/sprint
+-- values the game computes at runtime -- ground truth for whether the
+-- source-table mutation is reaching gameplay/UI at all. Remove once
+-- confirmed working, alongside the two mod:echo calls above.
+local _ogryn_combatblade_resolve_logged = {}
+
 mod:hook(WeaponTweakTemplates, "create", function(func, lerp_values, weapon_template, override_lerp_value_or_nil)
     local templates = func(lerp_values, weapon_template, override_lerp_value_or_nil)
 
@@ -125,6 +155,36 @@ mod:hook(WeaponTweakTemplates, "create", function(func, lerp_values, weapon_temp
                 outer = ogryn_combatblade_block_cost_outer,
             }
             resolved_stamina.push_cost = ogryn_combatblade_push_cost
+        end
+
+        if not _ogryn_combatblade_resolve_logged[weapon_template] then
+            _ogryn_combatblade_resolve_logged[weapon_template] = true
+
+            local resolved_dodge_templates = templates[template_types.dodge]
+            for dodge_key, resolved_dodge in pairs(resolved_dodge_templates) do
+                mod:echo(
+                    "BetterTide: resolved dodge template '"
+                        .. tostring(dodge_key)
+                        .. "' for combat blade -- distance_scale="
+                        .. tostring(resolved_dodge.distance_scale)
+                        .. " speed_modifier="
+                        .. tostring(resolved_dodge.speed_modifier)
+                        .. " base_distance="
+                        .. tostring(resolved_dodge.base_distance)
+                )
+            end
+
+            local resolved_sprint_templates = templates[template_types.sprint]
+            for sprint_key, resolved_sprint in pairs(resolved_sprint_templates) do
+                mod:echo(
+                    "BetterTide: resolved sprint template '"
+                        .. tostring(sprint_key)
+                        .. "' for combat blade -- sprint_speed_mod="
+                        .. tostring(resolved_sprint.sprint_speed_mod)
+                        .. " sprint_forward_acceleration="
+                        .. tostring(resolved_sprint.sprint_forward_acceleration)
+                )
+            end
         end
     end
 
@@ -243,14 +303,32 @@ local rippergun_recoil_template_names = {
     "rippergun_p1_m2_spraynpray",
 }
 
+-- The engine's spread_templates.lua does one-time post-processing at module
+-- load (before any mod runs) that writes a "num_spreads" COUNT field
+-- directly into still.immediate_spread.damage_hit/.shooting -- the SAME
+-- table as the {pitch, yaw} array entries. Recursing _scale_numeric_leaves
+-- into that whole table (an earlier version of this code did) also
+-- multiplies num_spreads, corrupting an integer count into a fraction; the
+-- game then does spread_type_settings[math.min(num_shots, num_spreads)],
+-- and a fractional index matches no array key, crashing on the next shot
+-- fired (confirmed via crash log: scripts/utilities/spread.lua:47, "attempt
+-- to index local 'spread_settings' (a nil value)"). Fixed by iterating only
+-- the numbered array entries (1..#entries), which skips the "num_spreads"
+-- string key entirely.
+local function _scale_immediate_spread_entries(entries, factor)
+    for i = 1, #entries do
+        _scale_numeric_leaves(entries[i], factor)
+    end
+end
+
 local function apply_rippergun_accuracy()
     for _, name in ipairs(rippergun_spread_template_names) do
         local still = spread_templates[name].still
         _scale_numeric_leaves(still.randomized_spread, rippergun_spread_tighten)
         _scale_numeric_leaves(still.max_spread, rippergun_spread_tighten)
         _scale_numeric_leaves(still.continuous_spread, rippergun_spread_tighten)
-        _scale_numeric_leaves(still.immediate_spread.damage_hit, rippergun_spread_tighten)
-        _scale_numeric_leaves(still.immediate_spread.shooting, rippergun_spread_tighten)
+        _scale_immediate_spread_entries(still.immediate_spread.damage_hit, rippergun_spread_tighten)
+        _scale_immediate_spread_entries(still.immediate_spread.shooting, rippergun_spread_tighten)
         _scale_numeric_leaves(still.decay.shooting, rippergun_spread_recovery_boost)
         _scale_numeric_leaves(still.decay.idle, rippergun_spread_recovery_boost)
     end
