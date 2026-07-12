@@ -23,71 +23,107 @@ end
 apply_ogryn_tweaks()
 
 ---- OGRYN COMBAT BLADE MOBILITY ----
--- All 3 mark variants ship with Ogryn's normal slow dodge/sprint/handling
--- templates despite being a small fast weapon. Bring them up to the same
--- mobility profile as the (non-Ogryn) Combat Knife: dodge_template,
--- sprint_template, and max_first_person_anim_movement_speed copied directly
--- from combatknife_p1_m1/m2. Heavy attacks also get the knife's fast
--- weapon_handling_template and total_time (Ogryn's heavy takes 2s start to
--- finish vs the knife's 1s) so the "heavy attack move tech" matches too.
+-- All 3 mark variants ship with Ogryn's normal slow dodge/sprint templates
+-- ("ogryn_fast"/"ogryn_assault") despite being a small fast weapon.
+--
+-- IMPORTANT: the engine "preparses" every weapon template's *_template
+-- string fields (dodge_template, sprint_template, stamina_template,
+-- weapon_handling_template, etc.) exactly ONCE, at the top of
+-- weapon_templates.lua, the first time that module is required -- which
+-- happens well before any mod script runs. Preparsing renames the field in
+-- place (e.g. "ogryn_fast" -> "base_ogryn_fast") and caches a name->table
+-- lookup keyed off whatever string was there AT THAT TIME. Reassigning
+-- weapon_template.dodge_template to a different string afterward (what an
+-- earlier version of this mod did) is therefore a silent no-op for anything
+-- that reads the resolved template (confirmed: it produced zero in-game
+-- difference), and pointing stamina_template at a brand-new key that didn't
+-- exist at preparse time crashes outright, because the resolved-template
+-- lookup never learns the new name (confirmed via a real crash log:
+-- scripts/utilities/weapon_stats.lua:422, "attempt to index local
+-- 'stamina_template' (a nil value)").
+--
+-- The correct, crash-safe fix is to leave dodge_template/sprint_template/
+-- stamina_template exactly as vanilla set them, and instead overwrite the
+-- CONTENTS of the templates they already resolve to -- those are read fresh
+-- on every use, not cached at preparse time.
+local weapon_dodge_templates = require("scripts/settings/dodge/weapon_dodge_templates")
+local weapon_sprint_templates = require("scripts/settings/sprint/weapon_sprint_templates")
 local weapon_stamina_templates = require("scripts/settings/stamina/weapon_stamina_templates")
 local ogryn_combatblade_templates = {
     require("scripts/settings/equipment/weapon_templates/combat_blades/ogryn_combatblade_p1_m1"),
     require("scripts/settings/equipment/weapon_templates/combat_blades/ogryn_combatblade_p1_m2"),
     require("scripts/settings/equipment/weapon_templates/combat_blades/ogryn_combatblade_p1_m3"),
 }
+local ogryn_combatblade_template_set = {}
+for _, weapon_template in ipairs(ogryn_combatblade_templates) do
+    ogryn_combatblade_template_set[weapon_template] = true
+end
 
-local ogryn_combatblade_dodge_template = "ninja_knife"
-local ogryn_combatblade_sprint_template = "ninja_l"
 local ogryn_combatblade_move_speed = 5.8
 local ogryn_combatblade_heavy_total_time = 1
-local ogryn_combatblade_heavy_handling_template = "time_scale_1_1_ninja"
 local ogryn_combatblade_heavy_actions = { "action_left_heavy", "action_right_heavy" }
 
--- New stamina template rather than reusing "default" (also used by the
--- Powermaul) or "combat_knife_p1" (stamina_modifier 1 -- too low for the
--- requested 6-8 range). Sprint/block/push costs copied from combat_knife_p1
--- to keep the low-cost mobility feel that goes with them.
-weapon_stamina_templates.ogryn_combatblade_mobile = weapon_stamina_templates.ogryn_combatblade_mobile or {
-    stamina_modifier = 7,
-    sprint_cost_per_second = {
-        lerp_basic = 0.75,
-        lerp_perfect = 0.25,
-    },
-    block_cost_default = {
-        inner = {
-            lerp_basic = 0.75,
-            lerp_perfect = 0.25,
-        },
-        outer = {
-            lerp_basic = 1.5,
-            lerp_perfect = 0.5,
-        },
-    },
-    push_cost = {
-        lerp_basic = 1.25,
-        lerp_perfect = 0.75,
-    },
-}
+-- "ogryn_fast"/"ogryn_assault" are exclusive to the Combat Blade family (no
+-- other Ogryn weapon references them), so overwriting their fields in place
+-- is safe -- verified via a repo-wide search before writing this. Every
+-- field copied from ninja_knife/ninja_l (the real Combat Knife's dodge and
+-- sprint templates) by reference, not by hand-copied literal, so this stays
+-- correct even if a future game patch changes those numbers.
+local function apply_ogryn_combatblade_dodge_and_sprint()
+    local ninja_knife_dodge = weapon_dodge_templates.ninja_knife
+    local ogryn_fast_dodge = weapon_dodge_templates.ogryn_fast
+    for key, value in pairs(ninja_knife_dodge) do
+        ogryn_fast_dodge[key] = value
+    end
 
-local function apply_ogryn_combatblade_mobility()
+    local ninja_l_sprint = weapon_sprint_templates.ninja_l
+    local ogryn_assault_sprint = weapon_sprint_templates.ogryn_assault
+    for key, value in pairs(ninja_l_sprint) do
+        ogryn_assault_sprint[key] = value
+    end
+end
+
+apply_ogryn_combatblade_dodge_and_sprint()
+
+-- Stamina's vanilla template ("default") is shared with the Powermaul, so
+-- overwriting it in place would buff that weapon too. Instead, hook the
+-- per-call template resolver (WeaponTweakTemplates.create) and only patch
+-- the resolved stamina values when the weapon being resolved is one of the
+-- 3 Combat Blade templates -- every other weapon using "default" (including
+-- the Powermaul) is completely unaffected.
+local WeaponTweakTemplates = require("scripts/extension_systems/weapon/utilities/weapon_tweak_templates")
+local WeaponTweakTemplateSettings = require("scripts/settings/equipment/weapon_templates/weapon_tweak_template_settings")
+local template_types = WeaponTweakTemplateSettings.template_types
+local ogryn_combatblade_stamina_modifier = 7
+local ogryn_combatblade_stamina_costs = weapon_stamina_templates.combat_knife_p1
+
+mod:hook(WeaponTweakTemplates, "create", function(func, lerp_values, weapon_template, override_lerp_value_or_nil)
+    local templates = func(lerp_values, weapon_template, override_lerp_value_or_nil)
+
+    if ogryn_combatblade_template_set[weapon_template] then
+        local resolved_stamina_templates = templates[template_types.stamina]
+        for _, resolved_stamina in pairs(resolved_stamina_templates) do
+            resolved_stamina.stamina_modifier = ogryn_combatblade_stamina_modifier
+            resolved_stamina.sprint_cost_per_second = ogryn_combatblade_stamina_costs.sprint_cost_per_second
+            resolved_stamina.block_cost_default = ogryn_combatblade_stamina_costs.block_cost_default
+            resolved_stamina.push_cost = ogryn_combatblade_stamina_costs.push_cost
+        end
+    end
+
+    return templates
+end)
+
+local function apply_ogryn_combatblade_speed_and_heavy_timing()
     for _, weapon_template in ipairs(ogryn_combatblade_templates) do
-        weapon_template.dodge_template = ogryn_combatblade_dodge_template
-        weapon_template.sprint_template = ogryn_combatblade_sprint_template
-        weapon_template.stamina_template = "ogryn_combatblade_mobile"
         weapon_template.max_first_person_anim_movement_speed = ogryn_combatblade_move_speed
 
         for _, action_name in ipairs(ogryn_combatblade_heavy_actions) do
-            local action = weapon_template[action_name]
-            if action then
-                action.total_time = ogryn_combatblade_heavy_total_time
-                action.weapon_handling_template = ogryn_combatblade_heavy_handling_template
-            end
+            weapon_template.actions[action_name].total_time = ogryn_combatblade_heavy_total_time
         end
     end
 end
 
-apply_ogryn_combatblade_mobility()
+apply_ogryn_combatblade_speed_and_heavy_timing()
 
 ---- OGRYN RIPPER GUN TWEAKS ----
 -- Shared helper: recursively multiplies every numeric leaf in a table by
@@ -119,9 +155,10 @@ local rippergun_ads_fast_time = 0.25
 
 local function apply_rippergun_speed()
     for _, weapon_template in ipairs(rippergun_templates) do
-        weapon_template.action_wield.total_time = rippergun_wield_time
-        weapon_template.action_zoom.total_time = rippergun_ads_time
-        weapon_template.action_zoom_fast.total_time = rippergun_ads_fast_time
+        local actions = weapon_template.actions
+        actions.action_wield.total_time = rippergun_wield_time
+        actions.action_zoom.total_time = rippergun_ads_time
+        actions.action_zoom_fast.total_time = rippergun_ads_fast_time
     end
 end
 
