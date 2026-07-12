@@ -36,9 +36,6 @@ return {
 	bot_profiles_group = {
 		en = title("Bot Team Setup"),
 	},
-	real_characters_group = {
-		en = title("Real Characters"),
-	},
 	diagnostics_group = {
 		en = title("Diagnostics"),
 	},
@@ -468,77 +465,53 @@ return {
 		en = "Bot slot 1",
 	},
 	bot_slot_1_profile_description = {
-		en = "Chooses the class for this slot. "
-			.. "If a real character is selected below for this slot, that takes priority. "
+		en = "Chooses the class for this slot. If you have a real character of that class, this bot uses "
+			.. "your actual character and loadout instead of a generic build. "
 			.. "None leaves the slot empty -- no bot spawns for it.",
 	},
 	bot_slot_2_profile = {
 		en = "Bot slot 2",
 	},
 	bot_slot_2_profile_description = {
-		en = "Chooses the class for this slot. "
-			.. "If a real character is selected below for this slot, that takes priority. "
+		en = "Chooses the class for this slot. If you have a real character of that class, this bot uses "
+			.. "your actual character and loadout instead of a generic build. "
 			.. "None leaves the slot empty -- no bot spawns for it.",
 	},
 	bot_slot_3_profile = {
 		en = "Bot slot 3",
 	},
 	bot_slot_3_profile_description = {
-		en = "Chooses the class for this slot. "
-			.. "If a real character is selected below for this slot, that takes priority. "
+		en = "Chooses the class for this slot. If you have a real character of that class, this bot uses "
+			.. "your actual character and loadout instead of a generic build. "
 			.. "None leaves the slot empty -- no bot spawns for it.",
 	},
 	bot_slot_4_profile = {
 		en = "Bot slot 4",
 	},
 	bot_slot_4_profile_description = {
-		en = "Requires 'Enable expanded party' below. None leaves the slot empty -- no bot spawns for it.",
+		en = "Requires 'Enable expanded party' below. Same class/real-character behavior as slots 1-3. "
+			.. "None leaves the slot empty -- no bot spawns for it.",
 	},
 	bot_slot_5_profile = {
 		en = "Bot slot 5",
 	},
 	bot_slot_5_profile_description = {
-		en = "Requires 'Enable expanded party' below. None leaves the slot empty -- no bot spawns for it.",
+		en = "Requires 'Enable expanded party' below. Same class/real-character behavior as slots 1-3. "
+			.. "None leaves the slot empty -- no bot spawns for it.",
 	},
 	bot_slot_6_profile = {
 		en = "Bot slot 6",
 	},
 	bot_slot_6_profile_description = {
-		en = "Requires 'Enable expanded party' below. None leaves the slot empty -- no bot spawns for it.",
+		en = "Requires 'Enable expanded party' below. Same class/real-character behavior as slots 1-3. "
+			.. "None leaves the slot empty -- no bot spawns for it.",
 	},
-	-- Real character selection (merged in from the former BestTeam mod)
+	-- Party size (merged in from the former BestTeam mod)
 	enable_expanded_party = {
 		en = "Enable expanded party",
 	},
 	enable_expanded_party_description = {
 		en = "Raises the party size beyond the base game's 4-player cap, up to 7 total.",
-	},
-	character_1 = {
-		en = "Real character 1",
-	},
-	character_2 = {
-		en = "Real character 2",
-	},
-	character_3 = {
-		en = "Real character 3",
-	},
-	character_4 = {
-		en = "Real character 4",
-	},
-	character_5 = {
-		en = "Real character 5",
-	},
-	character_6 = {
-		en = "Real character 6",
-	},
-	character_option_none = {
-		en = "None",
-	},
-	character_option_gender_male_abbreviation = {
-		en = "(m)",
-	},
-	character_option_gender_female_abbreviation = {
-		en = "(f)",
 	},
 	bot_profile_none = {
 		en = "None (slot empty)",

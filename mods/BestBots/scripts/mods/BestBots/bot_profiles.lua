@@ -31,17 +31,6 @@ local SLOT_SETTING_IDS = {
 	"bot_slot_6_profile",
 }
 
--- Real-character selection per slot (merged in from the former BestTeam mod).
--- A slot with a real character selected takes priority over its class choice.
-local CHARACTER_SETTING_IDS = {
-	"character_1",
-	"character_2",
-	"character_3",
-	"character_4",
-	"character_5",
-	"character_6",
-}
-
 local ATTACHMENT_SLOT_NAMES = {
 	"slot_attachment_1",
 	"slot_attachment_2",
@@ -118,29 +107,16 @@ local function _get_slot_profile_choice(slot_index)
 	return _mod:get(setting_id) or "none"
 end
 
-local function _get_character_choice(slot_index)
-	if not _mod then
-		return "none"
-	end
-
-	local setting_id = CHARACTER_SETTING_IDS[slot_index]
-	if not setting_id then
-		return "none"
-	end
-
-	return _mod:get(setting_id) or "none"
-end
-
--- A slot is active if either a real character or an AI class is selected for
--- it. Returns an ordered list of slot NUMBERS (1-6, skipping "None" gaps) so
--- the Nth bot the game actually spawns maps to the Nth active slot, not to
--- a fixed slot index -- e.g. slot 1 = None, slot 2 = Zealot must give the
--- one bot that spawns Zealot, not fall through to a default Veteran.
+-- A slot is active if an archetype is selected for it. Returns an ordered
+-- list of slot NUMBERS (1-6, skipping "None" gaps) so the Nth bot the game
+-- actually spawns maps to the Nth active slot, not a fixed slot index --
+-- e.g. slot 1 = None, slot 2 = Zealot must give the one bot that spawns,
+-- Zealot, not fall through to a default Veteran.
 local function _compute_active_slots()
 	local active = {}
 
 	for slot_index = 1, #SLOT_SETTING_IDS do
-		if _get_slot_profile_choice(slot_index) ~= "none" or _get_character_choice(slot_index) ~= "none" then
+		if _get_slot_profile_choice(slot_index) ~= "none" then
 			active[#active + 1] = slot_index
 		end
 	end
@@ -544,28 +520,28 @@ local function resolve_profile(profile)
 		return profile, false
 	end
 
-	-- Real character selection (merged in from the former BestTeam mod) takes
-	-- priority over an AI class choice for the same slot. If the roster hasn't
-	-- finished fetching yet, fall through to the class choice below instead of
-	-- blocking the spawn.
-	local character_choice = _get_character_choice(slot_index)
-	if character_choice ~= "none" and _real_character_roster then
-		local character_profile = _real_character_roster.get_character_profile(character_choice)
+	local choice = _get_slot_profile_choice(slot_index)
+	if choice == "none" then
+		return profile, false
+	end
+
+	-- If the account has a real character of this archetype, use it wholesale
+	-- (real loadout/build/talents, not the generic curated profile) -- that's
+	-- the whole point of picking your own class here instead of leaving a bot
+	-- on the default build. Falls through to the generic template below if no
+	-- such character exists yet, or if the roster hasn't finished fetching.
+	if _real_character_roster then
+		local character_profile = _real_character_roster.get_character_profile_by_archetype(choice)
 		if character_profile then
 			if _debug_enabled() then
 				_debug_log(
 					"bot_profiles:character_injected:" .. tostring(slot_index),
 					0,
-					"bot slot " .. tostring(slot_index) .. " → real character " .. tostring(character_choice)
+					"bot slot " .. tostring(slot_index) .. " (" .. tostring(choice) .. ") → real character"
 				)
 			end
 			return character_profile, true
 		end
-	end
-
-	local choice = _get_slot_profile_choice(slot_index)
-	if choice == "none" then
-		return profile, false
 	end
 
 	local resolved = _resolve_profile_template(choice)

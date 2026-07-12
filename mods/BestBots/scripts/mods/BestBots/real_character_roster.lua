@@ -1,96 +1,52 @@
 -- real_character_roster.lua — fetches the account's real character roster and
--- exposes it so bot_profiles.lua can inject a real character into a bot slot
--- instead of an AI class profile. Ported from the standalone BestTeam
--- (formerly Tertium4Or5) mod during the merge into BestBots.
+-- indexes it by archetype, so bot_profiles.lua can transparently prefer a
+-- real character's own build over the generic curated profile for whichever
+-- archetype a bot slot's dropdown selects. There is no separate "pick a
+-- character" UI control -- the existing per-slot archetype dropdown drives
+-- both: pick "Zealot" and you get YOUR Zealot if you have one, otherwise the
+-- generic Zealot build. Ported and redesigned from the standalone BestTeam
+-- (formerly Tertium4Or5) mod, which used a separate character-picker dropdown;
+-- merged here into the single archetype dropdown per user request.
 
 local _mod
 local _debug_log
 local _debug_enabled
 
--- Keyed by character_id. Cleared only on a fresh fetch (not per-mission —
--- the account's character roster doesn't change mid-session).
-local _profiles = {}
-
--- Shared, mutable table: BestBots_data.lua's character_N dropdowns reference
--- this SAME table object as their `options` list, so populating it here
--- updates the UI in place once the fetch resolves.
---
--- DMF's mod-options initialization rejects any dropdown whose `options` has
--- fewer than 2 entries -- and that validation runs immediately at mod load,
--- long before the async roster fetch below ever resolves. A second inert
--- "None" placeholder (value="none2", never surfaced as a real choice --
--- resolve_profile treats anything other than the real "none" as an unknown
--- character and falls through gracefully) satisfies that minimum until the
--- real roster arrives.
-local M = {}
-M.character_options = {
-	{ text = "character_option_none", value = "none" },
-	{ text = "character_option_none", value = "none2" },
-}
-
-local function _gender_abbreviation_loc_key(gender)
-	if gender == "male" then
-		return "character_option_gender_male_abbreviation"
-	end
-	return "character_option_gender_female_abbreviation"
-end
-
-local function _archetype_display_name(archetype)
-	local raw_name = Localize(archetype.archetype_name)
-	return raw_name:sub(1, 1):upper() .. raw_name:sub(2)
-end
+-- Keyed by archetype string (e.g. "zealot", "cryptic" -- matches the values
+-- used by bot_slot_N_profile). If an account has multiple characters of the
+-- same archetype, the first one encountered in the fetch wins -- there's only
+-- one dropdown slot per archetype, so there's no way to pick between them.
+-- Cleared and rebuilt on every fetch (not per-mission -- the roster doesn't
+-- change mid-session).
+local _profiles_by_archetype = {}
 
 local function fetch_all_profiles()
 	local data_service = Managers and Managers.data_service
 	local profiles_service = data_service and data_service.profiles
 	if not profiles_service then
-		if _debug_enabled and _debug_enabled() then
-			_debug_log(
-				"real_character_roster:fetch_skipped",
-				0,
-				"fetch_all_profiles() called but Managers.data_service.profiles unavailable"
-			)
-		end
 		return
-	end
-
-	if _debug_enabled and _debug_enabled() then
-		_debug_log("real_character_roster:fetch_requested", 0, "calling ProfilesService:fetch_all_profiles()")
 	end
 
 	profiles_service:fetch_all_profiles()
 end
 
 local function _handle_fetched_profiles(data)
-	local Personalities = require("scripts/settings/character/personalities")
 	local real_character_count = 0
 
-	table.clear(_profiles)
-	table.clear(M.character_options)
-	M.character_options[1] = { text = "character_option_none", value = "none" }
+	table.clear(_profiles_by_archetype)
 
 	for _, profile in pairs(data.profiles) do
 		profile.original_name = profile.name
-		_profiles[profile.character_id] = profile
 
-		local gender_text = _mod:localize(_gender_abbreviation_loc_key(profile.gender))
-		local archetype_name = _archetype_display_name(profile.archetype)
-		local personality_name = Localize(Personalities[profile.lore.backstory.personality].display_name)
+		local archetype_key = profile.archetype and profile.archetype.name
+		if archetype_key and not _profiles_by_archetype[archetype_key] then
+			_profiles_by_archetype[archetype_key] = profile
+		end
 
-		M.character_options[#M.character_options + 1] = {
-			text = profile.original_name .. " " .. gender_text .. " " .. personality_name .. " " .. archetype_name,
-			value = profile.character_id,
-		}
 		real_character_count = real_character_count + 1
 	end
 
-	-- Same minimum-2-entries guard as the initial state (see top of file) --
-	-- an account with zero real characters would otherwise leave this at 1.
-	if #M.character_options < 2 then
-		M.character_options[#M.character_options + 1] = { text = "character_option_none", value = "none2" }
-	end
-
-	if _debug_enabled() then
+	if _debug_enabled and _debug_enabled() then
 		_debug_log(
 			"real_character_roster:fetched",
 			0,
@@ -99,16 +55,16 @@ local function _handle_fetched_profiles(data)
 	end
 end
 
-function M.get_character_profile(character_id)
-	return _profiles[character_id]
+local M = {}
+
+-- Returns the account's real character profile for the given archetype
+-- (e.g. "zealot"), or nil if none exists / the roster hasn't fetched yet.
+function M.get_character_profile_by_archetype(archetype_key)
+	return _profiles_by_archetype[archetype_key]
 end
 
 function M.register_hooks()
 	_mod:hook("ProfilesService", "fetch_all_profiles", function(func, ...)
-		if _debug_enabled and _debug_enabled() then
-			_debug_log("real_character_roster:hook_fired", 0, "ProfilesService:fetch_all_profiles() hook intercepted a call")
-		end
-
 		local profiles_promise = func(...)
 
 		profiles_promise:next(function(data)
@@ -117,7 +73,9 @@ function M.register_hooks()
 				_mod:warning("BestBots: real_character_roster failed to process fetched profiles: " .. tostring(err))
 			end
 		end):catch(function(err)
-			_mod:warning("BestBots: real_character_roster fetch_all_profiles promise rejected: " .. tostring(err))
+			if _mod.warning then
+				_mod:warning("BestBots: real_character_roster fetch_all_profiles promise rejected: " .. tostring(err))
+			end
 		end)
 
 		return profiles_promise
