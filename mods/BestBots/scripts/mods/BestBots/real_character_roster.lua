@@ -14,9 +14,18 @@ local _profiles = {}
 -- Shared, mutable table: BestBots_data.lua's character_N dropdowns reference
 -- this SAME table object as their `options` list, so populating it here
 -- updates the UI in place once the fetch resolves.
+--
+-- DMF's mod-options initialization rejects any dropdown whose `options` has
+-- fewer than 2 entries -- and that validation runs immediately at mod load,
+-- long before the async roster fetch below ever resolves. A second inert
+-- "None" placeholder (value="none2", never surfaced as a real choice --
+-- resolve_profile treats anything other than the real "none" as an unknown
+-- character and falls through gracefully) satisfies that minimum until the
+-- real roster arrives.
 local M = {}
 M.character_options = {
 	{ text = "character_option_none", value = "none" },
+	{ text = "character_option_none", value = "none2" },
 }
 
 local function _gender_abbreviation_loc_key(gender)
@@ -43,6 +52,7 @@ end
 
 local function _handle_fetched_profiles(data)
 	local Personalities = require("scripts/settings/character/personalities")
+	local real_character_count = 0
 
 	table.clear(_profiles)
 	table.clear(M.character_options)
@@ -60,13 +70,20 @@ local function _handle_fetched_profiles(data)
 			text = profile.original_name .. " " .. gender_text .. " " .. personality_name .. " " .. archetype_name,
 			value = profile.character_id,
 		}
+		real_character_count = real_character_count + 1
+	end
+
+	-- Same minimum-2-entries guard as the initial state (see top of file) --
+	-- an account with zero real characters would otherwise leave this at 1.
+	if #M.character_options < 2 then
+		M.character_options[#M.character_options + 1] = { text = "character_option_none", value = "none2" }
 	end
 
 	if _debug_enabled() then
 		_debug_log(
 			"real_character_roster:fetched",
 			0,
-			"fetched " .. tostring(#M.character_options - 1) .. " real character(s)"
+			"fetched " .. tostring(real_character_count) .. " real character(s)"
 		)
 	end
 end
