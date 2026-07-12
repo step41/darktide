@@ -1083,12 +1083,6 @@ mod:command("bb_reset", "Reset all BestBots settings to their default values", f
 end)
 
 function mod.on_game_state_changed(status, state)
-	-- TEMPORARY diagnostic (unconditional, not gated behind Enable Debug Logs):
-	-- which (status, state) pairs actually fire, since gated logging showed
-	-- nothing last test pass. Remove once the real-character roster fetch is
-	-- confirmed working.
-	mod:echo("BestBots: game_state_changed(" .. tostring(status) .. ", " .. tostring(state) .. ")")
-
 	-- Merged in from the former BestTeam mod: kick off the real-character
 	-- roster fetch at every plausible opportunity -- StateMainMenu (the hub,
 	-- where slots actually get configured), StateLoading (mission launching,

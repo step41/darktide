@@ -492,21 +492,28 @@ local function resolve_profile(profile)
 	-- This check is load-order-independent and handles both #68 scenarios:
 	-- (a) real veterans preserved, (b) "None" stubs overridden. It now mainly
 	-- guards against an actual human player or another mod occupying this slot.
+	-- TEMPORARY: unconditional echoes (not gated behind Enable Debug Logs)
+	-- while diagnosing why real characters/archetypes aren't being applied.
+	-- Remove once confirmed working.
+	_mod:echo(
+		"BestBots: resolve_profile spawn="
+			.. tostring(spawn_number)
+			.. " slot="
+			.. tostring(slot_index)
+			.. " incoming profile.character_id="
+			.. tostring(profile.character_id)
+			.. " profile.name="
+			.. tostring(profile.name)
+	)
+
 	local has_real_character = profile.character_id or profile.name
 	if has_real_character then
-		if _debug_enabled() then
-			_debug_log(
-				"bot_profiles:yield_character_id:" .. tostring(slot_index),
-				0,
-				"preserving external profile for bot slot "
-					.. tostring(slot_index)
-					.. " (character_id="
-					.. tostring(profile.character_id)
-					.. ", name="
-					.. tostring(profile.name)
-					.. ")"
-			)
-		end
+		_mod:echo(
+			"BestBots: resolve_profile slot="
+				.. tostring(slot_index)
+				.. " YIELDING: incoming profile already has character_id/name "
+				.. "(another mod or the game already assigned a real player here)"
+		)
 		return profile, false
 	end
 
@@ -516,11 +523,14 @@ local function resolve_profile(profile)
 	-- Note: profile.archetype can be a resolved table (with .name field) or a string.
 	local archetype = profile.archetype
 	local archetype_name = type(archetype) == "table" and archetype.name or archetype
+	_mod:echo("BestBots: resolve_profile slot=" .. tostring(slot_index) .. " incoming archetype=" .. tostring(archetype_name))
 	if archetype_name and archetype_name ~= "veteran" then
+		_mod:echo("BestBots: resolve_profile slot=" .. tostring(slot_index) .. " YIELDING: incoming archetype already non-veteran")
 		return profile, false
 	end
 
 	local choice = _get_slot_profile_choice(slot_index)
+	_mod:echo("BestBots: resolve_profile slot=" .. tostring(slot_index) .. " configured choice=" .. tostring(choice))
 	if choice == "none" then
 		return profile, false
 	end
@@ -532,27 +542,30 @@ local function resolve_profile(profile)
 	-- such character exists yet, or if the roster hasn't finished fetching.
 	if _real_character_roster then
 		local character_profile = _real_character_roster.get_character_profile_by_archetype(choice)
+		_mod:echo(
+			"BestBots: resolve_profile slot="
+				.. tostring(slot_index)
+				.. " real character lookup for '"
+				.. tostring(choice)
+				.. "' found="
+				.. tostring(character_profile ~= nil)
+		)
 		if character_profile then
-			if _debug_enabled() then
-				_debug_log(
-					"bot_profiles:character_injected:" .. tostring(slot_index),
-					0,
-					"bot slot " .. tostring(slot_index) .. " (" .. tostring(choice) .. ") → real character"
-				)
-			end
 			return character_profile, true
 		end
+	else
+		_mod:echo("BestBots: resolve_profile slot=" .. tostring(slot_index) .. " _real_character_roster is NIL")
 	end
 
 	local resolved = _resolve_profile_template(choice)
 	if not resolved then
-		if _debug_enabled() then
-			_debug_log(
-				"bot_profiles:resolve_failed:" .. tostring(slot_index),
-				0,
-				"bot slot " .. tostring(slot_index) .. " failed to resolve profile for " .. tostring(choice)
-			)
-		end
+		_mod:echo(
+			"BestBots: resolve_profile slot="
+				.. tostring(slot_index)
+				.. " GENERIC TEMPLATE RESOLUTION FAILED for '"
+				.. tostring(choice)
+				.. "' -- bot stays on incoming (likely vanilla default) profile"
+		)
 		return profile, false
 	end
 
@@ -561,12 +574,23 @@ local function resolve_profile(profile)
 	-- holding vanilla veteran weapons. Reject before touching `profile`.
 	local resolved_loadout = resolved.loadout
 	if not (resolved_loadout and resolved_loadout.slot_primary and resolved_loadout.slot_secondary) then
+		_mod:echo(
+			"BestBots: resolve_profile slot="
+				.. tostring(slot_index)
+				.. " GENERIC TEMPLATE for '"
+				.. tostring(choice)
+				.. "' missing slot_primary/slot_secondary -- bot stays on incoming profile"
+		)
 		_warn_resolution(
 			"missing_weapon_slots:" .. tostring(choice),
 			"resolved profile for " .. tostring(choice) .. " is missing slot_primary or slot_secondary"
 		)
 		return profile, false
 	end
+
+	_mod:echo(
+		"BestBots: resolve_profile slot=" .. tostring(slot_index) .. " applying GENERIC TEMPLATE for '" .. tostring(choice) .. "'"
+	)
 
 	-- Mutate the vanilla profile in-place rather than replacing it entirely.
 	-- The vanilla profile has cosmetic slots, body data, and visual_loadout already
