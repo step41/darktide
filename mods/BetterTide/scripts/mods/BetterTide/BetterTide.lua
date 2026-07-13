@@ -400,6 +400,30 @@ end
 
 apply_ogryn_combatblade_damage()
 
+-- Guaranteed 100% crit chance. Traced the real crit roll to
+-- scripts/extension_systems/weapon/actions/action_weapon_base.lua:
+-- chance = prevent_crit and 0 or guaranteed_crit and 1 or
+-- CriticalStrike.chance(...) -- where guaranteed_crit is true if any of
+-- several buff keywords are set OR action_auto_crit is set, and
+-- action_auto_crit traces (action_sweep.lua) to a plain
+-- action_settings.guaranteed_crit boolean read directly off the action
+-- table -- the same actions already touched throughout this file. Not a
+-- *_template string, not preparse-cached, no hook needed -- a category-A
+-- safe direct field, same as total_time/damage_profile edits already
+-- above. (prevent_crit still overrides this to 0 when set -- e.g. a boss
+-- that's flagged immune to crits stays immune, which is correct.)
+local function apply_ogryn_combatblade_guaranteed_crit()
+    for _, weapon_template in ipairs(ogryn_combatblade_templates) do
+        for _, action in pairs(weapon_template.actions) do
+            if action.damage_profile then
+                action.guaranteed_crit = true
+            end
+        end
+    end
+end
+
+apply_ogryn_combatblade_guaranteed_crit()
+
 -- Armor penetration / rending, take 2. The first attempt here added a
 -- weapon_template.overclocks table -- WRONG, confirmed dead: a repo-wide
 -- search of the entire scripts/ui tree found zero UI files reference
