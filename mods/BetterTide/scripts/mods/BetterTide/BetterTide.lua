@@ -143,6 +143,11 @@ end
 -- further rather than a magnitude problem.
 local ogryn_combatblade_mobility_multiplier = 1
 local ogryn_combatblade_sprint_test_multiplier = 2.6
+-- Separate from the mobility multiplier above (which also drives dodge
+-- distance/speed and stamina costs) -- heavy-attack forward movement was
+-- reported "too much" even at knife parity (1x), so this needs its own
+-- dial, halving it below parity, without touching dodge/stamina.
+local ogryn_combatblade_heavy_movement_multiplier = 0.5
 local ogryn_combatblade_move_speed = 5.8 * ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_heavy_total_time = 1
 local ogryn_combatblade_heavy_actions = { "action_left_heavy", "action_right_heavy" }
@@ -304,11 +309,11 @@ end)
 -- action_movement_curve.modifier values are multipliers applied to the
 -- character's current move speed while the heavy attack plays (confirmed
 -- via WeaponActionMovement.move_speed_modifier) -- this is what produces
--- forward distance when moving + heavy-attacking together. Doubling only
+-- forward distance when moving + heavy-attacking together. Scales only
 -- .modifier (and .start_modifier, if present) -- .t is a normalized time
 -- position (0-1) along the swing, not a magnitude, so it must stay as-is
 -- or the curve's timing desyncs from the attack animation.
-local function _double_movement_curve_modifiers(action_movement_curve, factor)
+local function _scale_movement_curve_modifiers(action_movement_curve, factor)
     if action_movement_curve.start_modifier then
         action_movement_curve.start_modifier = action_movement_curve.start_modifier * factor
     end
@@ -327,7 +332,7 @@ local function apply_ogryn_combatblade_speed_and_heavy_timing()
             action.total_time = ogryn_combatblade_heavy_total_time
 
             if action.action_movement_curve then
-                _double_movement_curve_modifiers(action.action_movement_curve, ogryn_combatblade_mobility_multiplier)
+                _scale_movement_curve_modifiers(action.action_movement_curve, ogryn_combatblade_heavy_movement_multiplier)
             end
         end
     end
