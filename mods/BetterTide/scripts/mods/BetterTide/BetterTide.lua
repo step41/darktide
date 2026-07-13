@@ -142,7 +142,7 @@ end
 -- difference, that's strong evidence of an actual bug worth digging into
 -- further rather than a magnitude problem.
 local ogryn_combatblade_mobility_multiplier = 1
-local ogryn_combatblade_sprint_test_multiplier = 2.6
+local ogryn_combatblade_sprint_test_multiplier = 3
 -- Separate from the mobility multiplier above (which also drives dodge
 -- distance/speed and stamina costs) -- heavy-attack forward movement was
 -- reported "too much" even at knife parity (1x), so this needs its own
@@ -399,6 +399,111 @@ local function apply_ogryn_combatblade_damage()
 end
 
 apply_ogryn_combatblade_damage()
+
+-- Armor penetration / rending. Investigated because the Combat Blade
+-- "doesn't match" the real Combat Knife here -- verdict: the per-hit armor
+-- damage modifiers are a wash (Ogryn's "smiter" variants are equal-or-better
+-- against armored/super_armor than the knife's; only "linesman" is
+-- genuinely worse, see below). The REAL gap is structural: both weapons
+-- have the identical armor_pierce_stat mechanic
+-- (damage_trait_templates.default_armor_pierce_stat, confirmed byte-for-
+-- byte identical formula on both), but the real knife has a
+-- weapon_template.overclocks table with 5 craftable trade-offs -- two of
+-- which (armor_pierce_up_dps_down, first_target_up_armor_pierce_down) let
+-- a player perk INTO more armor pierce at crafting time. The Ogryn Combat
+-- Blade has NO overclocks table at all (confirmed via direct read of all 3
+-- mark files) -- an Ogryn player cannot build into rending no matter how
+-- they craft the weapon, full stop.
+--
+-- weapon_template.overclocks is read fresh per weapon instance
+-- (WeaponTweakTemplates.calculate_lerp_values, called on equip via
+-- Weapon._init_traits) -- not a *_template string, not preparse-cached, and
+-- the only 2 engine files that reference .overclocks are exactly that one
+-- plus weapon.lua's own item.overclocks read (the player's crafted
+-- selection) -- no separate UI-side cache found. Adding it fresh at mod
+-- load is safe.
+--
+-- All 3 marks use the identical stat key names
+-- (ogryn_combatblade_p1_m1_*_stat) despite being different marks -- that's
+-- how the base game itself names them on all 3 files, not a mistake here.
+-- Mirrors 4 of the knife's 5 trade-offs (dps, armor_pierce, first_target,
+-- mobility) -- skipped finesse_up_armor_pierce_down since the Ogryn blade
+-- has no finesse stat to trade from/to (confirmed absent from base_stats
+-- on all 3 marks; the knife has one, the blade doesn't).
+local ogryn_combatblade_overclocks = {
+    armor_pierce_up_dps_down = {
+        ogryn_combatblade_p1_m1_armor_pierce_stat = 0.1,
+        ogryn_combatblade_p1_m1_dps_stat = -0.1,
+    },
+    first_target_up_armor_pierce_down = {
+        ogryn_combatblade_p1_m1_armor_pierce_stat = -0.1,
+        ogryn_combatblade_p1_m1_first_target_stat = 0.1,
+    },
+    mobility_up_first_target_down = {
+        ogryn_combatblade_p1_m1_first_target_stat = -0.1,
+        ogryn_combatblade_p1_m1_mobility_stat = 0.1,
+    },
+    dps_up_mobility_down = {
+        ogryn_combatblade_p1_m1_dps_stat = 0.1,
+        ogryn_combatblade_p1_m1_mobility_stat = -0.1,
+    },
+}
+
+local function apply_ogryn_combatblade_overclocks()
+    for _, weapon_template in ipairs(ogryn_combatblade_templates) do
+        weapon_template.overclocks = weapon_template.overclocks or ogryn_combatblade_overclocks
+    end
+end
+
+apply_ogryn_combatblade_overclocks()
+
+-- combat_blade_light_linesman: the one genuinely worse per-hit armor
+-- profile found. Its DOMINANT damage component against a primary target is
+-- "attack" (power_distribution.attack ~100-200 vs impact's ~7-14, i.e.
+-- attack contributes the overwhelming majority of actual damage dealt),
+-- and that component's super_armor modifier is far below the real knife's
+-- equivalent (medium_combat_knife_linesman): Ogryn primary-target attack
+-- modifier 0.05 vs the knife's 0.5 for the same dominant component and
+-- role. Ogryn's impact-component modifier is actually fine/better (0.5 vs
+-- the knife's 0), but impact barely contributes to total damage here, so
+-- it doesn't compensate. Bumped the "attack" component's super_armor
+-- modifier across the top-level fallback and every target tier, roughly
+-- matching the knife's own tiering (primary target highest, secondary
+-- lower, splash/default lowest).
+local ArmorSettings = require("scripts/settings/damage/armor_settings")
+local DamageProfileSettings = require("scripts/settings/damage/damage_profile_settings")
+local armor_types = ArmorSettings.types
+local damage_lerp_values = DamageProfileSettings.damage_lerp_values
+
+local function apply_ogryn_combatblade_linesman_penetration()
+    local linesman = damage_profile_templates.combat_blade_light_linesman
+    linesman.armor_damage_modifier.attack[armor_types.super_armor] = damage_lerp_values.lerp_0_5
+    linesman.targets[1].armor_damage_modifier.attack[armor_types.super_armor] = damage_lerp_values.lerp_0_5
+    linesman.targets[2].armor_damage_modifier.attack[armor_types.super_armor] = damage_lerp_values.lerp_0_1
+    linesman.targets.default_target.armor_damage_modifier.attack[armor_types.super_armor] = damage_lerp_values.lerp_0_25
+end
+
+apply_ogryn_combatblade_linesman_penetration()
+
+-- special_uppercut_plus (Ogryn's special attack, already 2x damage-buffed
+-- above): default_target.power_distribution.attack = 0 (a flat zero, not a
+-- {min,max} range like every other target here) -- meaning the "attack"
+-- component's armor modifiers are already moot for this target regardless
+-- of value, since 0 times anything is 0. The component that actually
+-- matters is "impact" (power_distribution.impact = 1), and its
+-- super_armor modifier is set to no_damage -- a real zero, and an
+-- inconsistent one: this same profile's own top-level fallback
+-- (armor_damage_modifier.impact[super_armor]) already uses lerp_0_5, which
+-- targets 1-3 correctly inherit (they don't override armor_damage_modifier
+-- at all) -- only default_target overrides it down to no_damage. Fixed to
+-- match the profile's own established value instead of introducing a new
+-- one.
+local function apply_ogryn_combatblade_uppercut_fix()
+    local uppercut = damage_profile_templates.special_uppercut_plus
+    uppercut.targets.default_target.armor_damage_modifier.impact[armor_types.super_armor] = damage_lerp_values.lerp_0_5
+end
+
+apply_ogryn_combatblade_uppercut_fix()
 
 ---- OGRYN RIPPER GUN TWEAKS ----
 -- _scale_numeric_leaves is defined at the top of the file (shared helper).
