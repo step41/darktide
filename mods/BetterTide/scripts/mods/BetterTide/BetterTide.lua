@@ -81,9 +81,9 @@ end
 
 apply_ogryn_tweaks()
 
----- OGRYN COMBAT BLADE MOBILITY ----
--- All 3 mark variants ship with Ogryn's normal slow dodge/sprint templates
--- ("ogryn_fast"/"ogryn_assault") despite being a small fast weapon.
+---- OGRYN MOBILITY (dodge, sprint) -- ARCHETYPE-WIDE, ALL WEAPONS ----
+-- Originally Combat Blade-only; explicitly widened to every Ogryn weapon
+-- per request. Two field categories, resolved completely differently:
 --
 -- IMPORTANT: the engine "preparses" every weapon template's *_template
 -- string fields (dodge_template, sprint_template, stamina_template,
@@ -109,6 +109,8 @@ local weapon_dodge_templates = require("scripts/settings/dodge/weapon_dodge_temp
 local weapon_sprint_templates = require("scripts/settings/sprint/weapon_sprint_templates")
 local weapon_stamina_templates = require("scripts/settings/stamina/weapon_stamina_templates")
 local damage_profile_templates = require("scripts/settings/damage/damage_profile_templates")
+local archetype_dodge_templates = require("scripts/settings/dodge/archetype_dodge_templates")
+local archetype_sprint_templates = require("scripts/settings/sprint/archetype_sprint_templates")
 local ogryn_combatblade_templates = {
     require("scripts/settings/equipment/weapon_templates/combat_blades/ogryn_combatblade_p1_m1"),
     require("scripts/settings/equipment/weapon_templates/combat_blades/ogryn_combatblade_p1_m2"),
@@ -119,81 +121,104 @@ for _, weapon_template in ipairs(ogryn_combatblade_templates) do
     ogryn_combatblade_template_set[weapon_template] = true
 end
 
--- Dodge and heavy-attack forward movement both confirmed working (in fact
--- "way more than we want" / "about 2x what they should be") -- dialed back
--- to 1 (exact Combat Knife parity, the original ask) now that the
--- mechanism is proven. Kept for stamina too (reverts to the original 7
--- pool / combat_knife_p1 costs -- doubling stamina specifically was never
--- requested, just swept up in the "over the top" test pass).
+-- dodge_cooldown (time before you can dodge again) and sprint_move_speed
+-- have NO per-weapon override anywhere in their formulas (confirmed:
+-- player_character_state_dodging.lua reads dodge_cooldown straight off
+-- self._archetype_dodge_template with no weapon fallback path at all; the
+-- sprint speed formula is archetype.sprint_move_speed + weapon.sprint_
+-- speed_mod, additive not overridden). These are naturally universal to
+-- every Ogryn weapon already -- a direct archetype mutation is both
+-- correct and the simplest possible fix. An earlier version of this mod
+-- used a PlayerCharacterStateDodging.on_exit hook to scope dodge_cooldown
+-- to just the Combat Blade -- that hook (and the dodge-template tagging
+-- that fed it, previously in the stamina hook below) is removed entirely
+-- now that archetype-wide is explicitly wanted; there's nothing left to
+-- scope.
+archetype_dodge_templates.ogryn.dodge_cooldown = 0.05
+archetype_sprint_templates.ogryn.sprint_move_speed = archetype_sprint_templates.default.sprint_move_speed
+
+-- Dodge "count" (diminishing_return_start/limit) and the distance_scale/
+-- speed_modifier multipliers only exist as WEAPON-template concepts --
+-- there is no archetype equivalent field for either (confirmed: archetype_
+-- dodge_templates.ogryn's schema has no distance_scale/speed_modifier/
+-- diminishing_return_* keys at all). Making these "regardless of weapon
+-- equipped" means touching every distinct weapon-level dodge/sprint
+-- template name Ogryn actually uses, confirmed via a repo-wide search:
+--   dodge:  "ogryn_fast" (Combat Blade), "ogryn" (Club, Powermaul,
+--           Pickaxe, Heavystubber, Rippergun, Thumper, unarmed) -- both
+--           confirmed exclusive to Ogryn, no non-Ogryn weapon references
+--           either.
+--   sprint: "ogryn_assault" (Combat Blade), "ogryn" (same family as
+--           dodge "ogryn" plus Slabshield's sprint), "ogryn_sprint_slow"
+--           (Pickaxe mark 1), "ogryn_sprint_fast" (Pickaxe mark 3) -- all
+--           4 confirmed exclusive to Ogryn.
+-- NOT covered: the Gauntlet (dodge AND sprint both use "default", shared
+-- with dozens of non-Ogryn weapons) and the Slabshield's DODGE
+-- specifically (uses "support", shared with the autogun family). Both
+-- would need a weapon-instance-scoped hook (same pattern as the stamina
+-- hook below) to touch safely without affecting non-Ogryn weapons --
+-- left out of this pass; every other Ogryn-wieldable weapon is covered.
 --
--- Sprint speed is the one confirmed NOT working even at 2x -- full trace
--- confirms weapon_sprint_template.sprint_speed_mod really is the
--- authoritative term in the actual applied-velocity formula
--- (max_move_speed = archetype.sprint_move_speed(5) + weapon.sprint_speed_mod,
--- flows through to locomotion_steering.velocity_wanted with no clamp in
--- between), and the resolution mechanism is byte-for-byte identical to
--- dodge's (same accessor pattern, same WeaponTweakTemplates.create
--- pipeline) -- which IS confirmed working. Leading theory: the archetype
--- term (5) still dominated the sum even after doubling the weapon term
--- (~0.8 -> ~1.6), diluting the ~20% top-speed change enough to not read as
--- "different" next to the much larger dodge/heavy-attack changes. Testing
--- an extreme, dedicated multiplier here (separate from the mobility
--- multiplier above) to get a definitive signal: if this still produces zero
--- difference, that's strong evidence of an actual bug worth digging into
--- further rather than a magnitude problem.
+-- Deep-copy every field from ninja_knife/ninja_l rather than aliasing by
+-- reference: a plain `dodge_template[key] = value` assigns the SAME nested
+-- table object for any table-typed field, so a later scale would also
+-- scale the REAL Combat Knife's stats for every other class that uses it
+-- (Zealot included). dodge_speed_at_times is deliberately EXCLUDED from
+-- the copy (unlike every other dodge field) -- it's an animation-synced
+-- speed curve tuned for the knife's own swing/dodge animation, and
+-- applying it to visually very different weapons (Heavystubber, Powermaul)
+-- risks the same kind of animation/timing desync that broke Combat Blade
+-- attack speed earlier in this file -- each weapon keeps its own curve.
+local ogryn_dodge_template_names = { "ogryn_fast", "ogryn" }
+local ogryn_dodge_fields_to_copy = {
+    "base_distance",
+    "consecutive_dodges_reset",
+    "distance_scale",
+    "diminishing_return_distance_modifier",
+    "diminishing_return_start",
+    "diminishing_return_limit",
+    "speed_modifier",
+}
+local ogryn_sprint_template_names = { "ogryn_assault", "ogryn", "ogryn_sprint_slow", "ogryn_sprint_fast" }
+-- Confirmed working (not flagged as "too much" the way dodge distance and
+-- heavy-attack movement were, both already dialed back to 1x/0.5x
+-- elsewhere in this file) -- kept as the accepted baseline rather than
+-- reverted to 1x knife-parity.
+local ogryn_sprint_speed_multiplier = 3
+
+local function apply_ogryn_mobility()
+    local ninja_knife_dodge = weapon_dodge_templates.ninja_knife
+    for _, name in ipairs(ogryn_dodge_template_names) do
+        local dodge_template = weapon_dodge_templates[name]
+        for _, field_name in ipairs(ogryn_dodge_fields_to_copy) do
+            local value = ninja_knife_dodge[field_name]
+            if value ~= nil then
+                dodge_template[field_name] = type(value) == "table" and _deep_copy(value) or value
+            end
+        end
+    end
+
+    local ninja_l_sprint = weapon_sprint_templates.ninja_l
+    for _, name in ipairs(ogryn_sprint_template_names) do
+        local sprint_template = weapon_sprint_templates[name]
+        for key, value in pairs(ninja_l_sprint) do
+            sprint_template[key] = type(value) == "table" and _deep_copy(value) or value
+        end
+        _scale_numeric_leaves(sprint_template.sprint_speed_mod, ogryn_sprint_speed_multiplier)
+        _scale_numeric_leaves(sprint_template.sprint_forward_acceleration, ogryn_sprint_speed_multiplier)
+    end
+end
+
+apply_ogryn_mobility()
+
+---- OGRYN COMBAT BLADE ----
 local ogryn_combatblade_mobility_multiplier = 1
-local ogryn_combatblade_sprint_test_multiplier = 3
--- Separate from the mobility multiplier above (which also drives dodge
--- distance/speed and stamina costs) -- heavy-attack forward movement was
--- reported "too much" even at knife parity (1x), so this needs its own
--- dial, halving it below parity, without touching dodge/stamina.
+-- Heavy-attack forward movement (below) was reported "too much" even at
+-- knife parity (1x), so this needs its own dial, halving it below parity.
 local ogryn_combatblade_heavy_movement_multiplier = 0.5
 local ogryn_combatblade_move_speed = 5.8 * ogryn_combatblade_mobility_multiplier
 local ogryn_combatblade_heavy_total_time = 1
 local ogryn_combatblade_heavy_actions = { "action_left_heavy", "action_right_heavy" }
-
--- "ogryn_fast"/"ogryn_assault" are exclusive to the Combat Blade family (no
--- other Ogryn weapon references them), so overwriting their fields in place
--- is safe -- verified via a repo-wide search before writing this. Deep-copy
--- every field from ninja_knife/ninja_l rather than aliasing by reference:
--- a plain `ogryn_fast_dodge[key] = value` (an earlier version of this code)
--- assigns the SAME nested table object for any table-typed field, so
--- scaling it afterward would also scale the REAL Combat Knife's stats for
--- every other class that uses it (Zealot included). Left unscaled:
--- diminishing_return_distance_modifier (a falloff curve shape, not a
--- magnitude) and dodge_speed_at_times (an animation-synced speed curve --
--- doubling it would desync the visual dodge animation from the actual
--- movement).
-local function apply_ogryn_combatblade_dodge_and_sprint()
-    local ninja_knife_dodge = weapon_dodge_templates.ninja_knife
-    local ogryn_fast_dodge = weapon_dodge_templates.ogryn_fast
-    for key, value in pairs(ninja_knife_dodge) do
-        if type(value) == "table" then
-            ogryn_fast_dodge[key] = _deep_copy(value)
-        else
-            ogryn_fast_dodge[key] = value
-        end
-    end
-    ogryn_fast_dodge.base_distance = ogryn_fast_dodge.base_distance * ogryn_combatblade_mobility_multiplier
-    _scale_numeric_leaves(ogryn_fast_dodge.distance_scale, ogryn_combatblade_mobility_multiplier)
-    _scale_numeric_leaves(ogryn_fast_dodge.speed_modifier, ogryn_combatblade_mobility_multiplier)
-    _scale_numeric_leaves(ogryn_fast_dodge.diminishing_return_start, ogryn_combatblade_mobility_multiplier)
-    _scale_numeric_leaves(ogryn_fast_dodge.diminishing_return_limit, ogryn_combatblade_mobility_multiplier)
-
-    local ninja_l_sprint = weapon_sprint_templates.ninja_l
-    local ogryn_assault_sprint = weapon_sprint_templates.ogryn_assault
-    for key, value in pairs(ninja_l_sprint) do
-        if type(value) == "table" then
-            ogryn_assault_sprint[key] = _deep_copy(value)
-        else
-            ogryn_assault_sprint[key] = value
-        end
-    end
-    _scale_numeric_leaves(ogryn_assault_sprint.sprint_speed_mod, ogryn_combatblade_sprint_test_multiplier)
-    _scale_numeric_leaves(ogryn_assault_sprint.sprint_forward_acceleration, ogryn_combatblade_sprint_test_multiplier)
-end
-
-apply_ogryn_combatblade_dodge_and_sprint()
 
 -- Stamina's vanilla template ("default") is shared with the Powermaul, so
 -- overwriting it in place would buff that weapon too. Instead, hook the
@@ -240,70 +265,9 @@ mod:hook(WeaponTweakTemplates, "create", function(func, lerp_values, weapon_temp
             }
             resolved_stamina.push_cost = ogryn_combatblade_push_cost
         end
-
-        -- Tagged so the dodge-frequency hook below can recognize "the
-        -- currently equipped weapon's resolved dodge template is one of
-        -- ours" -- self._weapon_extension:dodge_template() returns this
-        -- exact RESOLVED (post-lerp) table, not the raw source table
-        -- mutated above, so an identity check against
-        -- weapon_dodge_templates.ogryn_fast would never match it.
-        local resolved_dodge_templates = templates[template_types.dodge]
-        for _, resolved_dodge in pairs(resolved_dodge_templates) do
-            resolved_dodge._bettertide_ogryn_combatblade = true
-        end
     end
 
     return templates
-end)
-
--- dodge_cooldown (time before you can dodge again) and
--- consecutive_dodges_reset (time before the diminishing-return dodge
--- counter resets) are read directly off the ARCHETYPE dodge template inside
--- the actual dodge-execution code (player_character_state_dodging.lua),
--- with NO per-weapon override in that formula -- unlike distance/speed,
--- which the weapon template already overrides once it defines its own
--- base_distance (confirmed: weapon base_distance wins over archetype
--- base_distance whenever present, which ogryn_fast now does). This is why
--- Ogryn's dodge frequency stayed capped even after the weapon-level fix.
---
--- Directly mutating the shared archetype table (archetype_dodge_templates.
--- ogryn) was explicitly ruled out -- it would affect every Ogryn weapon,
--- not just the knife -- and it's also a single object shared by every
--- Ogryn player in a session, so temporarily mutating and restoring it
--- around the call would risk a race in multiplayer. Instead: let on_exit
--- run normally first (still handles animations, buffs, consecutive-dodge
--- counting), then overwrite the resulting PER-PLAYER cooldown fields with
--- knife-specific values -- but only when the resolved dodge template just
--- used carries the tag set above, i.e. only when a Combat Blade is
--- actually equipped. Values set aggressively low ("nearly infinite"
--- dodging, matching the user's description of how the real Combat Blade
--- plays on other classes) rather than just matching Zealot's 0.15s, since
--- this is the "over the top, confirm it first" pass.
-local PlayerCharacterStateDodging =
-    require("scripts/extension_systems/character_state_machine/character_states/player_character_state_dodging")
-local ogryn_combatblade_dodge_cooldown = 0.05
-local ogryn_combatblade_dodge_jump_override_timer = 0.05
-local ogryn_combatblade_consecutive_dodges_reset = 0.1
-
-mod:hook(PlayerCharacterStateDodging, "on_exit", function(func, self, unit, t, next_state)
-    func(self, unit, t, next_state)
-
-    local weapon_dodge_template = self._weapon_extension and self._weapon_extension:dodge_template()
-    if not (weapon_dodge_template and weapon_dodge_template._bettertide_ogryn_combatblade) then
-        return
-    end
-
-    local dodge_character_state_component = self._dodge_character_state_component
-    local time_in_dodge = t - self._character_state_component.entered_t
-    local cd = math.max(ogryn_combatblade_dodge_cooldown, ogryn_combatblade_dodge_jump_override_timer - time_in_dodge)
-    dodge_character_state_component.cooldown = t + cd
-
-    local stat_buffs = self._buff_extension:stat_buffs()
-    local buff_dodge_cooldown_reset_modifier = stat_buffs.dodge_cooldown_reset_modifier or 1
-    local weapon_consecutive_dodges_reset = weapon_dodge_template.consecutive_dodges_reset or 0
-    local cooldown = (ogryn_combatblade_consecutive_dodges_reset + weapon_consecutive_dodges_reset)
-        * buff_dodge_cooldown_reset_modifier
-    dodge_character_state_component.consecutive_dodges_cooldown = t + cooldown
 end)
 
 -- action_movement_curve.modifier values are multipliers applied to the
