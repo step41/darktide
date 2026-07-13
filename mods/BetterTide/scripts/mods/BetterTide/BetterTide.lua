@@ -400,62 +400,57 @@ end
 
 apply_ogryn_combatblade_damage()
 
--- Armor penetration / rending. Investigated because the Combat Blade
--- "doesn't match" the real Combat Knife here -- verdict: the per-hit armor
--- damage modifiers are a wash (Ogryn's "smiter" variants are equal-or-better
--- against armored/super_armor than the knife's; only "linesman" is
--- genuinely worse, see below). The REAL gap is structural: both weapons
--- have the identical armor_pierce_stat mechanic
--- (damage_trait_templates.default_armor_pierce_stat, confirmed byte-for-
--- byte identical formula on both), but the real knife has a
--- weapon_template.overclocks table with 5 craftable trade-offs -- two of
--- which (armor_pierce_up_dps_down, first_target_up_armor_pierce_down) let
--- a player perk INTO more armor pierce at crafting time. The Ogryn Combat
--- Blade has NO overclocks table at all (confirmed via direct read of all 3
--- mark files) -- an Ogryn player cannot build into rending no matter how
--- they craft the weapon, full stop.
+-- Armor penetration / rending, take 2. The first attempt here added a
+-- weapon_template.overclocks table -- WRONG, confirmed dead: a repo-wide
+-- search of the entire scripts/ui tree found zero UI files reference
+-- .overclocks at all, on ANY weapon, for ANY class. Nothing in the shipped
+-- game ever sets item.overclocks, so
+-- WeaponTweakTemplates.calculate_lerp_values's overclock lookup always
+-- iterates an empty table -- the table this mod added was never read.
+-- Removed entirely rather than left in place doing nothing.
 --
--- weapon_template.overclocks is read fresh per weapon instance
--- (WeaponTweakTemplates.calculate_lerp_values, called on equip via
--- Weapon._init_traits) -- not a *_template string, not preparse-cached, and
--- the only 2 engine files that reference .overclocks are exactly that one
--- plus weapon.lua's own item.overclocks read (the player's crafted
--- selection) -- no separate UI-side cache found. Adding it fresh at mod
--- load is safe.
+-- The REAL crafting mechanism players actually use is weapon_template.perks
+-- (confirmed live: consumed by view_element_perks_item*/
+-- view_element_crafting_recipe.lua) -- structurally similar to base_stats
+-- but a fully separate, independent crafting slot (its own
+-- damage_trait_templates.default_X_perk trait, not tied to whether a
+-- matching base_stats entry exists). The real Combat Knife has 5 entries
+-- here (dps/armor_pierce/finesse/first_target/mobility perks);
+-- weapon_template.perks is completely UNDEFINED on all 3 Ogryn Combat
+-- Blade marks -- confirmed via direct grep, zero matches. An Ogryn player
+-- has no perk slot to invest in armor pierce at all, where a knife user
+-- does.
 --
--- All 3 marks use the identical stat key names
--- (ogryn_combatblade_p1_m1_*_stat) despite being different marks -- that's
--- how the base game itself names them on all 3 files, not a mistake here.
--- Mirrors 4 of the knife's 5 trade-offs (dps, armor_pierce, first_target,
--- mobility) -- skipped finesse_up_armor_pierce_down since the Ogryn blade
--- has no finesse stat to trade from/to (confirmed absent from base_stats
--- on all 3 marks; the knife has one, the blade doesn't).
-local ogryn_combatblade_overclocks = {
-    armor_pierce_up_dps_down = {
-        ogryn_combatblade_p1_m1_armor_pierce_stat = 0.1,
-        ogryn_combatblade_p1_m1_dps_stat = -0.1,
-    },
-    first_target_up_armor_pierce_down = {
-        ogryn_combatblade_p1_m1_armor_pierce_stat = -0.1,
-        ogryn_combatblade_p1_m1_first_target_stat = 0.1,
-    },
-    mobility_up_first_target_down = {
-        ogryn_combatblade_p1_m1_first_target_stat = -0.1,
-        ogryn_combatblade_p1_m1_mobility_stat = 0.1,
-    },
-    dps_up_mobility_down = {
-        ogryn_combatblade_p1_m1_dps_stat = 0.1,
-        ogryn_combatblade_p1_m1_mobility_stat = -0.1,
-    },
-}
+-- Added only armor_pierce_perk (the one the user actually asked about) --
+-- discovered structurally (any action with a damage_profile field, same
+-- method as the damage-scaling pass above) rather than hardcoding action
+-- names, since the 3 marks use different action sets. display_name reuses
+-- the real knife's own loc key (loc_trait_display_combatknife_p1_m1_
+-- armor_pierce_perk) -- BetterTide has no localization entry of its own
+-- for this, and the knife's key already resolves to sensible generic
+-- "Armor Piercing" text that applies equally well here.
+local DamageTraitTemplates =
+    require("scripts/settings/equipment/weapon_templates/weapon_trait_templates/damage_trait_templates")
 
-local function apply_ogryn_combatblade_overclocks()
+local function apply_ogryn_combatblade_armor_pierce_perk()
     for _, weapon_template in ipairs(ogryn_combatblade_templates) do
-        weapon_template.overclocks = weapon_template.overclocks or ogryn_combatblade_overclocks
+        weapon_template.perks = weapon_template.perks or {}
+
+        local armor_pierce_perk_damage = {}
+        for action_name, action in pairs(weapon_template.actions) do
+            if action.damage_profile then
+                armor_pierce_perk_damage[action_name] = { DamageTraitTemplates.default_armor_pierce_perk }
+            end
+        end
+
+        weapon_template.perks.ogryn_combatblade_p1_m1_armor_pierce_perk = {
+            display_name = "loc_trait_display_combatknife_p1_m1_armor_pierce_perk",
+            damage = armor_pierce_perk_damage,
+        }
     end
 end
 
-apply_ogryn_combatblade_overclocks()
+apply_ogryn_combatblade_armor_pierce_perk()
 
 -- combat_blade_light_linesman: the one genuinely worse per-hit armor
 -- profile found. Its DOMINANT damage component against a primary target is
